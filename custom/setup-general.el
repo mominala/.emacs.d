@@ -170,6 +170,15 @@
 (fa-config-default)
 
 
+;; hideshow
+(require 'hideshow)
+(add-hook 'prog-mode-hook 'hs-minor-mode)
+
+
+;; ranger
+(require 'ranger)
+(ranger-override-dired-mode t)
+
 
 
 (provide 'setup-general)
