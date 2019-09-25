@@ -110,6 +110,7 @@
 (require 'setup-lisp)
 (require 'setup-hydra)
 (require 'setup-org)
+(require 'setup-ranger)
 
 
 ;; theme
