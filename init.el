@@ -40,6 +40,7 @@
     git-timemachine
     haskell-mode
     helm
+    helm-ag
     helm-gtags
     helm-projectile
     helm-swoop
@@ -127,7 +128,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ranger zygospore yasnippet-snippets ws-butler volatile-highlights vdiff use-package tuareg srefactor spacemacs-theme smartparens smart-mode-line slime-company scion rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit helm-swoop helm-rtags helm-projectile helm-gtags haskell-mode github-search git-timemachine ggtags function-args flycheck-rtags flycheck-irony exwm-edit exwm expand-region evil ess elpy ecb duplicate-thing dtrt-indent dockerfile-mode company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format anzu))))
+    (helm-ag ranger zygospore yasnippet-snippets ws-butler volatile-highlights vdiff use-package tuareg srefactor spacemacs-theme smartparens smart-mode-line slime-company scion rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit helm-swoop helm-rtags helm-projectile helm-gtags haskell-mode github-search git-timemachine ggtags function-args flycheck-rtags flycheck-irony exwm-edit exwm expand-region evil ess elpy ecb duplicate-thing dtrt-indent dockerfile-mode company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format anzu))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

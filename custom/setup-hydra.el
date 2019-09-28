@@ -298,4 +298,67 @@ T - tag prefix
 
 
 
+
+;; ===================================== helm =======================================
+
+(defhydra hydra-helm-menu (:color pink
+                                  :hint nil)
+  "
+^Code^                ^Movement^           ^Search^               ^Misc
+^^^^^^^^---------------------------------------------------------------------------------
+_i_: Imenu-Semantic    _f_: Filesystem     _o_: Occurrences       _k_: Show Kill Ring
+_r_: Regexp            ^ ^                 _h_: Apropos           _SPC_: Show Mark Ring
+_le_: Lisp Eval        ^ ^                 _i_: Imenu-Semantic    _x_: helm-register
+_sws_: Swoop           ^ ^                 _m_: man woman pages   _cp_: Colour picker
+_swm_: Swoop multi     ^ ^                 _lf_: Locate Files     _ca_: Calculator
+_swa_: Swoop all       ^ ^                 _ss_: Ag search        ^ ^
+_swi_: Swoop from Is   ^ ^                 _sp_: Ag Project-root  ^ ^
+_pd_: Python Doc       ^ ^                 ^ ^                    ^ ^
+_j_: jedi:related-names
+
+ "
+
+  ("j" helm-jedi-related-names :color blue)
+                                        ;----{Ocurrences}---;
+  ("o" helm-occur :color blue)
+                                        ;{semantic or imenu};
+  ("i" helm-semantic-or-imenu :color blue)
+                                        ;-----{Apropos}-----;
+  ("h" helm-apropos :color blue)
+                                        ;-{browse kill ring};
+  ("k" helm-show-kill-ring :color blue)
+                                        ;-{browse mark ring};
+  ("SPC" helm-mark-ring :color blue)
+                                        ;-----{Regexp }-----;
+  ("r" helm-regexp :color blue)
+                                        ;----{Registers}----;
+  ("x" helm-register :color blue)
+                                        ;---{Colour picker}--;
+  ("cp" helm-colors :color blue)
+                                        ;----{Calculator}---;
+  ("ca" helm-calcul-expression :color blue)
+                                        ;----{man-pages}----;
+  ("m" helm-man-woman :color blue)
+                                        ;----{Find files}---;
+  ("f" helm-find-files :color blue)
+                                        ;---{Locate Files}--;
+  ("lf" helm-locate :color blue)
+                                        ;----{Eval elisp}---;
+  ("le" helm-eval-expression-with-eldoc :color blue)
+                                        ;------{Swoop}------;
+  ("sws" helm-swoop :color blue)
+  ("swm" helm-multi-swoop :color blue)
+  ("swa" helm-multi-swoop-all :color blue)
+  ("swi" helm-swoop-from-isearch :color blue)
+                                        ;{Python documentation};
+  ("pd" helm-pydoc :color blue)
+                                        ;--{Search with Ag}-;
+  ("ss" helm-ag :color blue)
+                                        ;-{Ag project root}-;
+  ("sp" helm-ag-project-root :color blue)
+  ("c" nil "cancel")
+  ("q" quit-window "quit" :color blue))
+
+(key-chord-define global-map "lm" 'hydra-helm-menu/body)
+
 (provide 'setup-hydra)
