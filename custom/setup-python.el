@@ -10,5 +10,10 @@
 ;; elpy
 (elpy-enable)
 
+(custom-set-variables
+ '(elpy-rpc-python-command "python3")
+ '(python-shell-interpreter "~/.local/bin/tf"))
+
+
 
 (provide 'setup-python)
