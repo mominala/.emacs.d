@@ -1,7 +1,38 @@
 ;; auto completion for auctex using company
 (require 'company-auctex)
 (require 'company-math)
+(require 'company-bibtex)
+(require 'helm-bibtex)
 
+
+
+(autoload 'helm-bibtex "helm-bibtex" "" t)
+
+(setq org-latex-prefer-user-labels t)
+(setq reftex-default-bibliography '("~/Bibliography/references.bib"))
+
+;;see org-ref for use of these variables
+(setq org-ref-bibliography-notes "~/Bibliography/notes.org"
+     org-ref-default-bibliography '("~/Bibliography/references.bib")
+     org-ref-pdf-directory "~/Bibliography/pdfs/")
+
+
+
+;; open pdf with system pdf viewer (works on mac)
+(setq bibtex-completion-pdf-open-function
+  (lambda (fpath)
+    (start-process "open" "*open*" "open" fpath)))
+
+(setq bibtex-completion-bibliography "~/Bibliography/references.bib"
+      bibtex-completion-library-path "~/Bibliography/pdfs/"
+      bibtex-completion-notes-path "~/Bibliography/helm-bibtex-notes")
+
+
+(setq bibtex-completion-format-citation-functions
+  '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
+    (latex-mode    . bibtex-completion-format-citation-cite)
+    (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
+    (default       . bibtex-completion-format-citation-default)))
 
 
 

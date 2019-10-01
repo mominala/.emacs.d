@@ -185,4 +185,11 @@
 (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
 
+;; drag stuff
+(require 'drag-stuff)
+(add-to-list 'drag-stuff-except-modes 'python-mode)
+(drag-stuff-global-mode 1)
+(setq drag-stuff-modifier 'meta)
+(drag-stuff-define-keys)
+
 (provide 'setup-general)

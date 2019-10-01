@@ -19,11 +19,13 @@
     company-jedi
     company-math
     company-rtags
+    company-bibtex
     slime-company
     duplicate-thing
     dtrt-indent
     docker
     dockerfile-mode
+    drag-stuff
     ecb
     ess
     expand-region
@@ -40,6 +42,7 @@
     ggtags
     github-search
     git-timemachine
+    gscholar-bibtex
     haskell-mode
     helm
     helm-ag
@@ -47,6 +50,7 @@
     helm-projectile
     helm-swoop
     helm-rtags
+    helm-bibtex
     hydra
     iedit
     irony
@@ -58,6 +62,7 @@
     markdown-mode
     modern-cpp-font-lock
     multiple-cursors
+    multi-term
     projectile
     pdf-tools
     pydoc-info
@@ -77,6 +82,7 @@
     volatile-highlights
     vdiff
     ws-butler
+    xah-lookup
     yasnippet-snippets
     yasnippet
     zygospore
@@ -118,7 +124,7 @@
 (require 'setup-hydra)
 (require 'setup-org)
 (require 'setup-ranger)
-
+(require 'setup-lookup)
 
 ;; theme
 (load-theme 'smart-mode-line-dark t)
