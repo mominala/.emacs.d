@@ -1,4 +1,6 @@
 (require 'package)
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(setq package-check-signature nil)
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
@@ -32,8 +34,8 @@
     exec-path-from-shell
     evil
     eldoc
-    exwm
-    exwm-edit
+    ;; exwm
+    ;; exwm-edit
     elpy
     flycheck
     flycheck-rtags
@@ -109,18 +111,18 @@
 (add-to-list 'exec-path "~/.local/bin")
 
 
-(require 'setup-exwm)
-(require 'setup-helm)
+;; (require 'setup-exwm)
+ (require 'setup-helm)
 ;; (require 'setup-helm-gtags)
 ;; (require 'setup-ggtags)
 (require 'setup-rtags)
 (require 'setup-editing)
 (require 'setup-general)
 (require 'setup-c)
-;; (require 'setup-cedet)
+;; ;; (require 'setup-cedet)
 (require 'setup-python)
 (require 'setup-tex)
-(require 'setup-lisp)
+;; (require 'setup-lisp)
 (require 'setup-hydra)
 (require 'setup-org)
 (require 'setup-ranger)
@@ -133,14 +135,18 @@
 
 (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
 (server-start)
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(elpy-rpc-python-command "python3")
  '(package-selected-packages
    (quote
-    (helm-ag ranger zygospore yasnippet-snippets ws-butler volatile-highlights vdiff use-package tuareg srefactor spacemacs-theme smartparens smart-mode-line slime-company scion rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit helm-swoop helm-rtags helm-projectile helm-gtags haskell-mode github-search git-timemachine ggtags function-args flycheck-rtags flycheck-irony exwm-edit exwm expand-region evil ess elpy ecb duplicate-thing dtrt-indent dockerfile-mode company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format anzu)))
+    (zygospore yasnippet-snippets xah-lookup ws-butler vdiff volatile-highlights use-package tuareg spacemacs-theme srefactor smart-mode-line smartparens scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multi-term multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit hydra helm-bibtex helm-rtags helm-swoop helm-projectile helm-gtags helm-ag helm haskell-mode gscholar-bibtex git-timemachine github-search ggtags function-args flycheck-irony flycheck-rtags flycheck elpy evil exec-path-from-shell expand-region ess ecb drag-stuff dockerfile-mode docker dtrt-indent duplicate-thing slime-company company-bibtex company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex company comment-dwim-2 cmake-ide cmake-mode clang-format clean-aindent-mode auctex anzu)))
+ '(python-shell-interpreter "~/.local/bin/tf"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
