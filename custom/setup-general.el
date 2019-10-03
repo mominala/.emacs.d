@@ -15,9 +15,8 @@
 (when (fboundp 'winner-mode)
   (winner-mode 1))
 
-
-(set-default-font "DejaVu Sans Mono-11")
-
+(add-to-list 'default-frame-alist
+             '(font . "DejaVu Sans Mono-10"))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
