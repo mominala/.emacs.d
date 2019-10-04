@@ -127,6 +127,7 @@
 (require 'setup-org)
 (require 'setup-ranger)
 (require 'setup-lookup)
+(require 'setup-compilation)
 
 ;; theme
 (load-theme 'smart-mode-line-dark t)
