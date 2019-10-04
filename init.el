@@ -113,9 +113,9 @@
 
 ;; (require 'setup-exwm)
  (require 'setup-helm)
-;; (require 'setup-helm-gtags)
+(require 'setup-helm-gtags)
 ;; (require 'setup-ggtags)
-(require 'setup-rtags)
+;; (require 'setup-rtags)
 (require 'setup-editing)
 (require 'setup-general)
 (require 'setup-c)
