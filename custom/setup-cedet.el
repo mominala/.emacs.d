@@ -1,3 +1,5 @@
+(setq semantic-load-turn-useful-things-on t)
+
 (require 'cc-mode)
 (require 'semantic)
 (require 'srefactor)
@@ -8,7 +10,7 @@
 (global-semanticdb-minor-mode 1)
 (global-semantic-idle-scheduler-mode 1)
 (global-semantic-stickyfunc-mode 1)
-
+(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
 (semantic-mode 1)
 
 (defun alexott/cedet-hook ()
@@ -30,5 +32,22 @@
 ;; Enable EDE only in C/C++
 (require 'ede)
 (global-ede-mode)
+
+
+(require 'stickyfunc-enhance)
+
+(setq semantic-new-buffer-setup-functions
+      (remove-if (lambda (buffer-setup-function)
+                   (member (car buffer-setup-function)
+                           '(python-mode html-mode)))
+                 semantic-new-buffer-setup-functions))
+
+(remove-hook 'python-mode-hook 'wisent-python-default-setup)
+
+(defun company-c-headers-setup ()
+  (add-to-list 'company-backends 'company-c-headers))
+
+(add-hook 'c++-mode-hook 'company-c-headers-setup)
+(add-hook 'c-mode-hook 'company-c-headers-setup)
 
 (provide 'setup-cedet)
