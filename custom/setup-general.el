@@ -16,7 +16,7 @@
   (winner-mode 1))
 
 (add-to-list 'default-frame-alist
-             '(font . "DejaVu Sans Mono-10"))
+             '(font . "DejaVu Sans Mono-11"))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 

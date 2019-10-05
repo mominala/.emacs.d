@@ -89,14 +89,14 @@
 (define-key c-mode-base-map (kbd "C-<") (function rtags-find-virtuals-at-point))
 (define-key c-mode-base-map (kbd "M-i") (function tags-imenu))
 
-(define-key global-map (kbd "M-.") (function tags-find-symbol-at-point))
-(define-key global-map (kbd "M-,") (function tags-find-references-at-point))
-(define-key global-map (kbd "M-*") (function tags-pop-stack))
-(define-key global-map (kbd "M-^") (function tags-find-file))
-(define-key global-map (kbd "C-.") (function tags-find-symbol))
-(define-key global-map (kbd "C-,") (function tags-find-references))
-(define-key global-map (kbd "C-<") (function rtags-find-virtuals-at-point))
-(define-key global-map (kbd "M-i") (function tags-imenu))
+;; (define-key global-map (kbd "M-.") (function tags-find-symbol-at-point))
+;; (define-key global-map (kbd "M-,") (function tags-find-references-at-point))
+;; (define-key global-map (kbd "M-*") (function tags-pop-stack))
+;; (define-key global-map (kbd "M-^") (function tags-find-file))
+;; (define-key global-map (kbd "C-.") (function tags-find-symbol))
+;; (define-key global-map (kbd "C-,") (function tags-find-references))
+;; (define-key global-map (kbd "C-<") (function rtags-find-virtuals-at-point))
+;; (define-key global-map (kbd "M-i") (function tags-imenu))
 
 
 (provide 'setup-rtags)
