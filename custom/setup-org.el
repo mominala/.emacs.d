@@ -10,7 +10,9 @@
 
 
 (setq org-directory (expand-file-name "~/org"))
-
+(setq org-default-notes-file (expand-file-name "~/org/general.org"))
+(global-set-key (kbd "C-c o")
+                (lambda () (interactive) (find-file "~/org/general.org")))
 
 
 (setq org-todo-keywords

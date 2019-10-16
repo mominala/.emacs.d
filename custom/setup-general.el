@@ -11,12 +11,13 @@
 (setq gc-cons-threshold 100000000)
 (setq inhibit-startup-message t)
 
+(setq visible-bell 1)
 
 (when (fboundp 'winner-mode)
   (winner-mode 1))
 
 (add-to-list 'default-frame-alist
-             '(font . "DejaVu Sans Mono-11"))
+             '(font . "DejaVu Sans Mono-12"))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -187,6 +188,7 @@
 ;; drag stuff
 (require 'drag-stuff)
 (add-to-list 'drag-stuff-except-modes 'python-mode)
+(add-to-list 'drag-stuff-except-modes 'org-mode)
 (drag-stuff-global-mode 1)
 (setq drag-stuff-modifier 'meta)
 (drag-stuff-define-keys)
