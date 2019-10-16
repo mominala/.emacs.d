@@ -1,5 +1,5 @@
 (require 'package)
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+;;(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq package-check-signature nil)
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
@@ -8,6 +8,7 @@
 (defconst packages
   '(anzu
     auctex
+    ag
     clean-aindent-mode
     clang-format
     cmake-mode
@@ -22,6 +23,7 @@
     company-math
     company-rtags
     company-bibtex
+    cython-mode
     slime-company
     duplicate-thing
     dtrt-indent
@@ -29,6 +31,7 @@
     dockerfile-mode
     drag-stuff
     ecb
+    eglot
     ess
     expand-region
     exec-path-from-shell
@@ -114,13 +117,14 @@
 
 ;; (require 'setup-exwm)
  (require 'setup-helm)
-(require 'setup-helm-gtags)
+;; (require 'setup-helm-gtags)
 ;; (require 'setup-ggtags)
 ;; (require 'setup-rtags)
 (require 'setup-editing)
 (require 'setup-general)
-(require 'setup-c)
-;; ;; (require 'setup-cedet)
+;; (require 'setup-cedet)
+;; (require 'setup-c)
+(require 'setup-eglot)
 (require 'setup-python)
 (require 'setup-tex)
 ;; (require 'setup-lisp)
@@ -146,12 +150,12 @@
  ;; If there is more than one, they won't work right.
  '(elpy-rpc-python-command "python3")
  '(helm-ff-lynx-style-map t)
- '(helm-imenu-lynx-style-map t t)
+ '(helm-imenu-lynx-style-map t)
  '(helm-occur-use-ioccur-style-keys t)
  '(helm-semantic-lynx-style-map t t)
  '(package-selected-packages
    (quote
-    (protobuf-mode zygospore yasnippet-snippets xah-lookup ws-butler vdiff volatile-highlights use-package tuareg spacemacs-theme srefactor smart-mode-line smartparens scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multi-term multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit hydra helm-bibtex helm-rtags helm-swoop helm-projectile helm-gtags helm-ag helm haskell-mode gscholar-bibtex git-timemachine github-search ggtags function-args flycheck-irony flycheck-rtags flycheck evil exec-path-from-shell expand-region ess ecb drag-stuff dockerfile-mode docker dtrt-indent duplicate-thing slime-company company-bibtex company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex company comment-dwim-2 cmake-ide cmake-mode clang-format clean-aindent-mode auctex anzu)))
+    (cmake-ide cython-mode ag protobuf-mode zygospore yasnippet-snippets xah-lookup ws-butler vdiff volatile-highlights use-package tuareg spacemacs-theme srefactor smart-mode-line smartparens scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multi-term multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit hydra helm-bibtex helm-rtags helm-swoop helm-projectile helm-gtags helm-ag helm haskell-mode gscholar-bibtex git-timemachine github-search ggtags function-args flycheck-irony flycheck-rtags flycheck evil exec-path-from-shell expand-region ess ecb drag-stuff dockerfile-mode docker dtrt-indent duplicate-thing slime-company company-bibtex company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex company comment-dwim-2 cmake-mode clang-format clean-aindent-mode auctex anzu)))
  '(python-shell-interpreter "python3"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -57,21 +57,21 @@
   ;; (add-to-list 'company-backends 'company-clang)
 ;; (add-to-list 'company-backends 'company-gtags)
 
-(defun c-c++-company-setup ()
-  (add-to-list (make-local-variable 'company-backends)
-               '(company-capf :with company-files :sorted company-yasnippet))
-  (add-to-list (make-local-variable 'company-backends)
-                 '(company-irony-c-headers company-c-headers))
-  ;; (add-to-list (make-local-variable 'company-backends)
-  ;;              '(company-irony :sorted company-semantic))
+;; (defun c-c++-company-setup ()
+;;   (add-to-list (make-local-variable 'company-backends)
+;;                '(company-capf :with company-files :sorted company-yasnippet))
+;;   (add-to-list (make-local-variable 'company-backends)
+;;                  '(company-irony-c-headers company-c-headers))
+;;   ;; (add-to-list (make-local-variable 'company-backends)
+;;   ;;              '(company-irony :sorted company-semantic))
 
-  (add-to-list (make-local-variable 'company-backends)
-               '(company-irony))
-)
+;;   (add-to-list (make-local-variable 'company-backends)
+;;                '(company-irony))
+;; )
 
 
-(add-hook 'c-mode-hook 'c-c++-company-setup)
-(add-hook 'c++-mode-hook 'c-c++-company-setup)
+;; (add-hook 'c-mode-hook 'c-c++-company-setup)
+;; (add-hook 'c++-mode-hook 'c-c++-company-setup)
 
 
 
