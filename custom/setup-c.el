@@ -31,7 +31,7 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.cc\\'" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.c\\'" . c++-mode))
-
+(add-to-list 'auto-mode-alist '("\\.ipp\\'" . c++-mode))
 
 (require 'rtags)
 (cmake-ide-setup)
@@ -46,6 +46,25 @@
 (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++17")))
 
+
+;; =============
+;; company
+;; =============
+(defun c-c++-company-setup ()
+  (add-to-list (make-local-variable 'company-backends)
+               '(company-capf :with company-files :sorted company-yasnippet))
+  (add-to-list (make-local-variable 'company-backends)
+                 '(company-irony-c-headers company-c-headers))
+  ;; (add-to-list (make-local-variable 'company-backends)
+  ;;              '(company-irony :sorted company-semantic))
+
+  (add-to-list (make-local-variable 'company-backends)
+               '(company-irony))
+)
+
+
+(add-hook 'c-mode-hook 'c-c++-company-setup)
+(add-hook 'c++-mode-hook 'c-c++-company-setup)
 
 
 

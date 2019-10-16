@@ -14,6 +14,10 @@
  '(elpy-rpc-python-command "python3")
  '(python-shell-interpreter "~/.local/bin/tf"))
 
+;; sphinx doc
+(add-hook 'python-mode-hook (lambda ()
+                              (require 'sphinx-doc)
+
 
 
 (provide 'setup-python)
