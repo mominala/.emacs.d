@@ -5,7 +5,7 @@
 ;; ================================== some keychords ============================================
 
 (key-chord-mode 1)
-(setq key-chord-two-keys-delay .015
+(setq key-chord-two-keys-delay .005
       key-chord-one-key-delay .020)
 
 
@@ -197,7 +197,7 @@ T - tag prefix
   ("<drag-mouse-1>" ignore)
   ("q" nil))
 
-(key-chord-define-global "ml" 'hydra-multiple-cursors/body)
+(key-chord-define-global " c" 'hydra-multiple-cursors/body)
 
 
 ;; ===================================== Ibuffer ============================================
