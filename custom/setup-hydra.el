@@ -5,28 +5,29 @@
 ;; ================================== some keychords ============================================
 
 (key-chord-mode 1)
-(setq key-chord-two-keys-delay .005
+(setq key-chord-two-keys-delay .010
       key-chord-one-key-delay .020)
 
 
+
 (dolist (binding
-         `((" l" . ibuffer)
+         `((";l" . ibuffer)
 
-           (" m" . magit-status)
+           (";m" . magit-status)
 
-           (" à" . delete-window)
-           (" &" . delete-other-windows)
-           (" é" . split-window-below)
-           (" ²" . split-window-right)
+           (";à" . delete-window)
+           (";&" . delete-other-windows)
+           (";é" . split-window-below)
+           (";²" . split-window-right)
 
            ("ji" . undo-tree-undo)
            ("jo" . undo-tree-redo)
            ("jk" . undo-tree-switch-branch)
            ("j;" . undo-tree-visualize)
 
-           (" x" . shell)
+           (";x" . shell)
 
-           (" r" . recompile)))
+           (";r" . recompile)))
   (key-chord-define-global (car binding) (cdr binding)))
 
 
@@ -54,7 +55,7 @@ _SPC_ cancel
   ("SPC" nil)
   )
 
-(key-chord-define prog-mode-map " s" 'hydra-hs/body)
+(key-chord-define prog-mode-map "ù*" 'hydra-hs/body)
 
 
 ;; ================================== projectile ============================================
@@ -107,8 +108,7 @@ _s-f_: file            _a_: ag                _i_: Ibuffer           _c_: cache 
   ("`"   hydra-projectile-other-window/body "other window")
   ("q"   nil "cancel" :color blue))
 
-
-(key-chord-define-global " p" 'hydra-projectile/body)
+(key-chord-define-global "po" 'hydra-projectile/body)
 
 ;; ================================== dired ============================================
 
@@ -197,7 +197,7 @@ T - tag prefix
   ("<drag-mouse-1>" ignore)
   ("q" nil))
 
-(key-chord-define-global " c" 'hydra-multiple-cursors/body)
+(key-chord-define-global "wx" 'hydra-multiple-cursors/body)
 
 
 ;; ===================================== Ibuffer ============================================
