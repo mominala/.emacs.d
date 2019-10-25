@@ -64,6 +64,8 @@
 ;; GROUP: Editing -> Undo -> Undo Tree
 (require 'undo-tree)
 (global-undo-tree-mode)
+(setq undo-tree-auto-save-history)
+(setq undo-tree-show-minibuffer-help t)
 
 ;; Package: yasnippet
 ;; GROUP: Editing -> Yasnippet
