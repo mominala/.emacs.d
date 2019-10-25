@@ -64,8 +64,10 @@
 ;; GROUP: Editing -> Undo -> Undo Tree
 (require 'undo-tree)
 (global-undo-tree-mode)
-(setq undo-tree-auto-save-history)
+(setq undo-tree-auto-save-history t)
 (setq undo-tree-show-minibuffer-help t)
+(setq undo-tree-minibuffer-help-dynamic t)
+
 
 ;; Package: yasnippet
 ;; GROUP: Editing -> Yasnippet
@@ -303,5 +305,21 @@ Position the cursor at it's beginning, according to the current mode."
 (setq evil-toggle-key "C-M-v")
 (evil-mode)
 
+
+;; highlight indent guide
+(require 'highlight-indent-guides)
+(setq highlight-indent-guides-method 'character)
+(setq highlight-indent-guides-auto-odd-face-perc 15)
+(setq highlight-indent-guides-auto-even-face-perc 15)
+(setq highlight-indent-guides-auto-character-face-perc 10)
+(setq highlight-indent-guides-responsive 'top)
+
+(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+
+
+;; git gutter
+(global-git-commit-mode t)
+(custom-set-variables
+'(git-gutter:update-interval 2))
 
 (provide 'setup-editing)

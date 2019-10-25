@@ -125,9 +125,9 @@
 
 
 ;; linum
-(global-linum-mode 1)
-(add-hook 'pdf-view-mode-hook (lambda () (linum-mode -1)))
-(setq linum-format "%4d \u2502")
+(global-display-line-numbers-mode t)
+(add-hook 'pdf-view-mode-hook (lambda () (global-display-line-numbers-mode -1)))
+(setq display-line-numbers "%4d \u2502 ")
 
 
 ;; rainbow

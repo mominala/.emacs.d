@@ -44,6 +44,7 @@
     function-args
     ggtags
     github-search
+    git-gutter
     git-timemachine
     gscholar-bibtex
     haskell-mode
@@ -54,6 +55,7 @@
     helm-swoop
     helm-rtags
     helm-bibtex
+    highlight-indent-guides
     hydra
     iedit
     irony
@@ -120,8 +122,8 @@
 ;; (require 'setup-ggtags)
 ;; (require 'setup-rtags)
 (require 'setup-c)
-(require 'setup-editing)
 (require 'setup-general)
+(require 'setup-editing)
 ;; (require 'setup-eglot)
 ;; (require 'setup-cedet)
 (require 'setup-python)
