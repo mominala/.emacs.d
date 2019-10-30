@@ -59,7 +59,7 @@
   ;;              '(company-irony :sorted company-semantic))
 
   (add-to-list (make-local-variable 'company-backends)
-               '(company-irony))
+               '(company-irony company-irony-c-headers))
 )
 
 

@@ -118,9 +118,9 @@
 
 (require 'setup-exwm)
 (require 'setup-helm)
-(require 'setup-helm-gtags)
+;; (require 'setup-helm-gtags)
 ;; (require 'setup-ggtags)
-;; (require 'setup-rtags)
+(require 'setup-rtags)
 (require 'setup-c)
 (require 'setup-general)
 (require 'setup-editing)
@@ -147,9 +147,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(elpy-rpc-python-command "python3")
+ '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
-    (eglot ag zygospore yasnippet-snippets xah-lookup ws-butler volatile-highlights vdiff use-package tuareg srefactor spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multiple-cursors multi-term modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine ggtags function-args flycheck-rtags flycheck-irony exwm-edit exwm expand-region exec-path-from-shell evil ess elpy ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format anzu)))
+    (helm-xref eglot ag zygospore yasnippet-snippets xah-lookup ws-butler volatile-highlights vdiff use-package tuareg srefactor spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multiple-cursors multi-term modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine ggtags function-args flycheck-rtags flycheck-irony exwm-edit exwm expand-region exec-path-from-shell evil ess elpy ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format anzu)))
  '(python-shell-interpreter "~/.local/bin/tf"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

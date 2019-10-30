@@ -318,7 +318,7 @@ Position the cursor at it's beginning, according to the current mode."
 
 
 ;; git gutter
-(global-git-commit-mode t)
+(global-git-gutter-mode t)
 (custom-set-variables
 '(git-gutter:update-interval 2))
 

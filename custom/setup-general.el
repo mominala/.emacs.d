@@ -126,7 +126,7 @@
 
 ;; linum
 (global-display-line-numbers-mode t)
-(add-hook 'pdf-view-mode-hook (lambda () (global-display-line-numbers-mode -1)))
+(add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
 (setq display-line-numbers "%4d \u2502 ")
 
 

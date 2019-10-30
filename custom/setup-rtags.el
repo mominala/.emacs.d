@@ -6,6 +6,7 @@
 
 (rtags-enable-standard-keybindings)
 (setq rtags-display-result-backend 'helm)
+(setq rtags-imenu-syntax-highlighting t)
 
 
 
@@ -88,6 +89,7 @@
 (define-key c-mode-base-map (kbd "C-,") (function tags-find-references))
 (define-key c-mode-base-map (kbd "C-<") (function rtags-find-virtuals-at-point))
 (define-key c-mode-base-map (kbd "M-i") (function tags-imenu))
+(define-key c-mode-base-map (kbd "C-M-i") (function rtags-find-symbol))
 
 ;; (define-key global-map (kbd "M-.") (function tags-find-symbol-at-point))
 ;; (define-key global-map (kbd "M-,") (function tags-find-references-at-point))
