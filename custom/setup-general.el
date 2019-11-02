@@ -52,7 +52,7 @@
 (use-package company
   :init
   (global-company-mode 1)
-  (add-to-list 'company-backends '(company-capf :with company-files :sorted company-dabbrev)))
+  (add-to-list 'company-backends '(company-capf :sorted company-files company-dabbrev)))
   ;;(delete 'company-semantic company-backends))
   ;; (add-to-list 'company-backends 'company-semantic)
   ;; (add-to-list 'company-backends 'company-clang)
@@ -127,6 +127,9 @@
 ;; linum
 (global-display-line-numbers-mode t)
 (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'comint-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode t)))
 (setq display-line-numbers "%4d \u2502 ")
 
 
@@ -165,5 +168,9 @@
 (drag-stuff-global-mode 1)
 (setq drag-stuff-modifier 'meta)
 (drag-stuff-define-keys)
+
+
+;; which-key
+(which-key-mode)
 
 (provide 'setup-general)

@@ -108,7 +108,7 @@ _s-f_: file            _a_: ag                _i_: Ibuffer           _c_: cache 
   ("`"   hydra-projectile-other-window/body "other window")
   ("q"   nil "cancel" :color blue))
 
-(key-chord-define-global "po" 'hydra-projectile/body)
+(key-chord-define-global "ùp" 'hydra-projectile/body)
 
 ;; ================================== dired ============================================
 

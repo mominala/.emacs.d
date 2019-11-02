@@ -92,7 +92,7 @@ You can find the original one at `exwm-config-ido-buffer-window-other-frame'."
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
-  (fringe-mode 1))
+  (fringe-mode -1))
 
 
 (exwm-config-default)

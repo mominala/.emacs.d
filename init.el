@@ -10,18 +10,21 @@
     auctex
     clean-aindent-mode
     clang-format
+    circe
     cmake-mode
     cmake-ide
     comment-dwim-2
     company
     company-auctex
     company-c-headers
+    company-coq
     company-irony
     company-irony-c-headers
     company-jedi
     company-math
     company-rtags
     company-bibtex
+    company-shell
     slime-company
     duplicate-thing
     dtrt-indent
@@ -30,6 +33,7 @@
     drag-stuff
     ecb
     ess
+    ein
     expand-region
     exec-path-from-shell
     evil
@@ -41,12 +45,14 @@
     flycheck
     flycheck-rtags
     flycheck-irony
+    flymake-shellcheck
     function-args
     ggtags
     github-search
     git-gutter
     git-timemachine
     gscholar-bibtex
+    general
     haskell-mode
     helm
     helm-ag
@@ -68,8 +74,10 @@
     modern-cpp-font-lock
     multiple-cursors
     multi-term
+    ob-ipython
     projectile
     protobuf-mode
+    proof-general
     pdf-tools
     pydoc-info
     rtags
@@ -84,11 +92,13 @@
     spacemacs-theme
     sphinx-doc
     tuareg
+    merlin
     undo-tree
     use-package
     volatile-highlights
     vdiff
     ws-butler
+    which-key
     xah-lookup
     yasnippet-snippets
     yasnippet
@@ -133,28 +143,15 @@
 (require 'setup-org)
 (require 'setup-ranger)
 (require 'setup-lookup)
+(require 'setup-shell)
+(require 'setup-ocaml)
 
 ;; theme
 (load-theme 'smart-mode-line-dark t)
 (load-theme 'spacemacs-dark t)
 
 
+
+
 (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
 (server-start)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(elpy-rpc-python-command "python3")
- '(git-gutter:update-interval 2)
- '(package-selected-packages
-   (quote
-    (helm-xref eglot ag zygospore yasnippet-snippets xah-lookup ws-butler volatile-highlights vdiff use-package tuareg srefactor spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multiple-cursors multi-term modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine ggtags function-args flycheck-rtags flycheck-irony exwm-edit exwm expand-region exec-path-from-shell evil ess elpy ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format anzu)))
- '(python-shell-interpreter "~/.local/bin/tf"))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

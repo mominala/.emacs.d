@@ -12,7 +12,10 @@
 
 (custom-set-variables
  '(elpy-rpc-python-command "python3")
- '(python-shell-interpreter "~/.local/bin/tf"))
+ '(python-shell-interpreter "python3")
+ '(python-shell-completion-native-enable nil))
+
+
 
 ;; sphinx doc
 (add-hook 'python-mode-hook (lambda ()
