@@ -173,4 +173,17 @@
 ;; which-key
 (which-key-mode)
 
+;; expand region
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
+
+;; dired
+(use-package dired-narrow
+  :ensure t
+  :config
+  (bind-key "C-c C-n" #'dired-narrow)
+  (bind-key "C-c C-f" #'dired-narrow-fuzzy)
+  (bind-key "C-c C-N" #'dired-narrow-regexp))
+
+
 (provide 'setup-general)

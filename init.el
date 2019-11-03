@@ -26,12 +26,14 @@
     company-bibtex
     company-shell
     slime-company
+    dired-narrow
     duplicate-thing
     dtrt-indent
     docker
     dockerfile-mode
     drag-stuff
     ecb
+    ereader
     ess
     ein
     expand-region
@@ -61,11 +63,13 @@
     helm-swoop
     helm-rtags
     helm-bibtex
+    helm-recoll
     highlight-indent-guides
     hydra
     iedit
     irony
     irony-eldoc
+    ivy
     jedi
     key-chord
     latex-preview-pane
@@ -75,6 +79,9 @@
     multiple-cursors
     multi-term
     ob-ipython
+    org-pdfview
+    org-noter
+    org-ref
     projectile
     protobuf-mode
     proof-general
@@ -84,6 +91,7 @@
     rainbow-delimiters
     rainbow-identifiers
     ranger
+    shr
     scion
     smartparens
     smart-mode-line
@@ -91,6 +99,7 @@
     slime
     spacemacs-theme
     sphinx-doc
+    swiper-helm
     tuareg
     merlin
     undo-tree
@@ -145,6 +154,7 @@
 (require 'setup-lookup)
 (require 'setup-shell)
 (require 'setup-ocaml)
+(require 'setup-recoll)
 
 ;; theme
 (load-theme 'smart-mode-line-dark t)
@@ -155,3 +165,23 @@
 
 (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
 (server-start)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(coq-prog-name (expand-file-name "~/.opam/4.08.1/bin/coqtop"))
+ '(elpy-rpc-python-command "python3")
+ '(git-gutter:update-interval 2)
+ '(package-selected-packages
+   (quote
+    (ivy swiper-helm dired-narrow org-noter helm-recoll zygospore yasnippet-snippets xah-lookup ws-butler which-key volatile-highlights vdiff use-package tuareg srefactor sphinx-doc spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info protobuf-mode proof-general pdf-tools ob-ipython multiple-cursors multi-term modern-cpp-font-lock merlin latex-preview-pane key-chord jedi irony-eldoc iedit highlight-indent-guides helm-xref helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine git-gutter ggtags general function-args flymake-shellcheck flycheck-rtags flycheck-irony exwm-edit exwm expand-region exec-path-from-shell evil ess elpy ein eglot ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-shell company-rtags company-jedi company-irony-c-headers company-irony company-coq company-c-headers company-bibtex company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format circe anzu ag)))
+ '(proof-three-window-enable t)
+ '(python-shell-completion-native-enable nil)
+ '(python-shell-interpreter "python3"))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

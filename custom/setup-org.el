@@ -37,4 +37,11 @@
  '((python . t)
    (ipython . t)))
 
+
+(eval-after-load 'org '(require 'org-pdfview))
+
+(add-to-list 'org-file-apps
+             '("\\.pdf\\'" . (lambda (file link)
+                                     (org-pdfview-open link))))
+
 (provide 'setup-org)
