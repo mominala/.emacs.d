@@ -51,7 +51,7 @@
 (use-package company
   :init
   (global-company-mode 1)
-  (add-to-list 'company-backends '(company-capf :with company-files :sorted company-dabbrev)))
+  (add-to-list 'company-backends '(company-capf :sorted company-files company-dabbrev)))
   ;;(delete 'company-semantic company-backends))
   ;; (add-to-list 'company-backends 'company-semantic)
   ;; (add-to-list 'company-backends 'company-clang)
@@ -151,9 +151,12 @@
 
 
 ;; linum
-(global-linum-mode 1)
-(add-hook 'pdf-view-mode-hook (lambda () (linum-mode -1)))
-(setq linum-format "%4d \u2502")
+(global-display-line-numbers-mode t)
+(add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'comint-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode t)))
+(setq display-line-numbers "%4d \u2502 ")
 
 
 ;; rainbow
@@ -187,8 +190,44 @@
 ;; drag stuff
 (require 'drag-stuff)
 (add-to-list 'drag-stuff-except-modes 'python-mode)
+(add-to-list 'drag-stuff-except-modes 'org-mode)
 (drag-stuff-global-mode 1)
 (setq drag-stuff-modifier 'meta)
 (drag-stuff-define-keys)
+
+
+;; which-key
+(which-key-mode)
+
+;; expand region
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
+
+;; dired
+(use-package dired-narrow
+  :ensure t
+  :config
+  (bind-key "C-c C-n" #'dired-narrow)
+  (bind-key "C-c C-f" #'dired-narrow-fuzzy)
+  (bind-key "C-c C-N" #'dired-narrow-regexp))
+
+
+;; dump jump
+(use-package dumb-jump
+  :bind (("M-g o" . dumb-jump-go-other-window)
+         ("M-g j" . dumb-jump-go)
+         ("M-g x" . dumb-jump-go-prefer-external)
+         ("M-g z" . dumb-jump-go-prefer-external-other-window))
+  :config
+  ;; (setq dumb-jump-selector 'ivy) ;; (setq dumb-jump-selector 'helm)
+  :init
+  (dumb-jump-mode)
+  :ensure
+  )
+
+;; avy
+(use-package avy
+  :ensure t
+  :bind ("C-<" . avy-goto-word-1)) ;; changed from char as per jcs
 
 (provide 'setup-general)

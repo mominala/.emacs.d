@@ -66,6 +66,9 @@
 (global-undo-tree-mode)
 (setq undo-tree-auto-save-history t)
 (setq undo-tree-show-minibuffer-help t)
+(setq undo-tree-minibuffer-help-dynamic t)
+(setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+
 
 ;; Package: yasnippet
 ;; GROUP: Editing -> Yasnippet
@@ -314,5 +317,10 @@ Position the cursor at it's beginning, according to the current mode."
 
 (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 
+
+;; git gutter
+(global-git-gutter-mode t)
+(custom-set-variables
+'(git-gutter:update-interval 2))
 
 (provide 'setup-editing)

@@ -7,47 +7,57 @@
 
 (defconst packages
   '(anzu
-    auctex
     ag
+    auctex
+    avy
     clean-aindent-mode
     clang-format
+    circe
     cmake-mode
     cmake-ide
     comment-dwim-2
     company
     company-auctex
     company-c-headers
+    company-coq
     company-irony
     company-irony-c-headers
     company-jedi
     company-math
     company-rtags
     company-bibtex
-    cython-mode
+    company-shell
+    dumb-jump
     slime-company
+    dired-narrow
     duplicate-thing
     dtrt-indent
     docker
     dockerfile-mode
     drag-stuff
     ecb
-    eglot
+    ereader
     ess
+    ein
     expand-region
     exec-path-from-shell
     evil
     eldoc
-    ;; exwm
-    ;; exwm-edit
+    eglot
+    exwm
+    exwm-edit
     elpy
     flycheck
     flycheck-rtags
     flycheck-irony
+    flymake-shellcheck
     function-args
     ggtags
     github-search
+    git-gutter
     git-timemachine
     gscholar-bibtex
+    general
     haskell-mode
     helm
     helm-ag
@@ -134,6 +144,9 @@
 (require 'setup-ranger)
 (require 'setup-lookup)
 (require 'setup-compilation)
+(require 'setup-shell)
+(require 'setup-ocaml)
+(require 'setup-recoll)
 
 ;; theme
 (load-theme 'smart-mode-line-dark t)
