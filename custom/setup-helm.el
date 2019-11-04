@@ -145,6 +145,10 @@
       :init
       (helm-projectile-on)
       (setq projectile-completion-system 'helm)
-      (setq projectile-indexing-method 'alien))))
+      (setq projectile-indexing-method 'alien))
+    ))
+
+
+(require 'helm-xref)
 
 (provide 'setup-helm)
