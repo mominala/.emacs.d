@@ -42,6 +42,12 @@
 
 (add-to-list 'org-file-apps
              '("\\.pdf\\'" . (lambda (file link)
-                                     (org-pdfview-open link))))
+                               (org-pdfview-open link))))
+
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
 
 (provide 'setup-org)

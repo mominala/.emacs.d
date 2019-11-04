@@ -8,6 +8,7 @@
   '(anzu
     ag
     auctex
+    avy
     clean-aindent-mode
     clang-format
     circe
@@ -25,6 +26,7 @@
     company-rtags
     company-bibtex
     company-shell
+    dumb-jump
     slime-company
     dired-narrow
     duplicate-thing
@@ -78,7 +80,9 @@
     modern-cpp-font-lock
     multiple-cursors
     multi-term
+    origami
     ob-ipython
+    org-bullets
     org-pdfview
     org-noter
     org-ref
@@ -175,7 +179,7 @@
  '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
-    (ivy swiper-helm dired-narrow org-noter helm-recoll zygospore yasnippet-snippets xah-lookup ws-butler which-key volatile-highlights vdiff use-package tuareg srefactor sphinx-doc spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info protobuf-mode proof-general pdf-tools ob-ipython multiple-cursors multi-term modern-cpp-font-lock merlin latex-preview-pane key-chord jedi irony-eldoc iedit highlight-indent-guides helm-xref helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine git-gutter ggtags general function-args flymake-shellcheck flycheck-rtags flycheck-irony exwm-edit exwm expand-region exec-path-from-shell evil ess elpy ein eglot ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-shell company-rtags company-jedi company-irony-c-headers company-irony company-coq company-c-headers company-bibtex company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format circe anzu ag)))
+    (org-ref avy dumb-jump org-bullets ivy swiper-helm dired-narrow org-noter helm-recoll zygospore yasnippet-snippets xah-lookup ws-butler which-key volatile-highlights vdiff use-package tuareg srefactor sphinx-doc spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info protobuf-mode proof-general pdf-tools ob-ipython multiple-cursors multi-term modern-cpp-font-lock merlin latex-preview-pane key-chord jedi irony-eldoc iedit highlight-indent-guides helm-xref helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine git-gutter ggtags general function-args flymake-shellcheck flycheck-rtags flycheck-irony exwm-edit exwm expand-region exec-path-from-shell evil ess elpy ein eglot ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-shell company-rtags company-jedi company-irony-c-headers company-irony company-coq company-c-headers company-bibtex company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format circe anzu ag)))
  '(proof-three-window-enable t)
  '(python-shell-completion-native-enable nil)
  '(python-shell-interpreter "python3"))
