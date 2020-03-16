@@ -1,7 +1,7 @@
 (require 'eglot)
 (require 'cc-mode)
 
-(add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd" "-background-index"))
+(add-to-list 'eglot-server-programs '((c++-mode c-mode) "mclangd"))
 (add-hook 'c-mode-hook 'eglot-ensure)
 (add-hook 'c++-mode-hook 'eglot-ensure)
 

@@ -42,6 +42,11 @@
       (lambda ()
         (define-key c++-mode-map (kbd "<f6>") 'kill-compilation)))
 
+
+(add-hook 'c++-mode-hook
+          (lambda ()
+            (define-key c++-mode-map (kbd "<f7>") 'clang-format-buffer)))
+
 ;; assure the compilation buffer is only opened once when multiple frames are open
 (add-to-list 'display-buffer-alist
              '("\\*compilation\\*" . (display-buffer-reuse-window

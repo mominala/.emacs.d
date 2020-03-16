@@ -159,6 +159,8 @@
 (setq display-line-numbers "%4d \u2502 ")
 
 
+(set-fringe-style '(0 . 0))
+
 ;; rainbow
 (require 'rainbow-delimiters)
 (require 'rainbow-identifiers)
@@ -225,9 +227,14 @@
   :ensure
   )
 
+
+(use-package use-package-chords
+  :ensure t
+  :config (key-chord-mode 1))
 ;; avy
+
 (use-package avy
   :ensure t
-  :bind ("C-<" . avy-goto-word-1)) ;; changed from char as per jcs
+  :chords ("jh" . avy-goto-word-1)) ;; changed from char as per jcs
 
 (provide 'setup-general)

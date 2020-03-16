@@ -5,7 +5,7 @@
 ;; ================================== some keychords ============================================
 
 (key-chord-mode 1)
-(setq key-chord-two-keys-delay .010
+(setq key-chord-two-keys-delay .015
       key-chord-one-key-delay .020)
 
 
@@ -27,7 +27,8 @@
 
            (";x" . shell)
 
-           (";r" . recompile)))
+           (";r" . recompile)
+           (";," . helm-swoop)))
   (key-chord-define-global (car binding) (cdr binding)))
 
 

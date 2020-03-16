@@ -38,14 +38,14 @@
     ecb
     ereader
     ess
-    ein
+    ;;ein
     expand-region
     exec-path-from-shell
     evil
     eldoc
     eglot
-    exwm
-    exwm-edit
+    ;;exwm
+    ;;exwm-edit
     elpy
     flycheck
     flycheck-rtags
@@ -57,7 +57,7 @@
     git-gutter
     git-timemachine
     gscholar-bibtex
-    general
+    ;; general
     haskell-mode
     helm
     helm-ag
@@ -66,10 +66,13 @@
     helm-swoop
     helm-rtags
     helm-bibtex
+    helm-recoll
+    highlight-indent-guides
     hydra
     iedit
     irony
     irony-eldoc
+    ivy
     jedi
     key-chord
     latex-preview-pane
@@ -78,27 +81,38 @@
     modern-cpp-font-lock
     multiple-cursors
     multi-term
+    origami
+    ob-ipython
+    org-bullets
+    org-pdfview
+    org-noter
+    org-ref
     projectile
     protobuf-mode
+    proof-general
     pdf-tools
     pydoc-info
+    plantuml-mode
     rtags
     rainbow-delimiters
     rainbow-identifiers
     ranger
+    shr
     scion
     smartparens
     smart-mode-line
     srefactor
     slime
-    sphinx-doc
     spacemacs-theme
+    sphinx-doc
     tuareg
+    merlin
     undo-tree
     use-package
     volatile-highlights
     vdiff
     ws-butler
+    which-key
     xah-lookup
     yasnippet-snippets
     yasnippet
@@ -145,8 +159,6 @@
 (require 'setup-lookup)
 (require 'setup-compilation)
 (require 'setup-shell)
-(require 'setup-ocaml)
-(require 'setup-recoll)
 
 ;; theme
 (load-theme 'smart-mode-line-dark t)
@@ -163,13 +175,14 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(elpy-rpc-python-command "python3")
+ '(git-gutter:update-interval 2)
  '(helm-ff-lynx-style-map t)
  '(helm-imenu-lynx-style-map t t)
  '(helm-occur-use-ioccur-style-keys t)
  '(helm-semantic-lynx-style-map t t)
  '(package-selected-packages
    (quote
-    (helm-xref highlight-indent-guides fill-column-indicator sphinx-doc cmake-ide cython-mode ag protobuf-mode zygospore yasnippet-snippets xah-lookup ws-butler vdiff volatile-highlights use-package tuareg spacemacs-theme srefactor smart-mode-line smartparens scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multi-term multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit hydra helm-bibtex helm-rtags helm-swoop helm-projectile helm-gtags helm-ag helm haskell-mode gscholar-bibtex git-timemachine github-search ggtags function-args flycheck-irony flycheck-rtags flycheck evil exec-path-from-shell expand-region ess ecb drag-stuff dockerfile-mode docker dtrt-indent duplicate-thing slime-company company-bibtex company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex company comment-dwim-2 cmake-mode clang-format clean-aindent-mode auctex anzu)))
+    (plantuml-mode use-package-chords ein ereader dired-narrow dumb-jump company-shell company-coq circe avy helm-xref highlight-indent-guides fill-column-indicator sphinx-doc cmake-ide cython-mode ag protobuf-mode zygospore yasnippet-snippets xah-lookup ws-butler vdiff volatile-highlights use-package tuareg spacemacs-theme srefactor smart-mode-line smartparens scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multi-term multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit hydra helm-bibtex helm-rtags helm-swoop helm-projectile helm-gtags helm-ag helm haskell-mode gscholar-bibtex git-timemachine github-search ggtags function-args flycheck-irony flycheck-rtags flycheck evil exec-path-from-shell expand-region ess ecb drag-stuff dockerfile-mode docker dtrt-indent duplicate-thing slime-company company-bibtex company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex company comment-dwim-2 cmake-mode clang-format clean-aindent-mode auctex anzu)))
  '(python-shell-interpreter "python3"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

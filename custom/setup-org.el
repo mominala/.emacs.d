@@ -33,7 +33,15 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((python . t)
-   (ipython . t)))
+   (ipython . t)
+   (shell . t)))
+
+(defun my-org-confirm-babel-evaluate (lang body)
+  (not (string= lang "python")))  ; don't ask for ditaa
+(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+
+
+(setq org-babel-python-command "python3")
 
 
 (eval-after-load 'org '(require 'org-pdfview))
