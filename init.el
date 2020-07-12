@@ -77,6 +77,7 @@
     latex-preview-pane
     magit
     markdown-mode
+    markdown-preview-mode
     modern-cpp-font-lock
     multiple-cursors
     multi-term

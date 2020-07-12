@@ -204,4 +204,25 @@
   :ensure t
   :bind ("C-<" . avy-goto-word-1)) ;; changed from char as per jcs
 
+
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init
+  (setq markdown-command "pandoc -s --mathjax -c ~/styles/gfm.css -t html5")
+  (setq markdown-preview-stylesheets '("~/styles/gfm.css"))
+  (add-hook 'markdown-mode-hook #'markdown-preview-mode)
+  ;; (setq markdown-enable-math t)
+  ;; (setq markdown-css-paths
+        ;; '("https://raw.githubusercontent.com/sindresorhus/github-markdown-css/gh-pages/github-markdown.css"))
+  ;; (setq markdown-xhtml-header-content
+  ;;       (concat "<script type=\"text/javascript\" async"
+  ;;               " src=\"https://cdnjs.cloudflare.com/ajax/libs/mathjax/"
+  ;;               "2.7.1/MathJax.js?config=TeX-MML-AM_CHTML\">"
+  ;;               "</script>"))
+  )
+
 (provide 'setup-general)
