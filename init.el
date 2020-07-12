@@ -41,7 +41,9 @@
     expand-region
     exec-path-from-shell
     evil
+    evil-tutor
     eldoc
+    elfeed
     eglot
     exwm
     exwm-edit
@@ -109,6 +111,7 @@
     sphinx-doc
     swiper-helm
     tuareg
+    texfrag
     merlin
     undo-tree
     use-package
