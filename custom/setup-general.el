@@ -225,4 +225,16 @@
   ;;               "</script>"))
   )
 
+(use-package simple-httpd
+  :ensure t
+  :config
+  (setq httpd-port 7070)
+  (setq httpd-host (system-name)))
+
+
+(use-package impatient-mode
+  :ensure t
+  :commands impatient-mode)
+
+
 (provide 'setup-general)

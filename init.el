@@ -69,6 +69,7 @@
     highlight-indent-guides
     hydra
     iedit
+    impatient-mode
     irony
     irony-eldoc
     ivy
@@ -96,8 +97,10 @@
     rainbow-delimiters
     rainbow-identifiers
     ranger
+    restclient
     shr
     scion
+    simple-httpd
     smartparens
     smart-mode-line
     srefactor
@@ -112,6 +115,7 @@
     volatile-highlights
     vdiff
     ws-butler
+    web-mode
     which-key
     xah-lookup
     yasnippet-snippets
