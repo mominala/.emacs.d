@@ -146,18 +146,20 @@
 (setq helm-gtags-prefix-key "\C-cg")
 
 (add-to-list 'load-path "~/.emacs.d/custom")
+(add-to-list 'load-path "~/.emacs.d/aweshell")
+(add-to-list 'load-path "~/.emacs.d/emacs-application-framework")
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 (add-to-list 'exec-path "~/.local/bin")
 
 
+(require 'setup-general)
 (require 'setup-exwm)
 (require 'setup-helm)
-;; (require 'setup-helm-gtags)
+(require 'setup-helm-gtags)
 ;; (require 'setup-ggtags)
 ;; (require 'setup-rtags)
 ;; (require 'setup-c)
-(require 'setup-general)
 (require 'setup-editing)
 (require 'setup-eglot)
 ;; (require 'setup-cedet)
@@ -191,11 +193,15 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(coq-prog-name (expand-file-name "~/.opam/4.08.1/bin/coqtop"))
+ '(custom-safe-themes
+   (quote
+    ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+ '(eaf-find-alternate-file-in-dired t t)
  '(elpy-rpc-python-command "python3")
  '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
-    (org-ref avy dumb-jump org-bullets ivy swiper-helm dired-narrow org-noter helm-recoll zygospore yasnippet-snippets xah-lookup ws-butler which-key volatile-highlights vdiff use-package tuareg srefactor sphinx-doc spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info protobuf-mode proof-general pdf-tools ob-ipython multiple-cursors multi-term modern-cpp-font-lock merlin latex-preview-pane key-chord jedi irony-eldoc iedit highlight-indent-guides helm-xref helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine git-gutter ggtags general function-args flymake-shellcheck flycheck-rtags flycheck-irony exwm-edit exwm expand-region exec-path-from-shell evil ess elpy ein eglot ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-shell company-rtags company-jedi company-irony-c-headers company-irony company-coq company-c-headers company-bibtex company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format circe anzu ag)))
+    (restclient auctex texfrag w3m elfeed impatient-mode markdown-preview-mode lsp-haskell company-ghc web-mode evil-tutor origami org-ref avy dumb-jump org-bullets ivy swiper-helm dired-narrow org-noter helm-recoll zygospore yasnippet-snippets xah-lookup ws-butler which-key volatile-highlights vdiff use-package tuareg srefactor sphinx-doc spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info protobuf-mode proof-general pdf-tools ob-ipython multiple-cursors multi-term modern-cpp-font-lock merlin latex-preview-pane key-chord jedi irony-eldoc iedit highlight-indent-guides helm-xref helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine git-gutter ggtags general function-args flymake-shellcheck flycheck-rtags flycheck-irony exwm-edit exwm expand-region exec-path-from-shell evil ess elpy ein eglot ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-shell company-rtags company-jedi company-irony-c-headers company-irony company-coq company-c-headers company-bibtex company-auctex comment-dwim-2 cmake-mode cmake-ide clean-aindent-mode clang-format circe anzu ag)))
  '(proof-three-window-enable t)
  '(python-shell-completion-native-enable nil)
  '(python-shell-interpreter "python3"))
