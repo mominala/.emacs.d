@@ -205,6 +205,11 @@
   :bind ("C-<" . avy-goto-word-1)) ;; changed from char as per jcs
 
 
+(use-package use-package-chords
+  :ensure t
+  :config (key-chord-mode 1))
+
+
 (use-package markdown-mode
   :ensure t
   :commands (markdown-mode gfm-mode)
@@ -225,6 +230,7 @@
   ;;               "</script>"))
   )
 
+
 (use-package simple-httpd
   :ensure t
   :config
@@ -236,5 +242,7 @@
   :ensure t
   :commands impatient-mode)
 
+
+(require 'aweshell)
 
 (provide 'setup-general)
