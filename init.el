@@ -68,6 +68,7 @@
     helm-rtags
     helm-bibtex
     helm-recoll
+    helm-lsp
     highlight-indent-guides
     hydra
     iedit
@@ -78,6 +79,9 @@
     jedi
     key-chord
     latex-preview-pane
+    lsp-mode
+    lsp-haskell
+    lsp-ui
     magit
     markdown-mode
     markdown-preview-mode
@@ -167,6 +171,10 @@
 (require 'setup-shell)
 (require 'setup-ocaml)
 (require 'setup-recoll)
+(require 'setup-statistics)
+(require 'setup-haskell)
+(require 'setup-eaf)
+(require 'setup-elfeed)
 
 ;; theme
 (load-theme 'smart-mode-line-dark t)
