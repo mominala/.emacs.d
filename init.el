@@ -42,7 +42,9 @@
     expand-region
     exec-path-from-shell
     evil
+    evil-tutor
     eldoc
+    elfeed
     eglot
     ;;exwm
     ;;exwm-edit
@@ -78,6 +80,7 @@
     latex-preview-pane
     magit
     markdown-mode
+    markdown-preview-mode
     modern-cpp-font-lock
     multiple-cursors
     multi-term
@@ -91,6 +94,7 @@
     protobuf-mode
     proof-general
     pdf-tools
+    pydoc
     pydoc-info
     plantuml-mode
     rtags
@@ -106,6 +110,7 @@
     spacemacs-theme
     sphinx-doc
     tuareg
+    texfrag
     merlin
     undo-tree
     use-package
@@ -159,6 +164,7 @@
 (require 'setup-lookup)
 (require 'setup-compilation)
 (require 'setup-shell)
+(require 'setup-elfeed)
 
 ;; theme
 (load-theme 'smart-mode-line-dark t)
