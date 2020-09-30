@@ -247,7 +247,7 @@
   :init
   (setq markdown-command "pandoc -s --mathjax -c ~/styles/gfm.css -t html5")
   (setq markdown-preview-stylesheets '("~/styles/gfm.css"))
-  (add-hook 'markdown-mode-hook #'markdown-preview-mode)
+  ;; (add-hook 'markdown-mode-hook #'markdown-preview-mode)
   ;; (setq markdown-enable-math t)
   ;; (setq markdown-css-paths
         ;; '("https://raw.githubusercontent.com/sindresorhus/github-markdown-css/gh-pages/github-markdown.css"))

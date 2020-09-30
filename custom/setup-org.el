@@ -36,6 +36,8 @@
    (ipython . t)
    (shell . t)))
 
+(require 'ob-async)
+
 (defun my-org-confirm-babel-evaluate (lang body)
   (not (string= lang "python")))  ; don't ask for ditaa
 (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
@@ -49,6 +51,21 @@
 (add-to-list 'org-file-apps
              '("\\.pdf\\'" . (lambda (file link)
                                (org-pdfview-open link))))
+
+
+(defun ox-export-to-docx-and-open ()
+  (interactive)
+  (let* ((bibfile (expand-file-name (car (org-ref-find-bibliography))))
+         ;; this is probably a full path
+         (current-file (buffer-file-name))
+         (basename (file-name-sans-extension current-file))
+         (docx-file (concat basename ".docx")))
+    (save-buffer)
+    (when (file-exists-p docx-file) (delete-file docx-file))
+    (shell-command (format
+                    "pandoc -s -S --bibliography=%s %s -o %s"
+                    bibfile current-file docx-file))
+    (org-open-file docx-file '(16))))
 
 (use-package org-bullets
   :ensure t
