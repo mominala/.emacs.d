@@ -74,12 +74,14 @@
 
 (setq elfeed-feeds
       (append '(("https://francisbach.com/feed" ML blog stats)
-               ("https://distill.pub/rss.xml" ML blog)
-               ("http://arxiv.org/rss/cs.AI" ML arxiv AI)
-               ("http://arxiv.org/rss/cs.LG" ML arxiv)
-               ("http://arxiv.org/rss/cs.CV" ML arxiv vision)
-               ("http://arxiv.org/rss/stat.ML" ML arxiv stat)
-               ("http://arxiv.org/rss/math.ST" Math arxiv stat))
+                ("https://distill.pub/rss.xml" ML blog)
+                ("http://arxiv.org/rss/cs.AI" ML arxiv AI)
+                ("http://arxiv.org/rss/cs.LG" ML arxiv)
+                ("http://arxiv.org/rss/cs.CV" ML arxiv vision)
+                ("http://arxiv.org/rss/stat.ML" ML arxiv stat)
+                ("http://arxiv.org/rss/math.ST" Math arxiv stat)
+                ("https://www.reddit.com/r/MachineLearning/.rss" reddit ML)
+                ("https://www.reddit.com/r/statistics/.rss" reddit stat))
               (mapcar #'get-filtered-arxiv-feed arxiv-queries)))
 
 (provide 'setup-elfeed)

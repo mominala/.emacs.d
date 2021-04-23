@@ -40,11 +40,11 @@
    (ipython . t)))
 
 
-(eval-after-load 'org '(require 'org-pdfview))
+(eval-after-load 'org '(require 'org-pdftools))
 
 (add-to-list 'org-file-apps
              '("\\.pdf\\'" . (lambda (file link)
-                               (org-pdfview-open link))))
+                               (org-pdftools-open link))))
 
 (use-package org-bullets
   :ensure t

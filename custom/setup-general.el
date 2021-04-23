@@ -10,6 +10,7 @@
 
 (setq gc-cons-threshold 100000000)
 (setq inhibit-startup-message t)
+(setq read-process-output-max (* 1024 1024))
 
 (setq visible-bell 1)
 
@@ -129,6 +130,7 @@
 (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
 (add-hook 'comint-mode-hook (lambda () (display-line-numbers-mode -1)))
 (add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'vterm-mode-hook (lambda () (display-line-numbers-mode -1)))
 (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode t)))
 (setq display-line-numbers "%4d \u2502 ")
 
@@ -235,7 +237,8 @@
   :ensure t
   :config
   (setq httpd-port 7070)
-  (setq httpd-host (system-name)))
+  (setq httpd-host (system-name))
+  (setq httpd-root "/var/www"))
 
 
 (use-package impatient-mode
