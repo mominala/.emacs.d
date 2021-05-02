@@ -3,6 +3,8 @@
 (setq package-check-signature nil)
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
+	     '("gnu" . "http://elpa.gnu.org/packages/") t)
 (package-initialize)
 
 (defconst packages
@@ -29,6 +31,7 @@
     company-shell
     dumb-jump
     slime-company
+    dap-mode
     dired-narrow
     duplicate-thing
     dtrt-indent
@@ -69,6 +72,7 @@
     helm-rtags
     helm-bibtex
     helm-recoll
+    helm-lsp
     highlight-indent-guides
     hydra
     iedit
@@ -78,6 +82,8 @@
     jedi
     key-chord
     latex-preview-pane
+    lsp-mode
+    lsp-treemacs
     magit
     markdown-mode
     markdown-preview-mode
@@ -86,17 +92,19 @@
     multi-term
     origami
     ob-ipython
+    ob-http
     ob-async
     org-bullets
-    org-pdfview
+    org-pdftools
     org-noter
     org-ref
+    org-re-reveal
+    ox-reveal
     projectile
     protobuf-mode
     proof-general
     pdf-tools
     pydoc
-    pydoc-info
     plantuml-mode
     rtags
     rainbow-delimiters
@@ -117,6 +125,7 @@
     use-package
     volatile-highlights
     vdiff
+    vterm
     ws-butler
     which-key
     xah-lookup
@@ -145,6 +154,8 @@
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 (add-to-list 'exec-path "~/.local/bin")
+(add-to-list 'exec-path "~/bin")
+
 
 
 ;; (require 'setup-exwm)
@@ -157,6 +168,7 @@
 ;; (require 'setup-cedet)
 ;; (require 'setup-c)
 (require 'setup-eglot)
+;; (require 'setup-lsp)
 (require 'setup-python)
 (require 'setup-tex)
 ;; (require 'setup-lisp)
@@ -190,7 +202,7 @@
  '(helm-semantic-lynx-style-map t t)
  '(package-selected-packages
    (quote
-    (yaml-mode ob-typescript typescript-mode python-mode org-ref ob-async elfeed markdown-preview-mode pydoc plantuml-mode use-package-chords ein ereader dired-narrow dumb-jump company-shell company-coq circe avy helm-xref highlight-indent-guides fill-column-indicator sphinx-doc cmake-ide cython-mode ag protobuf-mode zygospore yasnippet-snippets xah-lookup ws-butler vdiff volatile-highlights use-package tuareg spacemacs-theme srefactor smart-mode-line smartparens scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multi-term multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit hydra helm-bibtex helm-rtags helm-swoop helm-projectile helm-gtags helm-ag helm haskell-mode gscholar-bibtex git-timemachine github-search ggtags function-args flycheck-irony flycheck-rtags flycheck evil exec-path-from-shell expand-region ess ecb drag-stuff dockerfile-mode docker dtrt-indent duplicate-thing slime-company company-bibtex company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex company comment-dwim-2 cmake-mode clang-format clean-aindent-mode auctex anzu)))
+    (ox-reveal org-re-reveal org-re-reveal-ref ob-http ob-restclient rmsbolt elpy restclient vterm yaml-mode ob-typescript typescript-mode python-mode org-ref ob-async elfeed markdown-preview-mode pydoc plantuml-mode use-package-chords ein ereader dired-narrow dumb-jump company-shell company-coq circe avy helm-xref highlight-indent-guides fill-column-indicator sphinx-doc cmake-ide cython-mode ag protobuf-mode zygospore yasnippet-snippets xah-lookup ws-butler vdiff volatile-highlights use-package tuareg spacemacs-theme srefactor smart-mode-line smartparens scion ranger rainbow-identifiers rainbow-delimiters pydoc-info pdf-tools multi-term multiple-cursors modern-cpp-font-lock markdown-mode latex-preview-pane key-chord jedi irony-eldoc iedit hydra helm-bibtex helm-rtags helm-swoop helm-projectile helm-gtags helm-ag helm haskell-mode gscholar-bibtex git-timemachine github-search ggtags function-args flycheck-irony flycheck-rtags flycheck evil exec-path-from-shell expand-region ess ecb drag-stuff dockerfile-mode docker dtrt-indent duplicate-thing slime-company company-bibtex company-rtags company-math company-jedi company-irony-c-headers company-irony company-c-headers company-auctex company comment-dwim-2 cmake-mode clang-format clean-aindent-mode auctex anzu)))
  '(python-shell-interpreter "python3"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

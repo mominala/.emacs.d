@@ -30,27 +30,45 @@
         ))
 
 
+
+(require 'ob)
+(defun org-babel-execute:passthrough (body params)
+  body)
+
+;; json output is json
+(defalias 'org-babel-execute:json 'org-babel-execute:passthrough)
+(defalias 'org-babel-execute:js 'org-babel-execute:passthrough)
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((python . t)
    (ipython . t)
-   (shell . t)))
+   (shell . t)
+   (restclient . t)
+   (http . t)))
 
 (require 'ob-async)
-
 (defun my-org-confirm-babel-evaluate (lang body)
-  (not (string= lang "python")))  ; don't ask for ditaa
+  (not (or (string= lang "python")
+           (string= lang "bash")
+           (string= lang "restclient")
+           (string= lang "emacs-lisp")
+           (string= lang "http")
+           (string= lang "js")
+           (string= lang "json"))))  ; don't ask for ditaa
 (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+
 
 
 (setq org-babel-python-command "python3")
 
+;; (add-hook 'org-babel-after-execute-hook 'org-babel-result-hide-all)
 
-(eval-after-load 'org '(require 'org-pdfview))
+(eval-after-load 'org '(require 'org-pdftools))
 
 (add-to-list 'org-file-apps
              '("\\.pdf\\'" . (lambda (file link)
-                               (org-pdfview-open link))))
+                               (org-pdftools-open link))))
 
 
 (defun ox-export-to-docx-and-open ()
@@ -72,5 +90,11 @@
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
+
+(require 'ox-confluence)
+
+(require 'ox-reveal)
+
+(setq org-reveal-root (expand-file-name "~/work/reveal.js"))
 
 (provide 'setup-org)

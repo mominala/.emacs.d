@@ -18,12 +18,10 @@
 
 (defun c-c++-company-setup ()
   (delete 'company-clang company-backends)
+  (delete 'company-semantic company-backends)
   (add-to-list (make-local-variable 'company-backends)
                '(company-capf company-files :separate company-yasnippet))
   )
-
-
-
 
 (add-hook 'c-mode-hook 'c-c++-company-setup)
 (add-hook 'c++-mode-hook 'c-c++-company-setup)

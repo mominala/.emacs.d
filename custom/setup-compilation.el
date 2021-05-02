@@ -7,7 +7,7 @@
 (defun na-recompile ()
   "Run compile and resize the compile window closing the old one if necessary"
   (interactive)
-  (let ((compile-command "namake.sh")
+  (let ((compile-command (expand-file-name "~/work/camera/tools/docker/bin/namake.sh"))
         (compilation-read-command nil))
     (if (get-buffer "*compilation*") ; If old compile window exists
         (call-interactively 'recompile)
