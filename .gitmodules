@@ -1,0 +1,6 @@
+[submodule "aweshell"]
+	path = aweshell
+	url = https://github.com/manateelazycat/aweshell.git
+[submodule "emacs-application-framework"]
+	path = emacs-application-framework
+	url = https://github.com/manateelazycat/emacs-application-framework.git

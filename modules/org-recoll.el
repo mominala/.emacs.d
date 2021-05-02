@@ -354,19 +354,3 @@ If SQUERY is passed offer it as a default."
 (provide 'org-recoll)
 
 ;;; org-recoll.el ends here
-
-
-;; custom stuff
-(require 'org-recoll)
-(global-set-key (kbd "C-c g") 'org-recoll-search)
-(global-set-key (kbd "C-c u") 'org-recoll-update-index)
-
-
-;; helm
-(use-package helm-recoll
-  :commands helm-recoll
-  :init (setq helm-recoll-directories
-              '(("all" . "~/.recoll"))))
-
-
-(provide 'setup-recoll)

@@ -1,6 +1,11 @@
-(require 'hydra)
-(require 'key-chord)
+(use-package hydra
+  :ensure t)
 
+(use-package key-chord
+  :ensure t)
+
+(use-package multiple-cursors
+  :ensure t)
 
 ;; ================================== some keychords ============================================
 
@@ -463,4 +468,4 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 
 (key-chord-define global-map " h" 'hydra-pdftools/body)
 
-(provide 'setup-hydra)
+(provide 'mydra)
