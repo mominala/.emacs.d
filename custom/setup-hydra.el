@@ -80,11 +80,13 @@ _SPC_ cancel
 _s-f_: file            _a_: ag                _i_: Ibuffer           _c_: cache clear
  _ff_: file dwim       _g_: update gtags      _b_: switch to buffer  _x_: remove known project
  _fd_: file curr dir   _o_: multi-occur     _s-k_: Kill all buffers  _X_: cleanup non-existing
-  _r_: recent file                                               ^^^^_z_: cache current
-  _d_: dir
+  _r_: recent file    _ha_: helm-ag                              ^^^^_z_: cache current
+  _d_: dir            _hr_: helm-rg
 
 "
   ("a"   projectile-ag)
+  ("ha"  helm-projectile-ag)
+  ("hr"  helm-projectile-rg)
   ("b"   projectile-switch-to-buffer)
   ("c"   projectile-invalidate-cache)
   ("d"   projectile-find-dir)

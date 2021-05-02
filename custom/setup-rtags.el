@@ -76,7 +76,7 @@
   (call-interactively (if (use-rtags t) 'rtags-location-stack-back 'helm-gtags-pop-stack)))
 (defun tags-imenu ()
   (interactive)
-  (call-interactively (if (use-rtags t) 'rtags-imenu 'helm-imenu)))
+  (call-interactively (if (use-rtags t) 'rtags-imenu 'helm-semantic-or-imenu)))
 
 
 

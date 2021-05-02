@@ -4,9 +4,6 @@
 	     '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
-
-(setq debug-on-quit t)
-
 (defconst packages
   '(anzu
     ag
@@ -212,7 +209,7 @@
  '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
-    (elpy lsp-ui project-root pydoc yaml-mode docker-compose-mode org-mu4e org-mime mu4e vterm restclient texfrag w3m elfeed impatient-mode markdown-preview-mode lsp-haskell company-ghc web-mode evil-tutor origami org-ref avy dumb-jump org-bullets swiper-helm dired-narrow org-noter zygospore yasnippet-snippets xah-lookup ws-butler which-key volatile-highlights vdiff tuareg srefactor sphinx-doc spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info protobuf-mode proof-general pdf-tools ob-ipython multiple-cursors multi-term modern-cpp-font-lock merlin latex-preview-pane jedi irony-eldoc iedit highlight-indent-guides helm-xref helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine git-gutter ggtags general function-args flycheck-rtags flycheck-irony exwm-edit expand-region exec-path-from-shell evil ein ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-shell company-jedi company-irony-c-headers company-irony company-coq company-c-headers company-bibtex comment-dwim-2 cmake-mode clean-aindent-mode clang-format circe anzu ag)))
+    (aweshell ripgrep helm-rg super-save crux elpy lsp-ui project-root pydoc yaml-mode docker-compose-mode org-mu4e org-mime mu4e vterm restclient texfrag w3m elfeed impatient-mode markdown-preview-mode lsp-haskell company-ghc web-mode evil-tutor origami org-ref avy dumb-jump org-bullets swiper-helm dired-narrow org-noter zygospore yasnippet-snippets xah-lookup ws-butler which-key volatile-highlights vdiff tuareg srefactor sphinx-doc spacemacs-theme smartparens smart-mode-line slime-company scion ranger rainbow-identifiers rainbow-delimiters pydoc-info protobuf-mode proof-general pdf-tools ob-ipython multiple-cursors multi-term modern-cpp-font-lock merlin latex-preview-pane jedi irony-eldoc iedit highlight-indent-guides helm-xref helm-swoop helm-rtags helm-projectile helm-gtags helm-bibtex helm-ag haskell-mode gscholar-bibtex github-search git-timemachine git-gutter ggtags general function-args flycheck-rtags flycheck-irony exwm-edit expand-region exec-path-from-shell evil ein ecb duplicate-thing dtrt-indent drag-stuff dockerfile-mode docker company-shell company-jedi company-irony-c-headers company-irony company-coq company-c-headers company-bibtex comment-dwim-2 cmake-mode clean-aindent-mode clang-format circe anzu ag)))
  '(proof-three-window-enable t)
  '(python-shell-completion-native-enable nil)
  '(python-shell-interpreter "python3"))

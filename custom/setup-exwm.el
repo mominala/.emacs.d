@@ -47,8 +47,9 @@
             ([?\C-d] . [delete])
             ([?\C-k] . [S-end delete]))))
 
+  (setq exwm-workspace-show-all-buffers t)
+  (setq exwm-layout-show-all-buffers t)
   (exwm-randr-enable)
-
   (exwm-enable)
   ;; Other configurations
   (exwm-config-misc))
