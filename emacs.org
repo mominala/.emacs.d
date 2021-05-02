@@ -1,7 +1,6 @@
 #+title: Emacs config
 
-* General
-
+* General 
 ** packages
 
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -9,6 +8,7 @@
      (add-to-list 'package-archives
                   '("melpa" . "https://melpa.org/packages/") t)
      (package-initialize)
+     (package-refresh-contents)
      (package-install 'use-package)
 
      (require 'use-package)
@@ -59,7 +59,14 @@
    #+RESULTS:
    : t
 
-
+** funcs
+#+begin_src emacs-lisp :tangle yes
+  (defun icons-displayable-p ()
+    "Return non-nil if `all-the-icons' is displayable."
+    (and (display-graphic-p)
+         (require 'all-the-icons nil t)))
+#+end_src
+   
 * User Interface
 
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -97,7 +104,23 @@
       :ensure t
       :bind (("C-x 1" . zygospore-toggle-delete-other-windows)
              ("RET" .   newline-and-indent)))
+
+
+    ;; (use-package mini-frame
+    ;;   :ensure t
+    ;;   :config
+    ;;   (custom-set-variables
+    ;;    '(mini-frame-show-parameters
+    ;;      '((top . 0)
+    ;;        (width . 1.0)
+    ;;        (left . 0.5)
+    ;;        (height . 15))))
+    ;;   (setq x-gtk-resize-child-frames 'resize-mode)
+    ;;   (mini-frame-mode 1))
   #+END_SRC
+
+  #+RESULTS:
+  : t
 
 
 ** helm
@@ -368,7 +391,7 @@
 
    #+RESULTS:
    : t
-
+   
 ** dired
 
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -406,6 +429,44 @@
        (bind-key "C-c C-n" #'dired-narrow)
        (bind-key "C-c C-f" #'dired-narrow-fuzzy)
        (bind-key "C-c C-N" #'dired-narrow-regexp))
+
+     ;; from centaur emacs
+     (use-package all-the-icons-dired
+       :ensure t
+       :diminish
+       :hook (dired-mode . all-the-icons-dired-mode)
+       :config
+       ;; FIXME: Refresh after creating or renaming the files/directories.
+       ;; @see https://github.com/jtbm37/all-the-icons-dired/issues/34.
+       (with-no-warnings
+         (advice-add #'dired-do-create-files :around #'all-the-icons-dired--refresh-advice)
+         (advice-add #'dired-create-directory :around #'all-the-icons-dired--refresh-advice)
+         (advice-add #'wdired-abort-changes :around #'all-the-icons-dired--refresh-advice))
+
+       (with-no-warnings
+         (defun my-all-the-icons-dired--refresh ()
+           "Display the icons of files in a dired buffer."
+           (all-the-icons-dired--remove-all-overlays)
+           ;; NOTE: don't display icons it too many items
+           (if (<= (count-lines (point-min) (point-max)) 1000)
+               (save-excursion
+                 (goto-char (point-min))
+                 (while (not (eobp))
+                   (when (dired-move-to-filename nil)
+                     (let ((file (file-local-name (dired-get-filename 'relative 'noerror))))
+                       (when file
+                         (let ((icon (if (file-directory-p file)
+                                         (all-the-icons-icon-for-dir file
+                                                                     :face 'all-the-icons-dired-dir-face
+                                                                     :height 0.9
+                                                                     :v-adjust all-the-icons-dired-v-adjust)
+                                       (all-the-icons-icon-for-file file :height 0.9 :v-adjust all-the-icons-dired-v-adjust))))
+                           (if (member file '("." ".."))
+                               (all-the-icons-dired--add-overlay (point) "  \t")
+                             (all-the-icons-dired--add-overlay (point) (concat icon "\t")))))))
+                   (forward-line 1)))
+             (message "Not display icons because of too many items.")))
+         (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh)))
 
      ;; file manager
      (use-package ranger
@@ -451,12 +512,17 @@
      ;; dump jump
      (use-package dumb-jump
        :ensure t
+       :after helm
        :bind (("M-g o" . dumb-jump-go-other-window)
               ("M-g j" . dumb-jump-go)
               ("M-g x" . dumb-jump-go-prefer-external)
               ("M-g z" . dumb-jump-go-prefer-external-other-window))
        :config
+       (require 'helm)
        (setq dumb-jump-selector 'helm)
+       (setq dumb-jump-prefer-searcher 'ag)
+       ;; enable xref interface, add it to the end of the list
+       (add-hook 'xref-backend-functions #'dumb-jump-xref-activate t)
        :init
        (dumb-jump-mode)
        :ensure
@@ -472,16 +538,65 @@
      ;; (add-hook 'prog-mode-hook 'hs-minor-mode)
 
      (use-package origami
+       :ensure t
        :hook (prog-mode . origami-mode)
        :config
        (define-key global-map
-        (kbd "<f9>") 'origami-toggle-node))
+         (kbd "<f9>") 'origami-toggle-node))
    #+END_SRC
 
    #+RESULTS:
-   | origami-mode | highlight-indent-guides-mode | clean-aindent-mode | hs-minor-mode | rainbow-delimiters-mode | (lambda nil (display-line-numbers-mode t)) | (lambda nil (interactive) (setq show-trailing-whitespace 1)) |
+   | (lambda nil (interactive) (setq show-trailing-whitespace 1)) | clean-aindent-mode | highlight-indent-guides-mode | (lambda nil (display-line-numbers-mode t)) | display-line-numbers-mode | rainbow-delimiters-mode | origami-mode |
 
 
+   
+** ibuffer
+
+#+begin_src emacs-lisp :tangle yes
+  ;; from centaur emacs
+  (use-package ibuffer
+    :ensure nil
+    :init (setq ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold)))
+    :config
+    ;; Display icons for buffers
+    (use-package all-the-icons-ibuffer
+      :ensure t
+      :config
+      (all-the-icons-ibuffer-mode 1))
+
+    (with-eval-after-load 'helm
+      (with-no-warnings
+        (defun my-ibuffer-find-file ()
+          (interactive)
+          (let ((default-directory (let ((buf (ibuffer-current-buffer)))
+                                     (if (buffer-live-p buf)
+                                         (with-current-buffer buf
+                                           default-directory)
+                                       default-directory))))
+            (helm-find-files default-directory)))
+        (advice-add #'ibuffer-find-file :override #'my-ibuffer-find-file))))
+
+  ;; Group ibuffer's list by project root
+  (use-package ibuffer-projectile
+    :ensure t
+    :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
+    :hook ((ibuffer . (lambda ()
+                        (ibuffer-projectile-set-filter-groups)
+                        (unless (eq ibuffer-sorting-mode 'alphabetic)
+                          (ibuffer-do-sort-by-alphabetic)))))
+    :config
+    (setq ibuffer-projectile-prefix
+          (concat
+           (all-the-icons-octicon "file-directory"
+                                  :face ibuffer-filter-group-name-face
+                                  :v-adjust 0.0
+                                  :height 1.0)
+           " ")))
+#+end_src
+
+#+RESULTS:
+| lambda | nil | (ibuffer-projectile-set-filter-groups) | (unless (eq ibuffer-sorting-mode (quote alphabetic)) (ibuffer-do-sort-by-alphabetic)) |
+| lambda | nil | (ibuffer-projectile-set-filter-groups) | (if (eq ibuffer-sorting-mode (quote alphabetic)) nil (ibuffer-do-sort-by-alphabetic)) |
 
 * Theme
 
@@ -531,10 +646,14 @@
       :config
       (load-theme 'spacemacs-dark t))
 
+
+    ;; pleasing icons
+    (use-package all-the-icons :ensure t)
+
+
   #+END_SRC
 
   #+RESULTS:
-  : t
 
 
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -552,7 +671,6 @@
 
 
   #+END_SRC
-
 
 * Editing
 ** general params
@@ -589,7 +707,14 @@
                                                newline
                                                newline-mark))
                                  (whitespace-mode 1)))
+
+     (use-package aggressive-indent :ensure t
+       :config
+       (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode))
    #+END_SRC
+
+   #+RESULTS:
+   : t
 
 ** useful keybindings
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -635,35 +760,35 @@
 ** parens, comments and whitespaces
    #+BEGIN_SRC emacs-lisp :tangle yes
 
-  ;; parentheses
-  (use-package smartparens
-    :ensure t
-    :config
-    (use-package smartparens-config)
-    (setq sp-base-key-bindings 'paredit
-          sp-autoskip-closing-pair 'always
-          sp-hybrid-kill-entire-symbol nil)
-    (sp-use-smartparens-bindings)
-    (show-smartparens-global-mode +1)
-    (smartparens-global-mode 1)
-    )
+     ;; parentheses
+     (use-package smartparens
+       :ensure t
+       :config
+       (use-package smartparens-config)
+       (setq sp-base-key-bindings 'paredit
+             sp-autoskip-closing-pair 'always
+             sp-hybrid-kill-entire-symbol nil)
+       (sp-use-smartparens-bindings)
+       (show-smartparens-global-mode +1)
+       (smartparens-global-mode 1)
+       )
 
 
-  ;; comments
-  (use-package comment-dwim-2
-    :ensure t
-    :config
-    (global-set-key (kbd "M-;") 'comment-dwim-2))
+     ;; comments
+     (use-package comment-dwim-2
+       :ensure t
+       :config
+       (global-set-key (kbd "M-;") 'comment-dwim-2))
 
 
-  ;; auto clean whitespaces
-  (use-package ws-butler
-    :ensure t
-    :config
-    (add-hook 'c-mode-common-hook 'ws-butler-mode)
-    (add-hook 'text-mode 'ws-butler-mode)
-    (add-hook 'fundamental-mode 'ws-butler-mode)
-    )
+     ;; auto clean whitespaces
+     (use-package ws-butler
+       :ensure t
+       :config
+       (add-hook 'c-mode-common-hook 'ws-butler-mode)
+       (add-hook 'text-mode 'ws-butler-mode)
+       (add-hook 'fundamental-mode 'ws-butler-mode)
+       )
    #+END_SRC
 
 ** undo
@@ -685,7 +810,7 @@
      ;; Package: yasnippet
      (use-package yasnippet
        :ensure t
-       :config
+       :init
        ;; Inter-field navigation
        (defun yas/goto-end-of-active-field ()
          (interactive)
@@ -716,6 +841,9 @@
        (setq yas-wrap-around-region t)
        (add-hook 'term-mode-hook (lambda() (setq yas-dont-activate t))))
    #+END_SRC
+
+   #+RESULTS:
+   : t
 
 ** search
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -852,10 +980,7 @@ line instead."
     :ensure t)
    #+END_SRC
 
-
-
 * Programming
-
 ** Completion
 
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -875,15 +1000,91 @@ line instead."
                                  company-tabnine
                                  company-yasnippet))))
 
+
+     ;; from centaur emacs
+     ;; Better sorting and filtering
+     (use-package company-prescient
+       :ensure t
+       :init (company-prescient-mode 1))
+
+
+     ;; ;; Icons and quickhelp
+     ;; (use-package company-box
+     ;;   :diminish
+     ;;   :defines company-box-icons-all-the-icons
+     ;;   :hook (company-mode . company-box-mode)
+     ;;   :init (setq company-box-enable-icon t
+     ;;               company-box-backends-colors nil
+     ;;               company-box-doc-enable nil)
+     ;;   :config
+     ;;   (with-no-warnings
+     ;;     ;; Prettify icons
+     ;;     (defun my-company-box-icons--elisp (candidate)
+     ;;       (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'lisp-mode))
+     ;;         (let ((sym (intern candidate)))
+     ;;           (cond ((fboundp sym) 'Function)
+     ;;                 ((featurep sym) 'Module)
+     ;;                 ((facep sym) 'Color)
+     ;;                 ((boundp sym) 'Variable)
+     ;;                 ((symbolp sym) 'Text)
+     ;;                 (t . nil)))))
+     ;;     (advice-add #'company-box-icons--elisp :override #'my-company-box-icons--elisp))
+
+     ;;   (when (icons-displayable-p)
+     ;;     (declare-function all-the-icons-faicon 'all-the-icons)
+     ;;     (declare-function all-the-icons-material 'all-the-icons)
+     ;;     (declare-function all-the-icons-octicon 'all-the-icons)
+     ;;     (setq company-box-icons-all-the-icons
+     ;;           `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.8 :v-adjust -0.15))
+     ;;             (Text . ,(all-the-icons-faicon "text-width" :height 0.8 :v-adjust -0.02))
+     ;;             (Method . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
+     ;;             (Function . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
+     ;;             (Constructor . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
+     ;;             (Field . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
+     ;;             (Variable . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
+     ;;             (Class . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
+     ;;             (Interface . ,(all-the-icons-material "share" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
+     ;;             (Module . ,(all-the-icons-material "view_module" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
+     ;;             (Property . ,(all-the-icons-faicon "wrench" :height 0.8 :v-adjust -0.02))
+     ;;             (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.8 :v-adjust -0.15))
+     ;;             (Value . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
+     ;;             (Enum . ,(all-the-icons-material "storage" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
+     ;;             (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.8 :v-adjust -0.15))
+     ;;             (Snippet . ,(all-the-icons-material "format_align_center" :height 0.8 :v-adjust -0.15))
+     ;;             (Color . ,(all-the-icons-material "palette" :height 0.8 :v-adjust -0.15))
+     ;;             (File . ,(all-the-icons-faicon "file-o" :height 0.8 :v-adjust -0.02))
+     ;;             (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.8 :v-adjust -0.15))
+     ;;             (Folder . ,(all-the-icons-faicon "folder-open" :height 0.8 :v-adjust -0.02))
+     ;;             (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15))
+     ;;             (Constant . ,(all-the-icons-faicon "square-o" :height 0.8 :v-adjust -0.1))
+     ;;             (Struct . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
+     ;;             (Event . ,(all-the-icons-octicon "zap" :height 0.8 :v-adjust 0 :face 'all-the-icons-orange))
+     ;;             (Operator . ,(all-the-icons-material "control_point" :height 0.8 :v-adjust -0.15))
+     ;;             (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.8 :v-adjust -0.02))
+     ;;             (Template . ,(all-the-icons-material "format_align_left" :height 0.8 :v-adjust -0.15)))
+     ;;           company-box-icons-alist 'company-box-icons-all-the-icons)))
+
+
+
+
+     ;;Popup documentation for completion candidates
+     ;; (use-package company-quickhelp
+     ;;   :ensure t
+     ;;   :defines company-quickhelp-delay
+     ;;   :bind (:map company-active-map
+     ;;               ([remap company-show-doc-buffer] . company-quickhelp-manual-begin))
+     ;;   :hook (global-company-mode . company-quickhelp-mode)
+     ;;   :init (setq company-quickhelp-delay 0.5))
+
    #+END_SRC
 
    #+RESULTS:
+   | company-box-mode | company-mode-set-explicitly |
 ** semantic
    #+begin_src emacs-lisp :tangle yes
   (use-package emacs
   :config
   (require 'semantic)
-  (require 'srefactor)
   (global-semantic-idle-scheduler-mode 1)
   (global-semantic-stickyfunc-mode 1)
   (semantic-mode 1)
@@ -1058,7 +1259,11 @@ line instead."
      (add-hook 'c++-mode-hook 'c-c++-company-setup)
 
      (add-hook 'c-mode-common-hook 'hs-minor-mode)
-     (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
+
+     (use-package modern-cpp-font-lock
+       :ensure t
+       :config
+       (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 
      (add-to-list 'auto-mode-alist '("\\.cu\\'" . c++-mode))
      (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
@@ -1205,6 +1410,9 @@ line instead."
        :load-path "~/.emacs.d/aweshell/aweshell.el")
 
      (use-package vterm
+       :ensure t)
+
+     (use-package shx
        :ensure t)
    #+END_SRC
 
@@ -1392,8 +1600,6 @@ line instead."
    #+RESULTS:
    : t
 
-
-
 ** lsp
 
    #+begin_src emacs-lisp :tangle yes
@@ -1455,6 +1661,16 @@ line instead."
 #+RESULTS:
 | (lambda nil (require (quote dap-cpptools))) | lsp-deferred | my-select-clangcheck-for-checker | ess-roxy-enable-in-cpp | c-c++-company-setup | modern-c++-font-lock-mode | eglot-ensure | er/add-cc-mode-expansions | helm-gtags-mode | turn-on-function-args-mode |
 
+** formatting
+#+begin_src emacs-lisp :tangle yes
+  (use-package format-all :ensure t)
+#+end_src
+** docstring
+#+begin_src emacs-lisp :tangle yes
+  ;; (use-package docstr :ensure t) emacs 27
+#+end_src
+#+RESULTS:
+
 * Org
 ** general
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1514,7 +1730,15 @@ line instead."
        (use-package org-ref :ensure t :after org)
        (use-package org-noter :ensure t :after org)
        (use-package org-mime :ensure t :after org)
-       )
+       (use-package org-download :ensure t :after org
+         :config
+         (add-hook 'dired-mode-hook 'org-download-enable))
+       (use-package ox-pandoc :ensure t :after org)
+       (use-package ox-reveal
+         :ensure t
+         :after org)
+       (require 'ox-reveal)
+       (setq org-reveal-root (expand-file-name "~/.npm-packages/lib/node_modules/reveal.js")))
    #+END_SRC
 
    #+RESULTS:
@@ -1527,10 +1751,10 @@ line instead."
        :ensure nil
        :load-path "~/.emacs.d/modules/org-recoll.el"
        :config
-       (use-package helm-recoll :after recoll
+       (use-package helm-recoll :after org-recoll :ensure t
          :commands helm-recoll
-         :init (setq helm-recoll-directories
-                     '(("all" . "~/.recoll"))))
+         :config (setq helm-recoll-directories
+                       '(("all" . "~/.recoll"))))
        ;; custom stuff
        (global-set-key (kbd "C-c g") 'org-recoll-search)
        (global-set-key (kbd "C-c u") 'org-recoll-update-index))
@@ -1538,7 +1762,6 @@ line instead."
 
    #+RESULTS:
    : t
-
 
 * Web
 ** markdown
@@ -1549,10 +1772,11 @@ line instead."
        :mode (("README\\.md\\'" . gfm-mode)
               ("\\.md\\'" . markdown-mode)
               ("\\.markdown\\'" . markdown-mode))
-       :init
+       :config
+       (use-package markdown-preview-mode :ensure t)
        (setq markdown-command "pandoc -s --mathjax -c ~/styles/gfm.css -t html5")
        (setq markdown-preview-stylesheets '("~/styles/gfm.css"))
-       (add-hook 'markdown-mode-hook #'markdown-preview-mode)
+       ;; (add-hook 'markdown-mode-hook #'markdown-preview-mode)
        ;; (setq markdown-enable-math t)
        ;; (setq markdown-css-paths
        ;; '("https://raw.githubusercontent.com/sindresorhus/github-markdown-css/gh-pages/github-markdown.css"))
@@ -1575,6 +1799,8 @@ line instead."
        :ensure t
        :commands impatient-mode)
    #+END_SRC
+
+   #+RESULTS:
 
 ** IRC
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1686,7 +1912,6 @@ line instead."
 
    #+END_SRC
 
-
 * Immersion
 ** exwm
 
@@ -1700,6 +1925,7 @@ line instead."
        :init
        (defun exwm-config-default ()
          "Default configuration of EXWM."
+         (interactive)
          ;; Set the initial workspace number.
          (unless (get 'exwm-workspace-number 'saved-value)
            (setq exwm-workspace-number 4))
@@ -1786,7 +2012,7 @@ line instead."
          (scroll-bar-mode -1)
          (fringe-mode -1))
        :config
-       (exwm-config-default)
+       ;;(exwm-config-default)
        )
    #+END_SRC
 
@@ -1816,6 +2042,7 @@ line instead."
 ** daemon
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
-     (server-start)
+     ;; (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
+     ;; (server-start)
    #+END_SRC
+
