@@ -1,6 +1,6 @@
 #+title: Emacs config
 
-* General 
+* General
 ** packages
 
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -60,13 +60,13 @@
    : t
 
 ** funcs
-#+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp :tangle yes
   (defun icons-displayable-p ()
     "Return non-nil if `all-the-icons' is displayable."
     (and (display-graphic-p)
          (require 'all-the-icons nil t)))
-#+end_src
-   
+   #+end_src
+
 * User Interface
 
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -75,6 +75,7 @@
     (tool-bar-mode -1)
     (scroll-bar-mode -1)
     (toggle-frame-fullscreen)
+    (set-fringe-mode 1)
 
     ;; remove visual instead of sound
     (setq visible-bell 1)
@@ -121,7 +122,6 @@
 
   #+RESULTS:
   : t
-
 
 ** helm
 
@@ -391,7 +391,7 @@
 
    #+RESULTS:
    : t
-   
+
 ** dired
 
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -434,7 +434,6 @@
      (use-package all-the-icons-dired
        :ensure t
        :diminish
-       :hook (dired-mode . all-the-icons-dired-mode)
        :config
        ;; FIXME: Refresh after creating or renaming the files/directories.
        ;; @see https://github.com/jtbm37/all-the-icons-dired/issues/34.
@@ -466,7 +465,11 @@
                              (all-the-icons-dired--add-overlay (point) (concat icon "\t")))))))
                    (forward-line 1)))
              (message "Not display icons because of too many items.")))
-         (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh)))
+         (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh))
+       (add-hook 'dired-mode-hook (lambda ()
+                                    (interactive)
+                                    (unless (file-remote-p default-directory)
+                                      (all-the-icons-dired-mode)))))
 
      ;; file manager
      (use-package ranger
@@ -483,7 +486,7 @@
 ** hydras
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package which-key 
+     (use-package which-key
        :ensure t
        :config
        (which-key-mode 1))
@@ -501,7 +504,6 @@
    #+END_SRC
 
    #+RESULTS:
-
 
 ** Navigation
 
@@ -548,56 +550,71 @@
    #+RESULTS:
    | (lambda nil (interactive) (setq show-trailing-whitespace 1)) | clean-aindent-mode | highlight-indent-guides-mode | (lambda nil (display-line-numbers-mode t)) | display-line-numbers-mode | rainbow-delimiters-mode | origami-mode |
 
-
-   
 ** ibuffer
 
+   #+begin_src emacs-lisp :tangle yes
+     ;; from centaur emacs
+     (use-package ibuffer
+       :ensure nil
+       :init (setq ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold)))
+       :config
+       ;; Display icons for buffers
+       (use-package all-the-icons-ibuffer
+         :ensure t
+         :config
+         (add-hook 'ibuffer-mode-hook (lambda ()
+                                        (interactive)
+                                        (unless (file-remote-p default-directory)
+                                          (all-the-icons-ibuffer-mode)))))
+
+       (with-eval-after-load 'helm
+         (with-no-warnings
+           (defun my-ibuffer-find-file ()
+             (interactive)
+             (let ((default-directory (let ((buf (ibuffer-current-buffer)))
+                                        (if (buffer-live-p buf)
+                                            (with-current-buffer buf
+                                              default-directory)
+                                          default-directory))))
+               (helm-find-files default-directory)))
+           (advice-add #'ibuffer-find-file :override #'my-ibuffer-find-file))))
+
+     ;; Group ibuffer's list by project root
+     (use-package ibuffer-projectile
+       :ensure t
+       :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
+       :hook ((ibuffer . (lambda ()
+                           (ibuffer-projectile-set-filter-groups)
+                           (unless (eq ibuffer-sorting-mode 'alphabetic)
+                             (ibuffer-do-sort-by-alphabetic)))))
+       :config
+       (setq ibuffer-projectile-prefix
+             (concat
+              (all-the-icons-octicon "file-directory"
+                                     :face ibuffer-filter-group-name-face
+                                     :v-adjust 0.0
+                                     :height 1.0)
+              " ")))
+   #+end_src
+
+   #+RESULTS:
+   | lambda | nil | (ibuffer-projectile-set-filter-groups) | (unless (eq ibuffer-sorting-mode (quote alphabetic)) (ibuffer-do-sort-by-alphabetic)) |
+   | lambda | nil | (ibuffer-projectile-set-filter-groups) | (if (eq ibuffer-sorting-mode (quote alphabetic)) nil (ibuffer-do-sort-by-alphabetic)) |
+
+** misc
 #+begin_src emacs-lisp :tangle yes
-  ;; from centaur emacs
-  (use-package ibuffer
-    :ensure nil
-    :init (setq ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold)))
-    :config
-    ;; Display icons for buffers
-    (use-package all-the-icons-ibuffer
-      :ensure t
-      :config
-      (all-the-icons-ibuffer-mode 1))
+  (require 'ansi-color)
+  (defun display-ansi-colors ()
+    (interactive)
+    (ansi-color-apply-on-region (point-min) (point-max)))
 
-    (with-eval-after-load 'helm
-      (with-no-warnings
-        (defun my-ibuffer-find-file ()
-          (interactive)
-          (let ((default-directory (let ((buf (ibuffer-current-buffer)))
-                                     (if (buffer-live-p buf)
-                                         (with-current-buffer buf
-                                           default-directory)
-                                       default-directory))))
-            (helm-find-files default-directory)))
-        (advice-add #'ibuffer-find-file :override #'my-ibuffer-find-file))))
 
-  ;; Group ibuffer's list by project root
-  (use-package ibuffer-projectile
-    :ensure t
-    :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
-    :hook ((ibuffer . (lambda ()
-                        (ibuffer-projectile-set-filter-groups)
-                        (unless (eq ibuffer-sorting-mode 'alphabetic)
-                          (ibuffer-do-sort-by-alphabetic)))))
-    :config
-    (setq ibuffer-projectile-prefix
-          (concat
-           (all-the-icons-octicon "file-directory"
-                                  :face ibuffer-filter-group-name-face
-                                  :v-adjust 0.0
-                                  :height 1.0)
-           " ")))
+  ;; speed up tramp
+  ;; (defadvice projectile-project-root (around ignore-remote first activate)
+  ;;   (unless (file-remote-p default-directory) ad-do-it))
+  ;; (setq vc-ignore-dir-regexp
+  ;;       (format "%s\\|%s" vc-ignore-dir-regexp tramp-file-name-regexp))
 #+end_src
-
-#+RESULTS:
-| lambda | nil | (ibuffer-projectile-set-filter-groups) | (unless (eq ibuffer-sorting-mode (quote alphabetic)) (ibuffer-do-sort-by-alphabetic)) |
-| lambda | nil | (ibuffer-projectile-set-filter-groups) | (if (eq ibuffer-sorting-mode (quote alphabetic)) nil (ibuffer-do-sort-by-alphabetic)) |
-
 * Theme
 
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -622,7 +639,7 @@
       (add-hook 'python-mode-hook 'rainbow-identifiers-mode))
 
     ;; font
-    (set-face-attribute 'default t :font "DejaVu Sans Mono" :height 120)
+    (set-face-attribute 'default t :font "DejaVu Sans Mono" :height 110)
 
     ;; highlight line mode
     (use-package emacs
@@ -633,7 +650,6 @@
       (add-hook 'comint-mode-hook (lambda () (display-line-numbers-mode -1)))
       (add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
       (add-hook 'vterm-mode-hook (lambda () (display-line-numbers-mode -1)))
-      (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode t)))
       (setq display-line-numbers "%4d \u2502 ")
       ;; highlight line conf
       (global-hl-line-mode 1)
@@ -963,21 +979,21 @@ line instead."
 
 ** misc
    #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package super-save
-    :ensure t
-    :config
-    (super-save-mode +1))
+     ;; (use-package super-save
+     ;;   :ensure t
+     ;;   :config
+     ;;   (super-save-mode +1))
 
-  (use-package eldoc
-    :ensure t)
+     (use-package eldoc
+       :ensure t)
 
 
-  (use-package multiple-cursors
-    :ensure t
-    )
+     (use-package multiple-cursors
+       :ensure t
+       )
 
-  (use-package google-this
-    :ensure t)
+     (use-package google-this
+       :ensure t)
    #+END_SRC
 
 * Programming
@@ -997,8 +1013,9 @@ line instead."
                                  company-files
                                  company-dabbrev
                                  company-keywords
-                                 company-tabnine
-                                 company-yasnippet))))
+                                 ;; company-tabnine
+                                 company-yasnippet)))
+       (setq company-format-margin-function #'company-vscode-dark-icons-margin))
 
 
      ;; from centaur emacs
@@ -1082,16 +1099,17 @@ line instead."
    | company-box-mode | company-mode-set-explicitly |
 ** semantic
    #+begin_src emacs-lisp :tangle yes
-  (use-package emacs
-  :config
-  (require 'semantic)
-  (global-semantic-idle-scheduler-mode 1)
-  (global-semantic-stickyfunc-mode 1)
-  (semantic-mode 1)
-  (setq semantic-idle-scheduler-max-buffer-size 100000)
-  (setq semantic-idle-scheduler-work-idle-time 5)
-  (setq semantic-idle-work-parse-neighboring-files-flag nil)
-  )
+     (use-package emacs
+     :config
+     (require 'semantic)
+     (setq semantic-idle-scheduler-max-buffer-size 100000)
+     (setq semantic-idle-scheduler-work-idle-time 10)
+     (setq semantic-idle-work-parse-neighboring-files-flag nil)
+     (setq semantic-idle-work-update-headers-flag nil)
+     (global-semantic-idle-scheduler-mode 1)
+     (global-semantic-stickyfunc-mode 1)
+     (semantic-mode 1)
+     )
    #+end_src
 
    #+RESULTS:
@@ -1227,9 +1245,10 @@ line instead."
                     '(company-capf company-files :separate company-yasnippet))
        )
 
-     (setq llvm-root "/usr/lib/llvm-11")
+     (setq llvm-root "/usr/lib/llvm-12")
      (setq my-clangd-executable (expand-file-name "bin/clangd" llvm-root))
-     (setq my-clang-check-executable (expand-file-name "bin/clang-check" llvm-root))
+     ;; (setq my-clang-check-executable (expand-file-name "bin/clang-check" llvm-root))
+     (setq my-clang-check-executable "clang-check")
 
      ;; Google style by default
      (use-package google-c-style
@@ -1315,15 +1334,15 @@ line instead."
 
 ** lisp
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package emacs
-       :config
-       (use-package slime-company
-         :ensure t)
-       (load (expand-file-name "~/quicklisp/slime-helper.el"))
-       (setq inferior-lisp-program "/usr/bin/sbcl")
-       (setq slime-contribs '(slime-fancy))
-       (slime-setup '(slime-fancy slime-company))
-       )
+     ;; (use-package emacs
+     ;;   :config
+     ;;   (use-package slime-company
+     ;;     :ensure t)
+     ;;   (load (expand-file-name "~/quicklisp/slime-helper.el"))
+     ;;   (setq inferior-lisp-program "/usr/bin/sbcl")
+     ;;   (setq slime-contribs '(slime-fancy))
+     ;;   (slime-setup '(slime-fancy slime-company))
+     ;;   )
 
      (use-package srefactor
        :ensure t)
@@ -1455,34 +1474,41 @@ line instead."
       ;; Non-nil means display source file containing the main routine at startup
       gdb-show-main t
       )
+
+     (use-package compilation
+       :ensure nil
+       :load-path "~/.emacs.d/modules/compilation.el")
    #+END_SRC
 
 ** git
    #+BEGIN_SRC emacs-lisp :tangle yes
+     ;; git gutter
+     (use-package git-gutter
+       :ensure t
+       :config
+       ;; no git-gutter over tramp because it opens a new connection
+       ;; each time we visit the file
+       (add-hook 'find-file-hook (lambda ()
+                                   (interactive)
+                                   (unless (file-remote-p default-directory)
+                                     (git-gutter-mode 1))))
 
-  ;; git gutter
-  (use-package git-gutter
-    :ensure t
-    :config
-    (global-git-gutter-mode t)
-    (custom-set-variables
-     '(git-gutter:update-interval 2)))
-
-
-
-  (use-package with-editor
-    :ensure t)
-
-
-  (use-package magit
-    :ensure t)
+       (custom-set-variables
+        '(git-gutter:update-interval 2)))
 
 
 
-  (use-package git-timemachine
-    :ensure t)
+     (use-package with-editor
+       :ensure t)
 
 
+     (use-package magit
+       :ensure t)
+
+
+
+     (use-package git-timemachine
+       :ensure t)
    #+END_SRC
 
 ** Latex
@@ -1656,25 +1682,28 @@ line instead."
 
      ;; (add-hook 'c++-mode-hook (lambda ()
      ;;                            (require 'dap-cpptools)))
-#+end_src
+   #+end_src
 
-#+RESULTS:
-| (lambda nil (require (quote dap-cpptools))) | lsp-deferred | my-select-clangcheck-for-checker | ess-roxy-enable-in-cpp | c-c++-company-setup | modern-c++-font-lock-mode | eglot-ensure | er/add-cc-mode-expansions | helm-gtags-mode | turn-on-function-args-mode |
+   #+RESULTS:
+   | (lambda nil (require (quote dap-cpptools))) | lsp-deferred | my-select-clangcheck-for-checker | ess-roxy-enable-in-cpp | c-c++-company-setup | modern-c++-font-lock-mode | eglot-ensure | er/add-cc-mode-expansions | helm-gtags-mode | turn-on-function-args-mode |
 
 ** formatting
-#+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp :tangle yes
   (use-package format-all :ensure t)
-#+end_src
+   #+end_src
 ** docstring
-#+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp :tangle yes
   ;; (use-package docstr :ensure t) emacs 27
-#+end_src
-#+RESULTS:
+   #+end_src
+   #+RESULTS:
+** other
+   #+begin_src emacs-lisp :tangle yes
+   (use-package lua-mode :ensure t)
+   #+end_src
 
 * Org
 ** general
    #+BEGIN_SRC emacs-lisp :tangle yes
-
      (use-package org
        :ensure t
        :init
@@ -1711,12 +1740,52 @@ line instead."
                (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
                ))
 
+       (defun ox-export-to-docx-and-open ()
+         (interactive)
+         (let* ((bibfile (expand-file-name (car (org-ref-find-bibliography))))
+                ;; this is probably a full path
+                (current-file (buffer-file-name))
+                (basename (file-name-sans-extension current-file))
+                (docx-file (concat basename ".docx")))
+           (save-buffer)
+           (when (file-exists-p docx-file) (delete-file docx-file))
+           (shell-command (format
+                           "pandoc -s -S --bibliography=%s %s -o %s"
+                           bibfile current-file docx-file))
+           (org-open-file docx-file '(16))))
        (use-package ob-ipython
+         :ensure t)
+       (use-package ob-restclient
+         :ensure t)
+       (use-package ob-http
          :ensure t)
        (org-babel-do-load-languages
         'org-babel-load-languages
         '((python . t)
-          (ipython . t)))
+          (ipython . t)
+          (shell . t)
+          (restclient . t)
+          (http . t)))
+
+       (use-package ob-async :ensure t :config (require 'ob-async))
+
+       (require 'ob)
+       (defun org-babel-execute:passthrough (body params)
+         body)
+       ;; json output is json
+       (defalias 'org-babel-execute:json 'org-babel-execute:passthrough)
+       (defalias 'org-babel-execute:js 'org-babel-execute:passthrough)
+
+       (defun my-org-confirm-babel-evaluate (lang body)
+         (not (or (string= lang "python")
+                  (string= lang "bash")
+                  (string= lang "restclient")
+                  (string= lang "emacs-lisp")
+                  (string= lang "http")
+                  (string= lang "js")
+                  (string= lang "json"))))  ; don't ask for ditaa
+       (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+       (setq org-babel-python-command "python3")
 
        (use-package org-pdftools :ensure t :after org
          :config
@@ -1774,15 +1843,15 @@ line instead."
               ("\\.markdown\\'" . markdown-mode))
        :config
        (use-package markdown-preview-mode :ensure t)
-       (setq markdown-command "pandoc -s --mathjax -c ~/styles/gfm.css -t html5")
-       (setq markdown-preview-stylesheets '("~/styles/gfm.css"))
+       (setq markdown-command (concat "pandoc -s --mathjax -c " (expand-file-name "~/styles/gfm.css") " -t html5"))
+       (setq markdown-preview-stylesheets '("~/styles/"))
        ;; (add-hook 'markdown-mode-hook #'markdown-preview-mode)
        ;; (setq markdown-enable-math t)
        ;; (setq markdown-css-paths
        ;; '("https://raw.githubusercontent.com/sindresorhus/github-markdown-css/gh-pages/github-markdown.css"))
        ;; (setq markdown-xhtml-header-content
        ;;       (concat "<script type=\"text/javascript\" async"
-       ;;               " src=\"https://cdnjs.cloudflare.com/ajax/libs/mathjax/"
+       ;';               " src=\"https://cdnjs.cloudflare.com/ajax/libs/mathjax/"
        ;;               "2.7.1/MathJax.js?config=TeX-MML-AM_CHTML\">"
        ;;               "</script>"))
        )
@@ -1810,9 +1879,9 @@ line instead."
 ** mail
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package mu4me
-       :ensure nil
-       :load-path "~/.emacs.d/modules/mu4me.el")
+     ;; (use-package mu4me
+     ;;   :ensure nil
+     ;;   :load-path "~/.emacs.d/modules/mu4me.el")
 
 
      (use-package smtpmail
@@ -2045,4 +2114,3 @@ line instead."
      ;; (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
      ;; (server-start)
    #+END_SRC
-
