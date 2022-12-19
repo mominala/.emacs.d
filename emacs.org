@@ -985,96 +985,97 @@ line instead."
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; completion
-     (use-package company
-       :ensure t
-       :preface (use-package company-tabnine :ensure t)
-       :config
-       (global-company-mode 1)
-       (setq company-show-numbers t)
-       (setq company-idle-delay 0)
-       (setq company-backends '((company-capf
-                                 :sorted
-                                 company-files
-                                 company-dabbrev
-                                 company-keywords
-                                 company-tabnine
-                                 company-yasnippet))))
+(use-package company
+  :ensure t
+  :preface (use-package company-tabnine :ensure t)
+  :config
+  (global-company-mode 1)
+  (setq company-show-numbers t)
+  (setq company-idle-delay 0)
+  (setq company-backends '((company-capf
+                            :sorted
+                            company-files
+                            company-dabbrev
+                            company-keywords
+                            company-yasnippet
+                            :separate
+                            company-tabnine))))
 
 
-     ;; from centaur emacs
-     ;; Better sorting and filtering
-     (use-package company-prescient
-       :ensure t
-       :init (company-prescient-mode 1))
+;; from centaur emacs
+;; Better sorting and filtering
+(use-package company-prescient
+  :ensure t
+  :init (company-prescient-mode 1))
 
 
-     ;; ;; Icons and quickhelp
-     ;; (use-package company-box
-     ;;   :diminish
-     ;;   :defines company-box-icons-all-the-icons
-     ;;   :hook (company-mode . company-box-mode)
-     ;;   :init (setq company-box-enable-icon t
-     ;;               company-box-backends-colors nil
-     ;;               company-box-doc-enable nil)
-     ;;   :config
-     ;;   (with-no-warnings
-     ;;     ;; Prettify icons
-     ;;     (defun my-company-box-icons--elisp (candidate)
-     ;;       (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'lisp-mode))
-     ;;         (let ((sym (intern candidate)))
-     ;;           (cond ((fboundp sym) 'Function)
-     ;;                 ((featurep sym) 'Module)
-     ;;                 ((facep sym) 'Color)
-     ;;                 ((boundp sym) 'Variable)
-     ;;                 ((symbolp sym) 'Text)
-     ;;                 (t . nil)))))
-     ;;     (advice-add #'company-box-icons--elisp :override #'my-company-box-icons--elisp))
+;; ;; Icons and quickhelp
+;; (use-package company-box
+;;   :diminish
+;;   :defines company-box-icons-all-the-icons
+;;   :hook (company-mode . company-box-mode)
+;;   :init (setq company-box-enable-icon t
+;;               company-box-backends-colors nil
+;;               company-box-doc-enable nil)
+;;   :config
+;;   (with-no-warnings
+;;     ;; Prettify icons
+;;     (defun my-company-box-icons--elisp (candidate)
+;;       (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'lisp-mode))
+;;         (let ((sym (intern candidate)))
+;;           (cond ((fboundp sym) 'Function)
+;;                 ((featurep sym) 'Module)
+;;                 ((facep sym) 'Color)
+;;                 ((boundp sym) 'Variable)
+;;                 ((symbolp sym) 'Text)
+;;                 (t . nil)))))
+;;     (advice-add #'company-box-icons--elisp :override #'my-company-box-icons--elisp))
 
-     ;;   (when (icons-displayable-p)
-     ;;     (declare-function all-the-icons-faicon 'all-the-icons)
-     ;;     (declare-function all-the-icons-material 'all-the-icons)
-     ;;     (declare-function all-the-icons-octicon 'all-the-icons)
-     ;;     (setq company-box-icons-all-the-icons
-     ;;           `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.8 :v-adjust -0.15))
-     ;;             (Text . ,(all-the-icons-faicon "text-width" :height 0.8 :v-adjust -0.02))
-     ;;             (Method . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
-     ;;             (Function . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
-     ;;             (Constructor . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
-     ;;             (Field . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
-     ;;             (Variable . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
-     ;;             (Class . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
-     ;;             (Interface . ,(all-the-icons-material "share" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
-     ;;             (Module . ,(all-the-icons-material "view_module" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
-     ;;             (Property . ,(all-the-icons-faicon "wrench" :height 0.8 :v-adjust -0.02))
-     ;;             (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.8 :v-adjust -0.15))
-     ;;             (Value . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
-     ;;             (Enum . ,(all-the-icons-material "storage" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
-     ;;             (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.8 :v-adjust -0.15))
-     ;;             (Snippet . ,(all-the-icons-material "format_align_center" :height 0.8 :v-adjust -0.15))
-     ;;             (Color . ,(all-the-icons-material "palette" :height 0.8 :v-adjust -0.15))
-     ;;             (File . ,(all-the-icons-faicon "file-o" :height 0.8 :v-adjust -0.02))
-     ;;             (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.8 :v-adjust -0.15))
-     ;;             (Folder . ,(all-the-icons-faicon "folder-open" :height 0.8 :v-adjust -0.02))
-     ;;             (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15))
-     ;;             (Constant . ,(all-the-icons-faicon "square-o" :height 0.8 :v-adjust -0.1))
-     ;;             (Struct . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
-     ;;             (Event . ,(all-the-icons-octicon "zap" :height 0.8 :v-adjust 0 :face 'all-the-icons-orange))
-     ;;             (Operator . ,(all-the-icons-material "control_point" :height 0.8 :v-adjust -0.15))
-     ;;             (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.8 :v-adjust -0.02))
-     ;;             (Template . ,(all-the-icons-material "format_align_left" :height 0.8 :v-adjust -0.15)))
-     ;;           company-box-icons-alist 'company-box-icons-all-the-icons)))
-
-
+;;   (when (icons-displayable-p)
+;;     (declare-function all-the-icons-faicon 'all-the-icons)
+;;     (declare-function all-the-icons-material 'all-the-icons)
+;;     (declare-function all-the-icons-octicon 'all-the-icons)
+;;     (setq company-box-icons-all-the-icons
+;;           `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.8 :v-adjust -0.15))
+;;             (Text . ,(all-the-icons-faicon "text-width" :height 0.8 :v-adjust -0.02))
+;;             (Method . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
+;;             (Function . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
+;;             (Constructor . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
+;;             (Field . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
+;;             (Variable . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
+;;             (Class . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
+;;             (Interface . ,(all-the-icons-material "share" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
+;;             (Module . ,(all-the-icons-material "view_module" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
+;;             (Property . ,(all-the-icons-faicon "wrench" :height 0.8 :v-adjust -0.02))
+;;             (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.8 :v-adjust -0.15))
+;;             (Value . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
+;;             (Enum . ,(all-the-icons-material "storage" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
+;;             (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.8 :v-adjust -0.15))
+;;             (Snippet . ,(all-the-icons-material "format_align_center" :height 0.8 :v-adjust -0.15))
+;;             (Color . ,(all-the-icons-material "palette" :height 0.8 :v-adjust -0.15))
+;;             (File . ,(all-the-icons-faicon "file-o" :height 0.8 :v-adjust -0.02))
+;;             (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.8 :v-adjust -0.15))
+;;             (Folder . ,(all-the-icons-faicon "folder-open" :height 0.8 :v-adjust -0.02))
+;;             (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15))
+;;             (Constant . ,(all-the-icons-faicon "square-o" :height 0.8 :v-adjust -0.1))
+;;             (Struct . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
+;;             (Event . ,(all-the-icons-octicon "zap" :height 0.8 :v-adjust 0 :face 'all-the-icons-orange))
+;;             (Operator . ,(all-the-icons-material "control_point" :height 0.8 :v-adjust -0.15))
+;;             (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.8 :v-adjust -0.02))
+;;             (Template . ,(all-the-icons-material "format_align_left" :height 0.8 :v-adjust -0.15)))
+;;           company-box-icons-alist 'company-box-icons-all-the-icons)))
 
 
-     ;;Popup documentation for completion candidates
-     ;; (use-package company-quickhelp
-     ;;   :ensure t
-     ;;   :defines company-quickhelp-delay
-     ;;   :bind (:map company-active-map
-     ;;               ([remap company-show-doc-buffer] . company-quickhelp-manual-begin))
-     ;;   :hook (global-company-mode . company-quickhelp-mode)
-     ;;   :init (setq company-quickhelp-delay 0.5))
+
+
+;;Popup documentation for completion candidates
+;; (use-package company-quickhelp
+;;   :ensure t
+;;   :defines company-quickhelp-delay
+;;   :bind (:map company-active-map
+;;               ([remap company-show-doc-buffer] . company-quickhelp-manual-begin))
+;;   :hook (global-company-mode . company-quickhelp-mode)
+;;   :init (setq company-quickhelp-delay 0.5))
 
    #+END_SRC
 
@@ -1161,20 +1162,18 @@ line instead."
          :config
          (add-hook 'python-mode-hook (lambda ()
                                        (sphinx-doc-mode t)))))
-     ;; (use-package pydoc-info
-     ;;   :ensure t
-     ;;   :config
-     ;;   (info-lookup-add-help
-     ;;    :mode 'python-mode
-     ;;    :parse-rule 'pydoc-info-python-symbol-at-point
-     ;;    :doc-spec
-     ;;    '(("(python)Index" pydoc-info-lookup-transform-entry)
-     ;;      ("(TARGETNAME)Index" pydoc-info-lookup-transform-entry)))
-     ;;   ))
+;; (use-package pydoc-info
+;;   :ensure t
+;;   :config
+;;   (info-lookup-add-help
+;;    :mode 'python-mode
+;;    :parse-rule 'pydoc-info-python-symbol-at-point
+;;    :doc-spec
+;;    '(("(python)Index" pydoc-info-lookup-transform-entry)
+;;      ("(TARGETNAME)Index" pydoc-info-lookup-transform-entry)))
+;;   ))
 
 
-     (use-package ein
-       :ensure t)
    #+END_SRC
 
    #+RESULTS:
@@ -1222,69 +1221,69 @@ line instead."
        )
 
 
-     (defun c-c++-company-setup ()
-       (add-to-list (make-local-variable 'company-backends)
-                    '(company-capf company-files :separate company-yasnippet))
-       )
+(defun c-c++-company-setup ()
+  (add-to-list (make-local-variable 'company-backends)
+               '(company-capf company-files :separate company-yasnippet))
+  )
 
-     (setq llvm-root "/usr/lib/llvm-11")
-     (setq my-clangd-executable (expand-file-name "bin/clangd" llvm-root))
-     (setq my-clang-check-executable (expand-file-name "bin/clang-check" llvm-root))
+(setq llvm-root "/usr/lib/llvm-11")
+(setq my-clangd-executable (expand-file-name "bin/clangd" llvm-root))
+(setq my-clang-check-executable (expand-file-name "bin/clang-check" llvm-root))
 
-     ;; Google style by default
-     (use-package google-c-style
-       :ensure t
-       :hook ((c-mode-common . google-set-c-style)
-              (c-mode-common . google-make-newline-indent)))
-
-
-     (use-package flycheck-clangcheck
-       :ensure t
-       :init
-       ;; Use clangcheck for flycheck in C++ mode
-       (defun my-select-clangcheck-for-checker ()
-         "Select clang-check for flycheck's checker."
-         (require 'flycheck-clangcheck)
-         (flycheck-set-checker-executable 'c/c++-clangcheck my-clang-check-executable)
-         (flycheck-select-checker 'c/c++-clangcheck))
-       :config
-       (setq flycheck-clangcheck-analyze t
-             flycheck-clangcheck-extra-arg-before '("-std=c++2a")
-             ;; flycheck-clangcheck-extra-arg '("-Xanalyzer" "-analyzer-output=text")
-             )
-       :hook (c++-mode . my-select-clangcheck-for-checker))
+;; Google style by default
+(use-package google-c-style
+  :ensure t
+  :hook ((c-mode-common . google-set-c-style)
+       (c-mode-common . google-make-newline-indent)))
 
 
-     (add-hook 'c-mode-hook 'c-c++-company-setup)
-     (add-hook 'c++-mode-hook 'c-c++-company-setup)
+(use-package flycheck-clangcheck
+  :ensure t
+  :init
+  ;; Use clangcheck for flycheck in C++ mode
+  (defun my-select-clangcheck-for-checker ()
+    "Select clang-check for flycheck's checker."
+    (require 'flycheck-clangcheck)
+    (flycheck-set-checker-executable 'c/c++-clangcheck my-clang-check-executable)
+    (flycheck-select-checker 'c/c++-clangcheck))
+  :config
+  (setq flycheck-clangcheck-analyze t
+        flycheck-clangcheck-extra-arg-before '("-std=c++2a")
+        ;; flycheck-clangcheck-extra-arg '("-Xanalyzer" "-analyzer-output=text")
+        )
+  :hook (c++-mode . my-select-clangcheck-for-checker))
 
-     (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
-     (use-package modern-cpp-font-lock
-       :ensure t
-       :config
-       (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
+(add-hook 'c-mode-hook 'c-c++-company-setup)
+(add-hook 'c++-mode-hook 'c-c++-company-setup)
 
-     (add-to-list 'auto-mode-alist '("\\.cu\\'" . c++-mode))
-     (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-     (add-to-list 'auto-mode-alist '("\\.cc\\'" . c++-mode))
-     (add-to-list 'auto-mode-alist '("\\.c\\'" . c++-mode))
-     (add-to-list 'auto-mode-alist '("\\.ipp\\'" . c++-mode))
+(add-hook 'c-mode-common-hook 'hs-minor-mode)
 
-     (use-package eglot
-       :ensure t
-       :config
-       (add-to-list 'eglot-server-programs
-                    '((c++-mode c-mode) "clangd" "--query-driver=/usr/lib/llvm-11**" "-background-index" "--log=verbose" "--folding-ranges"))
-       (add-hook 'c-mode-hook 'eglot-ensure)
-       (add-hook 'c++-mode-hook 'eglot-ensure)
+(use-package modern-cpp-font-lock
+  :ensure t
+  :config
+  (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 
-       (define-key c-mode-base-map (kbd "M-,") 'xref-find-references)
-       (define-key c-mode-base-map (kbd "M-.") 'xref-find-definitions)
-       (define-key c-mode-base-map (kbd "M-*") 'xref-pop-marker-stack)
-       (define-key c-mode-base-map (kbd "M-i") 'helm-semantic-or-imenu)
+(add-to-list 'auto-mode-alist '("\\.cu\\'" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.cc\\'" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.c\\'" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.ipp\\'" . c++-mode))
 
-       )
+(use-package eglot
+  :ensure t
+  :config
+  (add-to-list 'eglot-server-programs
+               '((c++-mode c-mode) "clangd" "--query-driver=/usr/lib/llvm-11**" "-background-index" "--log=verbose" "--folding-ranges"))
+  (add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c++-mode-hook 'eglot-ensure)
+
+  (define-key c-mode-base-map (kbd "M-,") 'xref-find-references)
+  (define-key c-mode-base-map (kbd "M-.") 'xref-find-definitions)
+  (define-key c-mode-base-map (kbd "M-*") 'xref-pop-marker-stack)
+  (define-key c-mode-base-map (kbd "M-i") 'helm-semantic-or-imenu)
+
+  )
    #+END_SRC
 
    #+RESULTS:
@@ -1304,10 +1303,10 @@ line instead."
      (use-package haskell-mode
        :ensure t)
 
-     (use-package eglot
-       :ensure t
-       :config
-       (add-to-list 'eglot-server-programs '(haskell-mode . ("ghcide" "--lsp"))))
+(use-package eglot
+  :ensure t
+  :config
+  (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp"))))
    #+END_SRC
 
    #+RESULTS:
@@ -1367,21 +1366,21 @@ line instead."
                      (prettify-symbols-mode))))
        )
 
-     (use-package proof-general
-       :ensure t
-       :config
-       (use-package company-coq
-         :ensure t)
-       (add-hook 'coq-mode-hook #'company-coq-mode)
-       (custom-set-variables
-        '(coq-prog-name (expand-file-name "~/.opam/4.08.1/bin/coqtop"))
-        '(proof-three-window-enable t))
+(use-package proof-general
+  :ensure t
+  :config
+  (use-package company-coq
+    :ensure t)
+  (add-hook 'coq-mode-hook #'company-coq-mode)
+  (custom-set-variables
+   '(coq-prog-name (expand-file-name "~/.opam/4.08.1/bin/coqtop"))
+   '(proof-three-window-enable t))
 
-       (add-hook 'coq-mode-hook
-                 (lambda()
-                   (when (functionp 'prettify-symbols-mode)
-                     (prettify-symbols-mode))))
-       )
+  (add-hook 'coq-mode-hook
+            (lambda()
+              (when (functionp 'prettify-symbols-mode)
+                (prettify-symbols-mode))))
+  )
    #+END_SRC
 
    #+RESULTS:
@@ -1435,52 +1434,52 @@ line instead."
      (use-package restclient
        :ensure t)
 
-     (use-package protobuf-mode
-       :ensure t)
+(use-package protobuf-mode
+  :ensure t)
    #+END_SRC
-
+   
 ** Compilation and debugging
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-
-     ;; compilation
-     (global-set-key (kbd "<f5>") (lambda ()
-                                    (interactive)
-                                    (setq-local compilation-read-command nil)
-                                    (call-interactively 'compile)))
-     ;; setup GDB
-     (setq
-      ;; use gdb-many-windows by default
-      gdb-many-windows t
-      ;; Non-nil means display source file containing the main routine at startup
-      gdb-show-main t
-      )
+     
+;; compilation
+(global-set-key (kbd "<f5>") (lambda ()
+                               (interactive)
+                               (setq-local compilation-read-command nil)
+                               (call-interactively 'compile)))
+;; setup GDB
+(setq
+ ;; use gdb-many-windows by default
+ gdb-many-windows t
+ ;; Non-nil means display source file containing the main routine at startup
+ gdb-show-main t
+ )
    #+END_SRC
 
 ** git
    #+BEGIN_SRC emacs-lisp :tangle yes
-
-  ;; git gutter
-  (use-package git-gutter
-    :ensure t
-    :config
-    (global-git-gutter-mode t)
-    (custom-set-variables
-     '(git-gutter:update-interval 2)))
-
-
-
-  (use-package with-editor
-    :ensure t)
-
-
-  (use-package magit
-    :ensure t)
+     
+;; git gutter
+(use-package git-gutter
+  :ensure t
+  :config
+  (global-git-gutter-mode t)
+  (custom-set-variables
+   '(git-gutter:update-interval 2)))
 
 
 
-  (use-package git-timemachine
-    :ensure t)
+(use-package with-editor
+  :ensure t)
+
+
+(use-package magit
+  :ensure t)
+
+
+
+(use-package git-timemachine
+  :ensure t)
 
 
    #+END_SRC
@@ -1583,16 +1582,16 @@ line instead."
        (setq projectile-enable-caching t))
 
 
-     (use-package helm-projectile
-       :ensure t
-       :init
-       :config
-       (require 'projectile)
-       (helm-projectile-on)
-       (setq projectile-completion-system 'helm)
-       (setq projectile-indexing-method 'alien)
-       (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-       (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+(use-package helm-projectile
+  :ensure t
+  :init
+  :config
+  (require 'projectile)
+  (helm-projectile-on)
+  (setq projectile-completion-system 'helm)
+  (setq projectile-indexing-method 'alien)
+  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
 
    #+END_SRC
@@ -1604,58 +1603,58 @@ line instead."
 
    #+begin_src emacs-lisp :tangle yes
      ;; (defun efs/lsp-mode-setup ()
-     ;;   (setq lsp-headerline-breadcrumb-segments '(symbols))
-     ;;   (lsp-headerline-breadcrumb-mode))
+;;   (setq lsp-headerline-breadcrumb-segments '(symbols))
+;;   (lsp-headerline-breadcrumb-mode))
 
-     ;; (use-package lsp-mode
-     ;;   :commands (lsp lsp-deferred)
-     ;;   :hook (lsp-mode . efs/lsp-mode-setup)
-     ;;   :init
-     ;;   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-     ;;   (setq lsp-enable-indentation t
-     ;;         lsp-semantic-tokens-enable nil
-     ;;         lsp-auto-guess-root t
-     ;;         lsp-prefer-flymake nil)
-     ;;   :config
-     ;;   (lsp-enable-which-key-integration t))
-
-
-     ;; (use-package dap-mode
-     ;;   :ensure t)
-
-     ;; (use-package lsp-ui
-     ;;   :ensure t
-     ;;   :hook (lsp-mode . lsp-ui-mode)
-     ;;   :custom
-     ;;   (lsp-ui-doc-enable t)
-     ;;   (lsp-ui-doc-show-with-cursor t)
-     ;;   (lsp-ui-doc-show-with-mouse nil)
-     ;;   (lsp-ui-doc-position 'bottom)
-     ;;   (lsp-ui-doc-header nil)
-     ;;   (lsp-ui-doc-include-signature t)
-     ;;   (lsp-ui-doc-alignment 'window)
-     ;;   (lsp-ui-doc-max-width 100)
-     ;;   (lsp-ui-doc-max-height 13)
-     ;;   (lsp-ui-doc-delay 2))
-
-     ;; (use-package helm-lsp
-     ;;   :ensure t
-     ;;   :config
-     ;;   (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol))
+;; (use-package lsp-mode
+;;   :commands (lsp lsp-deferred)
+;;   :hook (lsp-mode . efs/lsp-mode-setup)
+;;   :init
+;;   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+;;   (setq lsp-enable-indentation t
+;;         lsp-semantic-tokens-enable nil
+;;         lsp-auto-guess-root t
+;;         lsp-prefer-flymake nil)
+;;   :config
+;;   (lsp-enable-which-key-integration t))
 
 
-     ;; ;; LSP with C++
-     ;; (add-hook 'c++-mode-hook 'lsp-deferred)
+;; (use-package dap-mode
+;;   :ensure t)
 
-     ;; (defun my-lsp-c++-hook ()
-     ;;   "Configure clangd as C++ backend for lsp"
-     ;;   (setq lsp-clients-clangd-executable my-clangd-executable
-     ;;         lsp-clients-clangd-args (list (concat "--query-driver=" llvm-root "**") "-background-index" "--log=verbose" "--folding-ranges")))
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :hook (lsp-mode . lsp-ui-mode)
+;;   :custom
+;;   (lsp-ui-doc-enable t)
+;;   (lsp-ui-doc-show-with-cursor t)
+;;   (lsp-ui-doc-show-with-mouse nil)
+;;   (lsp-ui-doc-position 'bottom)
+;;   (lsp-ui-doc-header nil)
+;;   (lsp-ui-doc-include-signature t)
+;;   (lsp-ui-doc-alignment 'window)
+;;   (lsp-ui-doc-max-width 100)
+;;   (lsp-ui-doc-max-height 13)
+;;   (lsp-ui-doc-delay 2))
 
-     ;; (add-hook 'lsp-mode 'my-lsp-c++-hook)
+;; (use-package helm-lsp
+;;   :ensure t
+;;   :config
+;;   (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol))
 
-     ;; (add-hook 'c++-mode-hook (lambda ()
-     ;;                            (require 'dap-cpptools)))
+
+;; ;; LSP with C++
+;; (add-hook 'c++-mode-hook 'lsp-deferred)
+
+;; (defun my-lsp-c++-hook ()
+;;   "Configure clangd as C++ backend for lsp"
+;;   (setq lsp-clients-clangd-executable my-clangd-executable
+;;         lsp-clients-clangd-args (list (concat "--query-driver=" llvm-root "**") "-background-index" "--log=verbose" "--folding-ranges")))
+
+;; (add-hook 'lsp-mode 'my-lsp-c++-hook)
+
+;; (add-hook 'c++-mode-hook (lambda ()
+;;                            (require 'dap-cpptools)))
 #+end_src
 
 #+RESULTS:
@@ -1787,17 +1786,17 @@ line instead."
        ;;               "</script>"))
        )
 
-     (use-package simple-httpd
-       :ensure t
-       :config
-       (setq httpd-port 7070)
-       (setq httpd-host (system-name))
-       (setq httpd-root "/var/www"))
+(use-package simple-httpd
+  :ensure t
+  :config
+  (setq httpd-port 7070)
+  (setq httpd-host (system-name))
+  (setq httpd-root "/var/www"))
 
 
-     (use-package impatient-mode
-       :ensure t
-       :commands impatient-mode)
+(use-package impatient-mode
+  :ensure t
+  :commands impatient-mode)
    #+END_SRC
 
    #+RESULTS:
@@ -1815,100 +1814,100 @@ line instead."
        :load-path "~/.emacs.d/modules/mu4me.el")
 
 
-     (use-package smtpmail
-       :ensure t)
+(use-package smtpmail
+  :ensure t)
    #+END_SRC
-
+   
 ** elfeed
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package cl-lib :ensure t)
-     (use-package eww :ensure t)
+(use-package eww :ensure t)
 
-     (defvar arxiv-categories '("stat.ML"
-                                "cs.CV"
-                                "cs.AI"
-                                "cs.LG"
-                                "math.PR"
-                                "stat.TH"))
+(defvar arxiv-categories '("stat.ML"
+                           "cs.CV"
+                           "cs.AI"
+                           "cs.LG"
+                           "math.PR"
+                           "stat.TH"))
 
-     (defvar arxiv-queries '("object+detection"
-                             "similarity"
-                             "metric+learning"
-                             "domain+adaptation"
-                             "distillation"
-                             "tracking"
-                             "pruning"
-                             "transfer"
-                             "self-supervised"
-                             "representation"
-                             "semi-supervised"
-                             "few+shot"))
+(defvar arxiv-queries '("object+detection"
+                        "similarity"
+                        "metric+learning"
+                        "domain+adaptation"
+                        "distillation"
+                        "tracking"
+                        "pruning"
+                        "transfer"
+                        "self-supervised"
+                        "representation"
+                        "semi-supervised"
+                        "few+shot"))
 
-     (defvar query-text "http://export.arxiv.org/api/query?search_query=%%28%s%%29+AND+abs:%%22%s%%22&sortBy=submittedDate&sortOrder=descending&max_results=%d")
-
-
-
-     (defvar num-results 30)
+(defvar query-text "http://export.arxiv.org/api/query?search_query=%%28%s%%29+AND+abs:%%22%s%%22&sortBy=submittedDate&sortOrder=descending&max_results=%d")
 
 
 
-     (defun re-seq (regexp string)
-       "Get a list of all regexp matches in a string"
-       (save-match-data
-         (let ((pos 0)
-               matches)
-           (while (string-match regexp string pos)
-             (push (match-string 0 string) matches)
-             (setq pos (match-end 0)))
-           matches)))
-
-     (defun replace-in-string (what with in)
-       (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
+(defvar num-results 30)
 
 
-     (defun get-filtered-arxiv-feed (query)
-       "construct query text to arxiv API"
-       (cl-flet ((compose-with-or (arg1 arg2) (format "%s+OR+%s" arg1 arg2)))
-         `(,(format query-text
-                    (cl-reduce #'compose-with-or (mapcar
-                                                  (lambda (arg) (format "cat:%s" arg))
-                                                  arxiv-categories))
-                    query
-                    num-results
-                    )
-           arxiv
-           ,(make-symbol (replace-in-string "+" "-" query)))))
+
+(defun re-seq (regexp string)
+  "Get a list of all regexp matches in a string"
+  (save-match-data
+    (let ((pos 0)
+          matches)
+      (while (string-match regexp string pos)
+        (push (match-string 0 string) matches)
+        (setq pos (match-end 0)))
+      matches)))
+
+(defun replace-in-string (what with in)
+  (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
 
 
-     (defun open-arxiv-pdf-link ()
-       "open arxiv pdf with eww"
-       (interactive)
-       (let ((urlreg "http://arxiv.org/abs/.*"))
-         (eww (format "%s.pdf"
-                      (replace-in-string "/abs/"
-                                         "/pdf/"
-                                         (substring-no-properties
-                                          (car (re-seq urlreg (buffer-string)))))))))
+(defun get-filtered-arxiv-feed (query)
+  "construct query text to arxiv API"
+  (cl-flet ((compose-with-or (arg1 arg2) (format "%s+OR+%s" arg1 arg2)))
+    `(,(format query-text
+               (cl-reduce #'compose-with-or (mapcar
+                                             (lambda (arg) (format "cat:%s" arg))
+                                             arxiv-categories))
+               query
+               num-results
+               )
+      arxiv
+      ,(make-symbol (replace-in-string "+" "-" query)))))
 
 
-     (use-package elfeed
-       :ensure t
-       :config
-       (global-set-key (kbd "C-x w") 'elfeed)
-       (define-key elfeed-show-mode-map (kbd "C-c C-c") 'open-arxiv-pdf-link)
+(defun open-arxiv-pdf-link ()
+  "open arxiv pdf with eww"
+  (interactive)
+  (let ((urlreg "http://arxiv.org/abs/.*"))
+    (eww (format "%s.pdf"
+                 (replace-in-string "/abs/"
+                                    "/pdf/"
+                                    (substring-no-properties
+                                     (car (re-seq urlreg (buffer-string)))))))))
 
-       (setq elfeed-feeds
-             (append '(("https://francisbach.com/feed" ML blog stats)
-                       ("https://distill.pub/rss.xml" ML blog)
-                       ("http://arxiv.org/rss/cs.AI" ML arxiv AI)
-                       ("http://arxiv.org/rss/cs.LG" ML arxiv)
-                       ("http://arxiv.org/rss/cs.CV" ML arxiv vision)
-                       ("http://arxiv.org/rss/stat.ML" ML arxiv stat)
-                       ("http://arxiv.org/rss/math.ST" Math arxiv stat)
-                       ("https://www.reddit.com/r/MachineLearning/.rss" reddit ML)
-                       ("https://www.reddit.com/r/statistics/.rss" reddit stat))
-                     (mapcar #'get-filtered-arxiv-feed arxiv-queries))))
+
+(use-package elfeed
+  :ensure t
+  :config
+  (global-set-key (kbd "C-x w") 'elfeed)
+  (define-key elfeed-show-mode-map (kbd "C-c C-c") 'open-arxiv-pdf-link)
+
+  (setq elfeed-feeds
+        (append '(("https://francisbach.com/feed" ML blog stats)
+                  ("https://distill.pub/rss.xml" ML blog)
+                  ("http://arxiv.org/rss/cs.AI" ML arxiv AI)
+                  ("http://arxiv.org/rss/cs.LG" ML arxiv)
+                  ("http://arxiv.org/rss/cs.CV" ML arxiv vision)
+                  ("http://arxiv.org/rss/stat.ML" ML arxiv stat)
+                  ("http://arxiv.org/rss/math.ST" Math arxiv stat)
+                  ("https://www.reddit.com/r/MachineLearning/.rss" reddit ML)
+                  ("https://www.reddit.com/r/statistics/.rss" reddit stat))
+                (mapcar #'get-filtered-arxiv-feed arxiv-queries))))
 
    #+END_SRC
 
