@@ -15,7 +15,12 @@
      ;; add chords keyword to use-package
      (use-package use-package-chords
        :ensure t)
+
+     (use-package quelpa-use-package
+       :ensure t)
    #+END_SRC
+
+   #+RESULTS:
 
 ** exec path
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -34,8 +39,11 @@
      (add-to-list 'load-path "~/.emacs.d/modules")
      (add-to-list 'load-path "~/.emacs.d/aweshell")
      (add-to-list 'load-path "~/.emacs.d/emacs-application-framework")
+     (add-to-list 'load-path "~/.emacs.d/emacs-reveal")
      (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
    #+END_SRC
+
+   #+RESULTS:
 
 ** other params
 
@@ -437,10 +445,10 @@
        :config
        ;; FIXME: Refresh after creating or renaming the files/directories.
        ;; @see https://github.com/jtbm37/all-the-icons-dired/issues/34.
-       (with-no-warnings
-         (advice-add #'dired-do-create-files :around #'all-the-icons-dired--refresh-advice)
-         (advice-add #'dired-create-directory :around #'all-the-icons-dired--refresh-advice)
-         (advice-add #'wdired-abort-changes :around #'all-the-icons-dired--refresh-advice))
+       ;; (with-no-warnings
+       ;;   (advice-add #'dired-do-create-files :around #'all-the-icons-dired--refresh-advice)
+       ;;   (advice-add #'dired-create-directory :around #'all-the-icons-dired--refresh-advice)
+       ;;   (advice-add #'wdired-abort-changes :around #'all-the-icons-dired--refresh-advice))
 
        (with-no-warnings
          (defun my-all-the-icons-dired--refresh ()
@@ -943,8 +951,6 @@
        (add-hook 'org-shiftdown-final-hook 'windmove-down)
        (add-hook 'org-shiftright-final-hook 'windmove-right)
        (windmove-default-keybindings))
-
-
    #+END_SRC
 
    #+RESULTS:
@@ -1476,9 +1482,13 @@ line instead."
       )
 
      (use-package compilation
-       :ensure nil
-       :load-path "~/.emacs.d/modules/compilation.el")
+       :load-path "~/.emacs.d/modules/compilation.el"
+       :config
+       (require 'compilation))
    #+END_SRC
+
+   #+RESULTS:
+   : t
 
 ** git
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1532,9 +1542,16 @@ line instead."
        :ensure t
        :config
        ;;see org-ref for use of these variables
-       (setq org-ref-bibliography-notes "~/Bibliography/notes.org"
-             org-ref-default-bibliography '("~/Bibliography/references.bib")
-             org-ref-pdf-directory "~/Bibliography/pdfs/"))
+       (require 'org-ref-helm)
+       (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
+             org-ref-insert-cite-function 'org-ref-cite-insert-helm
+             org-ref-insert-label-function 'org-ref-insert-label-link
+             org-ref-insert-ref-function 'org-ref-insert-ref-link
+             org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body)))
+       (define-key org-mode-map (kbd "C-c ]") 'org-ref-insert-link))
+       ;; (setq org-ref-bibliography-notes "~/Bibliography/notes.org"
+       ;;       org-ref-default-bibliography '("~/Bibliography/references.bib")
+       ;;       org-ref-pdf-directory "~/Bibliography/pdfs/"))
 
 
 
@@ -1805,9 +1822,40 @@ line instead."
        (use-package ox-pandoc :ensure t :after org)
        (use-package ox-reveal
          :ensure t
-         :after org)
-       (require 'ox-reveal)
-       (setq org-reveal-root (expand-file-name "~/.npm-packages/lib/node_modules/reveal.js")))
+         :after org
+         :config
+         (require 'ox-reveal)
+         (setq org-reveal-root (expand-file-name "~/work/reveal.js"))
+         (setq org-reveal-external-plugins
+               '((RevealTocProgress . "%/plugin/toc-progress/toc-progress.js"))))
+       ;; (use-package oer-reveal
+       ;;   :ensure t
+       ;;   :config
+       ;;   (require 'oer-reveal-publish)
+       ;;   (oer-reveal-setup-submodules t)
+       ;;   (oer-reveal-generate-include-files t)
+       ;;   (oer-reveal-publish-setq-defaults)
+       ;;   (setq org-re-reveal-root (concat "file://"
+       ;;                                    (expand-file-name
+       ;;                                     "~/work/reveal.js"))))
+       ;; (use-package emacs-reveal
+       ;;   :load-path "~/.emacs.d/emacs-reveal/emacs-reveal.el"
+       ;;   :config
+       ;;   (require 'emacs-reveal)
+       ;;   (setq org-re-reveal-root (concat "file://"
+       ;;                                    (expand-file-name
+       ;;                                     "~/.emacs.d/emacs-reveal/emacs-reveal-submodules/reveal.js")))
+       ;;   )
+
+       ;; (require 'oc-csl)
+       (use-package org-re-reveal
+         :ensure t
+         :after org
+         :config
+         (require 'org-re-reveal)
+         (setq org-re-reveal-root (expand-file-name "~/work/reveal.js"))
+         )
+       )
    #+END_SRC
 
    #+RESULTS:
@@ -2091,22 +2139,27 @@ line instead."
 ** eaf
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package eaf
-       :load-path "~/.emacs.d/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
-       :init
-       (use-package epc :defer t :ensure t)
-       (use-package ctable :defer t :ensure t)
-       (use-package deferred :defer t :ensure t)
-       (use-package s :defer t :ensure t)
-       :custom
-       (eaf-browser-continue-where-left-off t)
-       :config
-       (eaf-setq eaf-browser-enable-adblocker "true")
-       (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-       (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-       (eaf-bind-key take_photo "p" eaf-camera-keybinding)
-       (eaf-bind-key nil "M-q" eaf-browser-keybinding))
+     ;; (use-package eaf
+     ;;   :load-path "~/.emacs.d/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
+     ;;   :init
+     ;;   (use-package epc :defer t :ensure t)
+     ;;   (use-package ctable :defer t :ensure t)
+     ;;   (use-package deferred :defer t :ensure t)
+     ;;   (use-package s :defer t :ensure t)
+     ;;   :custom
+     ;;   (eaf-browser-continue-where-left-off t)
+     ;;   :config
+     ;;   (require 'eaf)
+     ;;   ;; (eaf-setq eaf-browser-enable-adblocker "true")
+     ;; (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+     ;; (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+     ;; (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+     ;; (eaf-bind-key nil "M-q" eaf-browser-keybinding)
+     ;; )
    #+END_SRC
+
+   #+RESULTS:
+   : t
 
 ** daemon
 
