@@ -15,17 +15,36 @@
      ;; add chords keyword to use-package
      (use-package use-package-chords
        :ensure t)
+
+     ;; straight bootstrap
+     (defvar bootstrap-version)
+     (let ((bootstrap-file
+            (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+           (bootstrap-version 5))
+       (unless (file-exists-p bootstrap-file)
+         (with-current-buffer
+             (url-retrieve-synchronously
+              "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+              'silent 'inhibit-cookies)
+           (goto-char (point-max))
+           (eval-print-last-sexp)))
+       (load bootstrap-file nil 'nomessage))
    #+END_SRC
+
+   #+RESULTS:
+   : t
 
 ** exec path
    #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; load exec path from shell
-  (use-package exec-path-from-shell
-    :ensure t
-    :config
-    (when (memq window-system '(mac ns x))
-      (exec-path-from-shell-initialize)))
-  (add-to-list 'exec-path "~/.local/bin")
+     ;; load exec path from shell
+     (use-package exec-path-from-shell
+       :ensure t
+       :config
+       ;; (when (memq window-system '(mac ns x))
+       (exec-path-from-shell-initialize))
+     ;; (add-to-list 'exec-path "~/.local/bin")
+     ;; (add-to-list 'exec-path "~/.ghcup/bin")
+
    #+END_SRC
 
 ** load path
@@ -54,6 +73,18 @@
      ;; save customization elsewere
      (setq custom-file "~/.emacs.d/custom.el")
      (load custom-file)
+
+     ;; backup settings
+
+
+     (setq
+      backup-by-copying t      ; don't clobber symlinks
+      backup-directory-alist
+      '(("." . "~/.saves/"))    ; don't litter my fs tree
+      delete-old-versions t
+      kept-new-versions 6
+      kept-old-versions 2
+      version-control t)       ; use versioned backups
    #+END_SRC
 
    #+RESULTS:
@@ -121,7 +152,6 @@
 
   #+RESULTS:
   : t
-
 
 ** helm
 
@@ -963,21 +993,21 @@ line instead."
 
 ** misc
    #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package super-save
-    :ensure t
-    :config
-    (super-save-mode +1))
+     ;; (use-package super-save
+;;   :ensure t
+;;   :config
+;;   (super-save-mode +1))
 
-  (use-package eldoc
-    :ensure t)
+(use-package eldoc
+  :ensure t)
 
 
-  (use-package multiple-cursors
-    :ensure t
-    )
+(use-package multiple-cursors
+  :ensure t
+  )
 
-  (use-package google-this
-    :ensure t)
+(use-package google-this
+  :ensure t)
    #+END_SRC
 
 * Programming
@@ -1174,6 +1204,8 @@ line instead."
 ;;   ))
 
 
+(use-package ein
+  :ensure t)
    #+END_SRC
 
    #+RESULTS:
@@ -1314,22 +1346,30 @@ line instead."
 
 ** lisp
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package emacs
+     (use-package slime
        :config
-       (use-package slime-company
-         :ensure t)
        (load (expand-file-name "~/quicklisp/slime-helper.el"))
        (setq inferior-lisp-program "/usr/bin/sbcl")
-       (setq slime-contribs '(slime-fancy))
-       (slime-setup '(slime-fancy slime-company))
+       (setq slime-contribs '(slime-fancy slime-company))
+       (slime-setup '(slime-company slime-fancy))
        )
 
-     (use-package srefactor
-       :ensure t)
+(use-package slime-company
+  :ensure t
+  :after (slime company)
+  :hook (slime-editing-mode-hook
+         . (lambda ()
+             (set (make-local-variable 'company-backends)
+                  '((company-slime company-dabbrev-code company-semantic)))))
+  :config
+  (setq slime-company-completion 'fuzzy
+        slime-company-after-completion 'slime-company-just-one-space))
+
+(use-package srefactor
+  :ensure t)
    #+END_SRC
 
    #+RESULTS:
-   : t
 
 ** julia
 
@@ -1351,7 +1391,7 @@ line instead."
        :preface (use-package tuareg :ensure t)
        :ensure t
        :config
-       (setq tuareg-indent-align-with-first-arg t)
+     (setq tuareg-indent-align-with-first-arg t)
        (setq tuareg-match-patterns-aligned t)
        ;; Register Merlin
        (autoload 'merlin-mode "merlin" nil t nil)
@@ -1530,6 +1570,9 @@ line instead."
                                 company-auctex-environments
                                 company-bibtex))
                              company-backends)))
+       (defun my-latex-compile ()
+         (interactive)
+         (TeX-command "LaTeX" #'TeX-master-file))
        :config
        (setq org-latex-prefer-user-labels t)
        (setq reftex-default-bibliography '("~/Bibliography/references.bib"))
@@ -1560,8 +1603,19 @@ line instead."
 
        (setq TeX-view-program-list '(("pdf-tools" "TeX-pdf-tools-sync-view")))
 
+       (setq TeX-view-program-selection '((output-pdf "pdf-tools"))
+             TeX-source-correlate-start-server t)
+
        (setq texfrag-global-mode 1)
        (add-hook 'TeX-mode-hook 'my-latex-mode-setup)
+
+       ;; Update PDF buffers after successful LaTeX runs
+       (add-hook 'TeX-after-compilation-finished-functions
+                 #'TeX-revert-document-buffer)
+
+       (setq tex-source-correlate-mode 1)
+
+       (define-key latex-mode-map (kbd "<f5>") 'my-latex-compile)
        )
    #+END_SRC
 
@@ -1661,14 +1715,24 @@ line instead."
 | (lambda nil (require (quote dap-cpptools))) | lsp-deferred | my-select-clangcheck-for-checker | ess-roxy-enable-in-cpp | c-c++-company-setup | modern-c++-font-lock-mode | eglot-ensure | er/add-cc-mode-expansions | helm-gtags-mode | turn-on-function-args-mode |
 
 ** formatting
-#+begin_src emacs-lisp :tangle yes
-  (use-package format-all :ensure t)
-#+end_src
+   #+begin_src emacs-lisp :tangle yes
+     (use-package format-all :ensure t)
+   #+end_src
 ** docstring
-#+begin_src emacs-lisp :tangle yes
-  ;; (use-package docstr :ensure t) emacs 27
-#+end_src
-#+RESULTS:
+   #+begin_src emacs-lisp :tangle yes
+     ;; (use-package docstr :ensure t) emacs 27
+   #+end_src
+   #+RESULTS:
+** lean
+   #+begin_src emacs-lisp :tangle yes
+     (use-package lean4-mode
+       :straight (lean4-mode :type git :host github :repo "leanprover/lean4"
+                             :files ("lean4-mode/lean4*.el"))
+       ;; to defer loading the package until required
+       :commands (lean4-mode))
+   #+end_src
+
+   #+RESULTS:
 
 * Org
 ** general
@@ -1682,6 +1746,7 @@ line instead."
        (setq org-default-notes-file (expand-file-name "~/org/general.org"))
        (global-set-key (kbd "C-c o")
                        (lambda () (interactive) (find-file "~/org/general.org")))
+       (require 'org-protocol)
        :config
        (setq org-log-done t)
        (setq org-fast-tag-selection-single-key t)
@@ -1709,7 +1774,16 @@ line instead."
                (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
                (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
                ))
+       (defun transform-square-brackets-to-round-ones(string-to-transform)
+         "Transforms [ into ( and ] into ), other chars left unchanged."
+         (concat
+          (mapcar #'(lambda (c) (if (equal c ?[) ?\( (if (equal c ?]) ?\) c))) string-to-transform))
+         )
 
+       (setq org-capture-templates `(
+                                     ("p" "Protocol" entry (file+headline ,(concat org-directory "/notes.org") "Inbox")
+                                      "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+                                     ))
        (use-package ob-ipython
          :ensure t)
        (org-babel-do-load-languages
@@ -1718,6 +1792,7 @@ line instead."
           (ipython . t)))
 
        (use-package org-pdftools :ensure t :after org
+         :hook (org-mode . org-pdftools-setup-link)
          :config
          (add-to-list 'org-file-apps
                       '("\\.pdf\\'" . (lambda (file link)
@@ -1727,7 +1802,41 @@ line instead."
          :config
          (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
        (use-package org-ref :ensure t :after org)
-       (use-package org-noter :ensure t :after org)
+       (use-package org-noter :ensure t :after org
+         :init
+         (setq org-noter-notes-search-path (cons (expand-file-name "~/org") nil)))
+       (use-package org-noter-pdftools
+         :after org-noter
+         :config
+         ;; Add a function to ensure precise note is inserted
+         (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+           (interactive "P")
+           (org-noter--with-valid-session
+            (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                          (not org-noter-insert-note-no-questions)
+                                                        org-noter-insert-note-no-questions))
+                  (org-pdftools-use-isearch-link t)
+                  (org-pdftools-use-freepointer-annot t))
+              (org-noter-insert-note (org-noter--get-precise-info)))))
+
+         ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+         (defun org-noter-set-start-location (&optional arg)
+           "When opening a session with this document, go to the current location.
+          With a prefix ARG, remove start location."
+           (interactive "P")
+           (org-noter--with-valid-session
+            (let ((inhibit-read-only t)
+                  (ast (org-noter--parse-root))
+                  (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+              (with-current-buffer (org-noter--session-notes-buffer session)
+                (org-with-wide-buffer
+                 (goto-char (org-element-property :begin ast))
+                 (if arg
+                     (org-entry-delete nil org-noter-property-note-location)
+                   (org-entry-put nil org-noter-property-note-location
+                                  (org-noter--pretty-print-location location))))))))
+         (with-eval-after-load 'pdf-annot
+           (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
        (use-package org-mime :ensure t :after org)
        (use-package org-download :ensure t :after org
          :config
@@ -1738,11 +1847,10 @@ line instead."
          :after org)
        (require 'ox-reveal)
        (setq org-reveal-root (expand-file-name "~/.npm-packages/lib/node_modules/reveal.js")))
-   #+END_SRC
 
-   #+RESULTS:
-   : t
-
+       ;;(use-package polymode :ensure t)
+       ;;(use-package poly-org :ensure t)
+#+end_src
 ** recoll
 
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1762,6 +1870,27 @@ line instead."
    #+RESULTS:
    : t
 
+tools to handle text files, to test later.
+** deft
+#+begin_src emacs-lisp :tangle yes
+  (use-package deft :ensure t
+    :config
+    (setq deft-extensions '("txt" "org" "tex"))
+    (setq deft-directory "~/org")
+    (setq deft-recursive t))
+#+end_src
+
+#+RESULTS:
+: t
+
+** org-roam
+#+begin_src emacs-lisp :tangle yes
+(use-package org-roam
+:ensure t)
+#+end_src
+
+#+RESULTS:
+
 * Web
 ** markdown
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1773,8 +1902,11 @@ line instead."
               ("\\.markdown\\'" . markdown-mode))
        :config
        (use-package markdown-preview-mode :ensure t)
-       (setq markdown-command "pandoc -s --mathjax -c ~/styles/gfm.css -t html5")
-       (setq markdown-preview-stylesheets '("~/styles/gfm.css"))
+       (setq markdown-command (concat "pandoc -s --mathjax -c "
+                                      (expand-file-name "~/styles/gfm.css")
+                                      " -t html5"))
+       (setq markdown-preview-stylesheets
+             '((expand-file-name "~/styles/gfm.css")))
        ;; (add-hook 'markdown-mode-hook #'markdown-preview-mode)
        ;; (setq markdown-enable-math t)
        ;; (setq markdown-css-paths
@@ -2011,7 +2143,7 @@ line instead."
          (scroll-bar-mode -1)
          (fringe-mode -1))
        :config
-       ;;(exwm-config-default)
+       (exwm-config-default)
        )
    #+END_SRC
 
