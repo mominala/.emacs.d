@@ -896,7 +896,7 @@
        :config
        (setq evil-default-state 'emacs
              evil-disable-insert-state-bindings t
-             evil-toggle-key "C-M-v")
+             evil-toggle-key "C-M-z")
        (evil-mode))
 
 
@@ -905,6 +905,8 @@
 
 
    #+END_SRC
+
+   #+RESULTS:
 
 ** movement and selection
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1721,141 +1723,147 @@ line instead."
 * Org
 ** general
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package org
-       :ensure t
-       :init
-       (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-       (setq org-directory (expand-file-name "~/org"))
-       (setq org-default-notes-file (expand-file-name "~/org/general.org"))
-       (global-set-key (kbd "C-c o")
-                       (lambda () (interactive) (find-file "~/org/general.org")))
-       :config
-       (setq org-log-done t)
-       (setq org-fast-tag-selection-single-key t)
-       (setq org-use-fast-todo-selection t)
-       (setq org-startup-truncated nil)
-       (define-key global-map "\C-cl" 'org-store-link)
-       (define-key global-map "\C-ca" 'org-agenda)
-       (setq org-todo-keywords
-             '(
-               (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
-               (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-               ))
-       (setq org-todo-keyword-faces
-             '(("IDEA" . (:foreground "GoldenRod" :weight bold))
-               ("NEXT" . (:foreground "IndianRed1" :weight bold))
-               ("STARTED" . (:foreground "OrangeRed" :weight bold))
-               ("WAITING" . (:foreground "coral" :weight bold))
-               ("CANCELED" . (:foreground "LimeGreen" :weight bold))
-               ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
-               ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
-               ))
-       (setq org-hide-emphasis-markers t)
-       (setq org-todo-keywords
-             '(
-               (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
-               (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-               ))
+          (use-package org
+            :ensure t
+            :init
+            (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+            (setq org-directory (expand-file-name "~/org"))
+            (setq org-default-notes-file (expand-file-name "~/org/general.org"))
+            (global-set-key (kbd "C-c o")
+                            (lambda () (interactive) (find-file "~/org/general.org")))
+            :config
+            (setq org-log-done t)
+            (setq org-fast-tag-selection-single-key t)
+            (setq org-use-fast-todo-selection t)
+            (setq org-startup-truncated nil)
+            (define-key global-map "\C-cl" 'org-store-link)
+            (define-key global-map "\C-ca" 'org-agenda)
+            (setq org-todo-keywords
+                  '(
+                    (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
+                    (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+                    ))
+            (setq org-todo-keyword-faces
+                  '(("IDEA" . (:foreground "GoldenRod" :weight bold))
+                    ("NEXT" . (:foreground "IndianRed1" :weight bold))
+                    ("STARTED" . (:foreground "OrangeRed" :weight bold))
+                    ("WAITING" . (:foreground "coral" :weight bold))
+                    ("CANCELED" . (:foreground "LimeGreen" :weight bold))
+                    ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
+                    ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
+                    ))
+            (setq org-hide-emphasis-markers t)
+            (setq org-todo-keywords
+                  '(
+                    (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
+                    (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+                    ))
 
-       (defun ox-export-to-docx-and-open ()
-         (interactive)
-         (let* ((bibfile (expand-file-name (car (org-ref-find-bibliography))))
-                ;; this is probably a full path
-                (current-file (buffer-file-name))
-                (basename (file-name-sans-extension current-file))
-                (docx-file (concat basename ".docx")))
-           (save-buffer)
-           (when (file-exists-p docx-file) (delete-file docx-file))
-           (shell-command (format
-                           "pandoc -s -S --bibliography=%s %s -o %s"
-                           bibfile current-file docx-file))
-           (org-open-file docx-file '(16))))
-       (use-package ob-ipython
-         :ensure t)
-       (use-package ob-restclient
-         :ensure t)
-       (use-package ob-http
-         :ensure t)
-       (org-babel-do-load-languages
-        'org-babel-load-languages
-        '((python . t)
-          (ipython . t)
-          (shell . t)
-          (restclient . t)
-          (http . t)))
+            (defun ox-export-to-docx-and-open ()
+              (interactive)
+              (let* ((bibfile (expand-file-name (car (org-ref-find-bibliography))))
+                     ;; this is probably a full path
+                     (current-file (buffer-file-name))
+                     (basename (file-name-sans-extension current-file))
+                     (docx-file (concat basename ".docx")))
+                (save-buffer)
+                (when (file-exists-p docx-file) (delete-file docx-file))
+                (shell-command (format
+                                "pandoc -s -S --bibliography=%s %s -o %s"
+                                bibfile current-file docx-file))
+                (org-open-file docx-file '(16))))
+            (use-package ob-ipython
+              :ensure t)
+            (use-package ob-restclient
+              :ensure t)
+            (use-package ob-http
+              :ensure t)
+            (org-babel-do-load-languages
+             'org-babel-load-languages
+             '((python . t)
+               (ipython . t)
+               (shell . t)
+               (restclient . t)
+               (http . t)
+               (plantuml . t)))
 
-       (use-package ob-async :ensure t :config (require 'ob-async))
+            (setq org-plantuml-jar-path
+                  (expand-file-name "~/bin/plantuml.jar"))
 
-       (require 'ob)
-       (defun org-babel-execute:passthrough (body params)
-         body)
-       ;; json output is json
-       (defalias 'org-babel-execute:json 'org-babel-execute:passthrough)
-       (defalias 'org-babel-execute:js 'org-babel-execute:passthrough)
+            (use-package ob-async :ensure t :config (require 'ob-async))
 
-       (defun my-org-confirm-babel-evaluate (lang body)
-         (not (or (string= lang "python")
-                  (string= lang "bash")
-                  (string= lang "restclient")
-                  (string= lang "emacs-lisp")
-                  (string= lang "http")
-                  (string= lang "js")
-                  (string= lang "json"))))  ; don't ask for ditaa
-       (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
-       (setq org-babel-python-command "python3")
+            (require 'ob)
+            (defun org-babel-execute:passthrough (body params)
+              body)
+            ;; json output is json
+            (defalias 'org-babel-execute:json 'org-babel-execute:passthrough)
+            (defalias 'org-babel-execute:js 'org-babel-execute:passthrough)
 
-       (use-package org-pdftools :ensure t :after org
-         :config
-         (add-to-list 'org-file-apps
-                      '("\\.pdf\\'" . (lambda (file link)
-                                        (org-pdftools-open link)))))
-       (use-package org-bullets
-         :ensure t
-         :config
-         (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-       (use-package org-ref :ensure t :after org)
-       (use-package org-noter :ensure t :after org)
-       (use-package org-mime :ensure t :after org)
-       (use-package org-download :ensure t :after org
-         :config
-         (add-hook 'dired-mode-hook 'org-download-enable))
-       (use-package ox-pandoc :ensure t :after org)
-       (use-package ox-reveal
-         :ensure t
-         :after org
-         :config
-         (require 'ox-reveal)
-         (setq org-reveal-root (expand-file-name "~/work/reveal.js"))
-         (setq org-reveal-external-plugins
-               '((RevealTocProgress . "%/plugin/toc-progress/toc-progress.js"))))
-       ;; (use-package oer-reveal
-       ;;   :ensure t
-       ;;   :config
-       ;;   (require 'oer-reveal-publish)
-       ;;   (oer-reveal-setup-submodules t)
-       ;;   (oer-reveal-generate-include-files t)
-       ;;   (oer-reveal-publish-setq-defaults)
-       ;;   (setq org-re-reveal-root (concat "file://"
-       ;;                                    (expand-file-name
-       ;;                                     "~/work/reveal.js"))))
-       ;; (use-package emacs-reveal
-       ;;   :load-path "~/.emacs.d/emacs-reveal/emacs-reveal.el"
-       ;;   :config
-       ;;   (require 'emacs-reveal)
-       ;;   (setq org-re-reveal-root (concat "file://"
-       ;;                                    (expand-file-name
-       ;;                                     "~/.emacs.d/emacs-reveal/emacs-reveal-submodules/reveal.js")))
-       ;;   )
 
-       ;; (require 'oc-csl)
-       (use-package org-re-reveal
-         :ensure t
-         :after org
-         :config
-         (require 'org-re-reveal)
-         (setq org-re-reveal-root (expand-file-name "~/work/reveal.js"))
-         )
-       )
+            (defun my-org-confirm-babel-evaluate (lang body)
+              (not (or (string= lang "python")
+                       (string= lang "bash")
+                       (string= lang "restclient")
+                       (string= lang "emacs-lisp")
+                       (string= lang "http")
+                       (string= lang "js")
+                       (string= lang "json")
+                       (string= lang "plantuml"))))  ; don't ask for ditaa
+            (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+            (setq org-babel-python-command "python3")
+
+            (use-package org-pdftools :ensure t :after org
+              :config
+              (add-to-list 'org-file-apps
+                           '("\\.pdf\\'" . (lambda (file link)
+                                             (org-pdftools-open link)))))
+            (use-package org-bullets
+              :ensure t
+              :config
+              (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+            (use-package org-ref :ensure t :after org)
+            (use-package org-noter :ensure t :after org)
+            (use-package org-mime :ensure t :after org)
+            (use-package org-download :ensure t :after org
+              :config
+              (add-hook 'dired-mode-hook 'org-download-enable))
+            (use-package ox-pandoc :ensure t :after org)
+            (use-package ox-reveal
+              :ensure t
+              :after org
+              :config
+              (require 'ox-reveal)
+              (setq org-reveal-root (expand-file-name "~/work/reveal.js"))
+              (setq org-reveal-external-plugins
+                    '((RevealTocProgress . "%/plugin/toc-progress/toc-progress.js"))))
+            ;; (use-package oer-reveal
+            ;;   :ensure t
+            ;;   :config
+            ;;   (require 'oer-reveal-publish)
+            ;;   (oer-reveal-setup-submodules t)
+            ;;   (oer-reveal-generate-include-files t)
+            ;;   (oer-reveal-publish-setq-defaults)
+            ;;   (setq org-re-reveal-root (concat "file://"
+            ;;                                    (expand-file-name
+            ;;                                     "~/work/reveal.js"))))
+            ;; (use-package emacs-reveal
+            ;;   :load-path "~/.emacs.d/emacs-reveal/emacs-reveal.el"
+            ;;   :config
+            ;;   (require 'emacs-reveal)
+            ;;   (setq org-re-reveal-root (concat "file://"
+            ;;                                    (expand-file-name
+            ;;                                     "~/.emacs.d/emacs-reveal/emacs-reveal-submodules/reveal.js")))
+            ;;   )
+
+            ;; (require 'oc-csl)
+            (use-package org-re-reveal
+              :ensure t
+              :after org
+              :config
+              (require 'org-re-reveal)
+              (setq org-re-reveal-root (expand-file-name "~/work/reveal.js"))
+              )
+            )
    #+END_SRC
 
    #+RESULTS:
