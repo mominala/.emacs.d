@@ -1,20 +1,21 @@
 #+title: Emacs config
-
 * General 
 ** packages
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (require 'package)
-     (add-to-list 'package-archives
-                  '("melpa" . "https://melpa.org/packages/") t)
-     (package-initialize)
-     (package-refresh-contents)
-     (package-install 'use-package)
+     ;; (require 'package)
+     ;; (add-to-list 'package-archives
+     ;;              '("melpa" . "https://melpa.org/packages/") t)
+     ;; (package-initialize)
+     ;; (package-refresh-contents)
+     ;; (package-install 'use-package)
+
+     (straight-use-package 'use-package)
 
      (require 'use-package)
      ;; add chords keyword to use-package
      (use-package use-package-chords
-       :ensure t)
+       )
 
      ;; straight bootstrap
      (defvar bootstrap-version)
@@ -38,14 +39,14 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; load exec path from shell
      (use-package exec-path-from-shell
-       :ensure t
+       
        :config
        ;; (when (memq window-system '(mac ns x))
        (exec-path-from-shell-initialize))
      ;; (add-to-list 'exec-path "~/.local/bin")
      ;; (add-to-list 'exec-path "~/.ghcup/bin")
 
-   #+END_SRC
+     #+END_SRC
 
 ** load path
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -54,6 +55,7 @@
      (add-to-list 'load-path "~/.emacs.d/aweshell")
      (add-to-list 'load-path "~/.emacs.d/emacs-application-framework")
      (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+     (add-to-list 'load-path "~/.emacs.d/emacs-reveal")
    #+END_SRC
 
 ** other params
@@ -91,13 +93,12 @@
    : t
 
 ** funcs
-#+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp :tangle yes
   (defun icons-displayable-p ()
     "Return non-nil if `all-the-icons' is displayable."
     (and (display-graphic-p)
          (require 'all-the-icons nil t)))
-#+end_src
-   
+   #+end_src   
 * User Interface
 
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -106,6 +107,7 @@
     (tool-bar-mode -1)
     (scroll-bar-mode -1)
     (toggle-frame-fullscreen)
+    (set-fringe-mode 1)
 
     ;; remove visual instead of sound
     (setq visible-bell 1)
@@ -132,13 +134,13 @@
 
     ;; Maximize buffers back and forth
     (use-package zygospore
-      :ensure t
+
       :bind (("C-x 1" . zygospore-toggle-delete-other-windows)
              ("RET" .   newline-and-indent)))
 
 
     ;; (use-package mini-frame
-    ;;   :ensure t
+    ;;   
     ;;   :config
     ;;   (custom-set-variables
     ;;    '(mini-frame-show-parameters
@@ -148,23 +150,26 @@
     ;;        (height . 15))))
     ;;   (setq x-gtk-resize-child-frames 'resize-mode)
     ;;   (mini-frame-mode 1))
+
+
+    (use-package rich-minority
+      :config
+      (setq rm-blacklist ""))
+
   #+END_SRC
 
   #+RESULTS:
   : t
 
 ** helm
-
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package helm
-       :ensure t
-       :preface (require 'helm-config)
+       :straight (helm :type git :host github :repo "emacs-helm/helm")
        :init
        ;; To fix error at compile:
        ;; Error (bytecomp): Forgot to expand macro with-helm-buffer in
        ;; (with-helm-buffer helm-echo-input-in-header-line)
-       (if (version< "26.0.50" emacs-version)
-           (eval-when-compile (require 'helm-lib)))
+       (require 'helm-autoloads)
        (defun helm-hide-minibuffer-maybe ()
          (when (with-helm-buffer helm-echo-input-in-header-line)
            (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
@@ -174,11 +179,11 @@
              (setq-local cursor-type nil))))
        (defun my-helm-display-child-frame (buffer &optional resume)
          "Display `helm-buffer' in a separate frame.
-     Function suitable for `helm-display-function',
-     `helm-completion-in-region-display-function'
-     and/or `helm-show-completion-default-display-function'.
-     See `helm-display-buffer-height' and `helm-display-buffer-width' to
-     configure frame size."
+          Function suitable for `helm-display-function',
+          `helm-completion-in-region-display-function'
+          and/or `helm-show-completion-default-display-function'.
+          See `helm-display-buffer-height' and `helm-display-buffer-width' to
+          configure frame size."
          (if (not (display-graphic-p))
              ;; Fallback to default when frames are not usable.
              (helm-default-display-buffer buffer)
@@ -237,45 +242,45 @@
              (helm-display-buffer-popup-frame buffer default-frame-alist))
            (helm-log-run-hook 'helm-window-configuration-hook)))
        (defun my-helm-display-frame-center (buffer &optional resume)
-       "Display `helm-buffer' in a separate frame which centered in
-     parent frame."
-       (if (not (display-graphic-p))
-           ;; Fallback to default when frames are not usable.
-           (helm-default-display-buffer buffer)
-         (setq helm--buffer-in-new-frame-p t)
-         (let* ((parent (selected-frame))
-                (frame-pos (frame-position parent))
-                (parent-left (car frame-pos))
-                (parent-top (cdr frame-pos))
-                (width (/ (frame-width parent) 2))
-                (height (/ (frame-height parent) 3))
-                (default-frame-alist
-                  (if resume
-                      (buffer-local-value 'helm--last-frame-parameters
-                                          (get-buffer buffer))
-                    `((parent . ,parent)
-                      (width . ,width)
-                      (height . ,height)
-                      (undecorated . ,helm-use-undecorated-frame-option)
-                      (left-fringe . 0)
-                      (right-fringe . 0)
-                      (tool-bar-lines . 0)
-                      (line-spacing . 0)
-                      (desktop-dont-save . t)
-                      (no-special-glyphs . t)
-                      (inhibit-double-buffering . t)
-                      (left . ,(+ parent-left (/ (* (frame-char-width parent) (frame-width parent)) 4)))
-                      (top . ,(+ parent-top (/ (* (frame-char-width parent) (frame-height parent)) 6)))
-                      (title . "Helm")
-                      (vertical-scroll-bars . nil)
-                      (menu-bar-lines . 0)
-                      (fullscreen . nil)
-                      (visible . ,(null helm-display-buffer-reuse-frame))
-                     )))
-                display-buffer-alist)
-           (set-face-background 'internal-border (face-foreground 'default))
-           (helm-display-buffer-popup-frame buffer default-frame-alist))
-         (helm-log-run-hook 'helm-window-configuration-hook)))
+         "Display `helm-buffer' in a separate frame which centered in
+          parent frame."
+         (if (not (display-graphic-p))
+             ;; Fallback to default when frames are not usable.
+             (helm-default-display-buffer buffer)
+           (setq helm--buffer-in-new-frame-p t)
+           (let* ((parent (selected-frame))
+                  (frame-pos (frame-position parent))
+                  (parent-left (car frame-pos))
+                  (parent-top (cdr frame-pos))
+                  (width (/ (frame-width parent) 2))
+                  (height (/ (frame-height parent) 3))
+                  (default-frame-alist
+                    (if resume
+                        (buffer-local-value 'helm--last-frame-parameters
+                                            (get-buffer buffer))
+                      `((parent . ,parent)
+                        (width . ,width)
+                        (height . ,height)
+                        (undecorated . ,helm-use-undecorated-frame-option)
+                        (left-fringe . 0)
+                        (right-fringe . 0)
+                        (tool-bar-lines . 0)
+                        (line-spacing . 0)
+                        (desktop-dont-save . t)
+                        (no-special-glyphs . t)
+                        (inhibit-double-buffering . t)
+                        (left . ,(+ parent-left (/ (* (frame-char-width parent) (frame-width parent)) 4)))
+                        (top . ,(+ parent-top (/ (* (frame-char-width parent) (frame-height parent)) 6)))
+                        (title . "Helm")
+                        (vertical-scroll-bars . nil)
+                        (menu-bar-lines . 0)
+                        (fullscreen . nil)
+                        (visible . ,(null helm-display-buffer-reuse-frame))
+                        )))
+                  display-buffer-alist)
+             (set-face-background 'internal-border (face-foreground 'default))
+             (helm-display-buffer-popup-frame buffer default-frame-alist))
+           (helm-log-run-hook 'helm-window-configuration-hook)))
        :config
        (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
        ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
@@ -300,7 +305,6 @@
              helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
              ;; helm-quick-update t ; do not display invisible candidates
              helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
-
              ;; you can customize helm-do-grep to execute ack-grep
              ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
              ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
@@ -329,11 +333,16 @@
              helm-locate-fuzzy-match t
              helm-display-header-line nil)
 
-       (setq ;; helm-display-function 'helm-display-buffer-in-own-frame
-        ;; helm-display-function 'my-helm-display-child-frame
-        helm-display-function 'my-helm-display-frame-center
-        helm-display-buffer-reuse-frame t
-        helm-display-buffer-width 80)
+       ;; (setq
+       ;; helm-display-function 'helm-display-buffer-in-own-frame
+       ;; helm-display-function 'my-helm-display-child-frame
+       ;; helm-display-function 'my-helm-display-frame-center
+       ;; helm-display-buffer-reuse-frame t
+       ;; helm-display-buffer-width 80)
+
+       (setq helm-display-function 'helm-display-buffer-in-own-frame
+             helm-display-buffer-reuse-frame t
+             helm-use-undecorated-frame-option t)
 
        (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
 
@@ -361,7 +370,7 @@
                  #'(lambda ()
                      (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
 
-           ;;; Save current position to mark ring
+                ;;; Save current position to mark ring
        (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
        ;; show minibuffer history with Helm
@@ -374,22 +383,33 @@
 
 
      (use-package ag
-       :ensure t)
+       )
+
+
+     ;; (use-package helm-posframe
+     ;;   :config
+     ;;   (helm-posframe-enable))
 
 
      (use-package helm-rg
-       :ensure t
+       :after helm
        :config
        (setq helm-rg-ripgrep-executable "/usr/bin/rg"))
-     (use-package helm-ag :ensure t)
+     (use-package helm-ag
+       :after helm
+       )
 
-     (use-package helm-bibtex :ensure t)
+     (use-package helm-bibtex
+       :after helm
+       )
 
-     (use-package helm-xref :ensure t)
+     (use-package helm-xref
+       :after helm
+       )
 
      ;; Locate the helm-swoop folder to your path
      (use-package helm-swoop
-       :ensure t
+       :after helm
        :bind (("C-c s" . helm-multi-swoop-all))
        :chords ((";," . helm-swoop))
        :config
@@ -412,7 +432,7 @@
        (setq helm-swoop-speed-or-color t))
 
      (use-package helm-projectile
-       :ensure t
+       :after helm
        :config
        (helm-projectile-on)
        (setq projectile-completion-system 'helm)
@@ -426,7 +446,7 @@
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package dired
-       :ensure nil
+       :straight (:type built-in)
        :bind
        (("C-x C-j" . dired-jump)
         ("C-x j" . dired-jump-other-window))
@@ -454,7 +474,7 @@
 
      ;; dired
      (use-package dired-narrow
-       :ensure t
+       
        :config
        (bind-key "C-c C-n" #'dired-narrow)
        (bind-key "C-c C-f" #'dired-narrow-fuzzy)
@@ -462,8 +482,6 @@
 
      ;; from centaur emacs
      (use-package all-the-icons-dired
-       :ensure t
-       :diminish
        :hook (dired-mode . all-the-icons-dired-mode)
        :config
        ;; FIXME: Refresh after creating or renaming the files/directories.
@@ -496,11 +514,16 @@
                              (all-the-icons-dired--add-overlay (point) (concat icon "\t")))))))
                    (forward-line 1)))
              (message "Not display icons because of too many items.")))
-         (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh)))
+
+         (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh))
+         (add-hook 'dired-mode-hook (lambda ()
+                                    (interactive)
+                                    (unless (file-remote-p default-directory)
+                                    (all-the-icons-dired-mode)))))
 
      ;; file manager
      (use-package ranger
-       :ensure t
+       
        :config
        ;;(ranger-override-dired-mode t)
        (setq ranger-show-hidden t)
@@ -513,21 +536,29 @@
 ** hydras
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package which-key 
-       :ensure t
+     (use-package which-key
        :config
        (which-key-mode 1))
 
      (use-package use-package-chords
-       :ensure t
        :config (key-chord-mode 1))
 
-     (use-package  hydra
-       :ensure t)
+     (use-package hydra)
+
+     (use-package key-chord)
+
+     (use-package multiple-cursors)
+
+     (use-package smerge-mode
+       :hook (magit-diff-visit-file . (lambda ()
+                                        (when smerge-mode
+                                          (unpackaged/smerge-hydra/body))))
+       )
+
 
      (use-package mydra
-       :ensure nil
-       :load-path "~/.emacs.d/modules/mydra.el")
+       :straight
+       (:type nil :local-repo "/home/malaoui/.emacs.d/modules/mydra"))
    #+END_SRC
 
    #+RESULTS:
@@ -541,7 +572,7 @@
 
      ;; dump jump
      (use-package dumb-jump
-       :ensure t
+       
        :after helm
        :bind (("M-g o" . dumb-jump-go-other-window)
               ("M-g j" . dumb-jump-go)
@@ -555,12 +586,11 @@
        (add-hook 'xref-backend-functions #'dumb-jump-xref-activate t)
        :init
        (dumb-jump-mode)
-       :ensure
        )
 
      ;; avy
      (use-package avy
-       :ensure t
+       
        :bind ("C-<" . avy-goto-word-1)) ;; changed from char as per jcs
 
      ;; hideshow
@@ -568,7 +598,7 @@
      ;; (add-hook 'prog-mode-hook 'hs-minor-mode)
 
      (use-package origami
-       :ensure t
+       
        :hook (prog-mode . origami-mode)
        :config
        (define-key global-map
@@ -582,15 +612,15 @@
    
 ** ibuffer
 
-#+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp :tangle yes
   ;; from centaur emacs
   (use-package ibuffer
-    :ensure nil
+    
     :init (setq ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold)))
     :config
     ;; Display icons for buffers
     (use-package all-the-icons-ibuffer
-      :ensure t
+      
       :config
       (all-the-icons-ibuffer-mode 1))
 
@@ -608,7 +638,7 @@
 
   ;; Group ibuffer's list by project root
   (use-package ibuffer-projectile
-    :ensure t
+    
     :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
     :hook ((ibuffer . (lambda ()
                         (ibuffer-projectile-set-filter-groups)
@@ -622,32 +652,37 @@
                                   :v-adjust 0.0
                                   :height 1.0)
            " ")))
-#+end_src
+   #+end_src
 
-#+RESULTS:
-| lambda | nil | (ibuffer-projectile-set-filter-groups) | (unless (eq ibuffer-sorting-mode (quote alphabetic)) (ibuffer-do-sort-by-alphabetic)) |
-| lambda | nil | (ibuffer-projectile-set-filter-groups) | (if (eq ibuffer-sorting-mode (quote alphabetic)) nil (ibuffer-do-sort-by-alphabetic)) |
-
+   #+RESULTS:
+   | lambda | nil | (ibuffer-projectile-set-filter-groups) | (unless (eq ibuffer-sorting-mode (quote alphabetic)) (ibuffer-do-sort-by-alphabetic)) |
+   | lambda | nil | (ibuffer-projectile-set-filter-groups) | (if (eq ibuffer-sorting-mode (quote alphabetic)) nil (ibuffer-do-sort-by-alphabetic)) |
+   |        |     |                                        |                                                                                       |
 * Theme
 
   #+BEGIN_SRC emacs-lisp :tangle yes
     ;; mode line
-    (use-package smart-mode-line
-      :ensure t
-      :config
-      (setq sml/no-confirm-load-theme t)
-      (sml/setup)
-      (load-theme 'smart-mode-line-dark t))
+    ;; (use-package smart-mode-line
+
+    ;;   :config
+    ;;   (setq sml/no-confirm-load-theme t)
+    ;;   (sml/setup)
+    ;;   (load-theme 'smart-mode-line-dark t))
+
+    (use-package doom-modeline
+      :init
+      (require 'all-the-icons)
+      (doom-modeline-mode 1))
 
     ;; colorful parentheses
     (use-package rainbow-delimiters
-      :ensure t
+
       :config
       (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
     ;; colorful keywords in python
     (use-package rainbow-identifiers
-      :ensure t
+
       :config
       (add-hook 'python-mode-hook 'rainbow-identifiers-mode))
 
@@ -671,14 +706,25 @@
       (set-face-foreground 'highlight nil))
 
     ;; theme
-    (use-package spacemacs-common
-      :ensure spacemacs-theme
-      :config
+    (use-package spacemacs-theme
+      :defer t
+      :init
+      (load-theme 'spacemacs-dark t))
+
+    (defun load-spacemacs-theme (frame)
+      (select-frame frame)
+      (load-theme 'spacemacs-dark t))
+
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions #'load-spacemacs-theme)
       (load-theme 'spacemacs-dark t))
 
 
     ;; pleasing icons
-    (use-package all-the-icons :ensure t)
+    (use-package all-the-icons
+      :init
+      (unless (member "all-the-icons" (font-family-list))
+        (all-the-icons-install-fonts t)))
 
 
   #+END_SRC
@@ -687,17 +733,17 @@
 
 
   #+BEGIN_SRC emacs-lisp :tangle yes
-     ;; highlight indents and manually add it to python
-     (use-package highlight-indent-guides
-       :ensure t
-       :config
-       (setq highlight-indent-guides-method 'character
-             highlight-indent-guides-auto-odd-face-perc 15
-             highlight-indent-guides-auto-even-face-perc 15
-             highlight-indent-guides-auto-character-face-perc 10
-             highlight-indent-guides-responsive 'top)
-       (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-       )
+    ;; highlight indents and manually add it to python
+    (use-package highlight-indent-guides
+
+      :config
+      (setq highlight-indent-guides-method 'character
+            highlight-indent-guides-auto-odd-face-perc 15
+            highlight-indent-guides-auto-even-face-perc 15
+            highlight-indent-guides-auto-character-face-perc 10
+            highlight-indent-guides-responsive 'top)
+      (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+      )
 
 
   #+END_SRC
@@ -738,7 +784,7 @@
                                                newline-mark))
                                  (whitespace-mode 1)))
 
-     (use-package aggressive-indent :ensure t
+     (use-package aggressive-indent 
        :config
        (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode))
    #+END_SRC
@@ -749,7 +795,7 @@
 ** useful keybindings
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package crux
-       :ensure t
+       
        :bind (("C-a" . crux-move-beginning-of-line)
               ("C-k" . crux-smart-kill-line)
               ("C-c i" . crux-cleanup-buffer-or-region)
@@ -767,19 +813,19 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; visual hightlight for commong operations
      (use-package volatile-highlights
-       :ensure t
+       
        :config
        (volatile-highlights-mode t))
 
 
      ;; indenting utils
      (use-package clean-aindent-mode
-       :ensure t
+       
        :config
        (add-hook 'prog-mode-hook 'clean-aindent-mode))
 
      (use-package dtrt-indent
-       :ensure t
+       
        :config
        (dtrt-indent-mode 1)
        (setq dtrt-indent-verbosity 0))
@@ -792,9 +838,8 @@
 
      ;; parentheses
      (use-package smartparens
-       :ensure t
+       
        :config
-       (use-package smartparens-config)
        (setq sp-base-key-bindings 'paredit
              sp-autoskip-closing-pair 'always
              sp-hybrid-kill-entire-symbol nil)
@@ -806,14 +851,14 @@
 
      ;; comments
      (use-package comment-dwim-2
-       :ensure t
+       
        :config
        (global-set-key (kbd "M-;") 'comment-dwim-2))
 
 
      ;; auto clean whitespaces
      (use-package ws-butler
-       :ensure t
+       
        :config
        (add-hook 'c-mode-common-hook 'ws-butler-mode)
        (add-hook 'text-mode 'ws-butler-mode)
@@ -826,7 +871,7 @@
 
   ;; undo tree
   (use-package undo-tree
-    :ensure t
+    
     :config
     (global-undo-tree-mode)
     (setq undo-tree-auto-save-history t
@@ -839,7 +884,7 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; Package: yasnippet
      (use-package yasnippet
-       :ensure t
+       
        :init
        ;; Inter-field navigation
        (defun yas/goto-end-of-active-field ()
@@ -858,7 +903,7 @@
                (move-beginning-of-line 1)
              (goto-char position))))
        :config
-       (use-package yasnippet-snippets :ensure t)
+       (use-package yasnippet-snippets )
        (yas-global-mode 1)
        ;; Jump to end of snippet definition""
        (define-key yas-keymap (kbd "<return>") 'yas/exit-all-snippets)
@@ -879,7 +924,7 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; visual feedback while searching
      (use-package anzu
-       :ensure t
+       
        :config
        (global-anzu-mode)
        (global-set-key (kbd "M-%") 'anzu-query-replace)
@@ -888,7 +933,7 @@
 
      ;; highlight and edit similar words
      (use-package iedit
-       :ensure t
+       
        :config
        (setq iedit-toggle-key-default nil)
        (global-set-key (kbd "C-;") 'iedit-mode))
@@ -898,7 +943,7 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; evil mode, but emacs is the default
      (use-package evil
-       :ensure t
+       
        :config
        (setq evil-default-state 'emacs
              evil-disable-insert-state-bindings t
@@ -907,7 +952,7 @@
 
 
      (use-package evil-tutor
-       :ensure t)
+       )
 
 
    #+END_SRC
@@ -917,7 +962,7 @@
 
      ;; remove drag-sruff from modes that override its behavior
      (use-package drag-stuff
-       :ensure t
+       
        :config
        (add-to-list 'drag-stuff-except-modes 'python-mode)
        (add-to-list 'drag-stuff-except-modes 'org-mode)
@@ -928,7 +973,7 @@
 
      ;; expand region
      (use-package expand-region
-       :ensure t
+       
        :config
        (global-set-key (kbd "C-=") 'er/expand-region))
 
@@ -949,8 +994,7 @@
 
      ;; window navigation
      ;; use S-<arrows> outside of lists in org-mode
-     (use-package windmove
-       :ensure t
+     (use-package windmove       
        :config
        (add-hook 'org-shiftup-final-hook 'windmove-up)
        (add-hook 'org-shiftleft-final-hook 'windmove-left)
@@ -986,7 +1030,7 @@ line instead."
 ** writing
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package darkroom
-       :ensure t)
+       )
    #+END_SRC
 
    #+RESULTS:
@@ -994,118 +1038,309 @@ line instead."
 ** misc
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; (use-package super-save
-;;   :ensure t
+;;   
 ;;   :config
 ;;   (super-save-mode +1))
 
 (use-package eldoc
-  :ensure t)
+  )
 
 
 (use-package multiple-cursors
-  :ensure t
+  
   )
 
 (use-package google-this
-  :ensure t)
+  )
+   #+END_SRC
+* Org
+** general
+   #+BEGIN_SRC emacs-lisp :tangle yes
+
+     (use-package org
+       :init
+       (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+       (setq org-directory (expand-file-name "~/org"))
+       (setq org-default-notes-file (expand-file-name "~/org/general.org"))
+       (global-set-key (kbd "C-c o")
+                       (lambda () (interactive) (find-file "~/org/general.org")))
+       :config
+       (require 'org-protocol)
+       (setq org-log-done t)
+       (setq org-fast-tag-selection-single-key t)
+       (setq org-use-fast-todo-selection t)
+       (setq org-startup-truncated nil)
+       (define-key global-map "\C-cl" 'org-store-link)
+       (define-key global-map "\C-ca" 'org-agenda)
+       (setq org-todo-keywords
+             '(
+               (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
+               (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+               ))
+       (setq org-todo-keyword-faces
+             '(("IDEA" . (:foreground "GoldenRod" :weight bold))
+               ("NEXT" . (:foreground "IndianRed1" :weight bold))
+               ("STARTED" . (:foreground "OrangeRed" :weight bold))
+               ("WAITING" . (:foreground "coral" :weight bold))
+               ("CANCELED" . (:foreground "LimeGreen" :weight bold))
+               ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
+               ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
+               ))
+       (setq org-hide-emphasis-markers t)
+       (setq org-todo-keywords
+             '(
+               (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
+               (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+               ))
+       (defun transform-square-brackets-to-round-ones(string-to-transform)
+         "Transforms [ into ( and ] into ), other chars left unchanged."
+         (concat
+          (mapcar #'(lambda (c) (if (equal c ?[) ?\( (if (equal c ?]) ?\) c))) string-to-transform))
+         )
+
+       (setq org-capture-templates `(
+                                     ("p" "Protocol" entry (file+headline ,(concat org-directory "/notes.org") "Inbox")
+                                      "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+                                     ))
+       (use-package ob-ipython
+         :after org)
+       (use-package ob-restclient
+         :ensure t)
+       (use-package ob-http
+         :ensure t)
+       (org-babel-do-load-languages
+        'org-babel-load-languages
+        '((python . t)
+          (ipython . t)
+          (shell . t)
+          (restclient . t)
+          (http . t)
+          (plantuml . t)))
+
+       (setq org-plantuml-jar-path
+             (expand-file-name "~/bin/plantuml.jar"))
+
+       (use-package ob-async :ensure t :config (require 'ob-async))
+
+
+       (require 'ob)
+       (defun org-babel-execute:passthrough (body params)
+         body)
+                                             ; json output is json
+       (defalias 'org-babel-execute:json 'org-babel-execute:passthrough)
+       (defalias 'org-babel-execute:js 'org-babel-execute:passthrough)
+       (defun my-org-confirm-babel-evaluate (lang body)
+         (not (or (tring= lang "python")
+                  (string= lang "bash")
+                  (string= lang "restclient")
+                  (string= lang "emacs-lisp")
+                  (string= lang "http")
+                  (string= lang "js")
+                  (string= lang "json")
+                  (string= lang "plantuml"))))  ; don't ask for ditaa
+       (setq org-onfirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+       (setq org-babel-python-command "python3")
+
+       (use-package org-pdftools  :after org
+         :hook (org-mode . org-pdftools-setup-link)
+         :config
+         (add-to-list 'org-file-apps
+                      '("\\.pdf\\'" . (lambda (file link)
+                                        (org-pdftools-open link)))))
+       (use-package org-bullets
+
+         :config
+         (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+       (use-package org-ref  :after org)
+       (use-package org-noter  :after org
+         :init
+         (setq org-noter-notes-search-path (cons (expand-file-name "~/org") nil)))
+       (use-package org-noter-pdftools
+         :after org-noter
+         :config
+         ;; Add a function to ensure precise note is inserted
+         (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+           (interactive "P")
+           (org-noter--with-valid-session
+            (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                          (not org-noter-insert-note-no-questions)
+                                                        org-noter-insert-note-no-questions))
+                  (org-pdftools-use-isearch-link t)
+                  (org-pdftools-use-freepointer-annot t))
+              (org-noter-insert-note (org-noter--get-precise-info)))))
+
+         ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+         (defun org-noter-set-start-location (&optional arg)
+           "When opening a session with this document, go to the current location.
+               With a prefix ARG, remove start location."
+           (interactive "P")
+           (org-noter--with-valid-session
+            (let ((inhibit-read-only t)
+                  (ast (org-noter--parse-root))
+                  (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+              (with-current-buffer (org-noter--session-notes-buffer session)
+                (org-with-wide-buffer
+                 (goto-char (org-element-property :begin ast))
+                 (if arg
+                     (org-entry-delete nil org-noter-property-note-location)
+                   (org-entry-put nil org-noter-property-note-location
+                                  (org-noter--pretty-print-location location))))))))
+         (with-eval-after-load 'pdf-annot
+           (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+       (use-package org-mime  :after org)
+       (use-package org-download  :after org
+         :config
+         (add-hook 'dired-mode-hook 'org-download-enable))
+       (use-package ox-pandoc  :after org)
+       (use-package ox-reveal
+         :ensure t
+         :after org
+         :config
+         (require 'ox-reveal)
+         (setq org-reveal-root (expand-file-name "~/work/reveal.js"))
+         (setq org-reveal-external-plugins
+               '((RevealTocProgress . "%/plugin/toc-progress/toc-progress.js"))))
+       )
+
+            ;;(use-package polymode )
+            ;;(use-package poly-org )
+#+end_src
+** recoll
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (use-package org-recoll
+       
+       :load-path "~/.emacs.d/modules/org-recoll.el"
+       :config
+       (use-package helm-recoll :after (org-recoll helm)
+         :commands helm-recoll
+         :config (setq helm-recoll-directories
+                       '(("all" . "~/.recoll"))))
+       ;; custom stuff
+       (global-set-key (kbd "C-c g") 'org-recoll-search)
+       (global-set-key (kbd "C-c u") 'org-recoll-update-index))
    #+END_SRC
 
+   #+RESULTS:
+   : t
+
+tools to handle text files, to test later.
+** deft
+#+begin_src emacs-lisp :tangle yes
+  (use-package deft 
+    :config
+    (setq deft-extensions '("txt" "org" "tex"))
+    (setq deft-directory "~/org")
+    (setq deft-recursive t))
+#+end_src
+
+#+RESULTS:
+: t
+
+** org-roam
+#+begin_src emacs-lisp :tangle yes
+(use-package org-roam
+)
+#+end_src
+
+#+RESULTS:
 * Programming
 ** Completion
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     ;; completion
-(use-package company
-  :ensure t
-  :preface (use-package company-tabnine :ensure t)
-  :config
-  (global-company-mode 1)
-  (setq company-show-numbers t)
-  (setq company-idle-delay 0)
-  (setq company-backends '((company-capf
-                            :sorted
-                            company-files
-                            company-dabbrev
-                            company-keywords
-                            company-yasnippet
-                            :separate
-                            company-tabnine))))
+          ;; completion
+     (use-package company
+  
+       :preface (use-package company-tabnine )
+       :config
+       (global-company-mode 1)
+       (setq company-show-numbers t)
+       (setq company-idle-delay 0)
+       (setq company-backends '((company-capf
+                                 :sorted
+                                 company-files
+                                 company-dabbrev
+                                 company-keywords
+                                 company-yasnippet
+                                 :separate
+                                 company-tabnine)))
+       (setq company-format-margin-function #'company-vscode-dark-icons-margin))
 
 
-;; from centaur emacs
-;; Better sorting and filtering
-(use-package company-prescient
-  :ensure t
-  :init (company-prescient-mode 1))
+     ;; from centaur emacs
+     ;; Better sorting and filtering
+     (use-package company-prescient
+  
+       :init (company-prescient-mode 1))
 
 
-;; ;; Icons and quickhelp
-;; (use-package company-box
-;;   :diminish
-;;   :defines company-box-icons-all-the-icons
-;;   :hook (company-mode . company-box-mode)
-;;   :init (setq company-box-enable-icon t
-;;               company-box-backends-colors nil
-;;               company-box-doc-enable nil)
-;;   :config
-;;   (with-no-warnings
-;;     ;; Prettify icons
-;;     (defun my-company-box-icons--elisp (candidate)
-;;       (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'lisp-mode))
-;;         (let ((sym (intern candidate)))
-;;           (cond ((fboundp sym) 'Function)
-;;                 ((featurep sym) 'Module)
-;;                 ((facep sym) 'Color)
-;;                 ((boundp sym) 'Variable)
-;;                 ((symbolp sym) 'Text)
-;;                 (t . nil)))))
-;;     (advice-add #'company-box-icons--elisp :override #'my-company-box-icons--elisp))
+     ;; ;; Icons and quickhelp
+     ;; (use-package company-box
+     ;;   :diminish
+     ;;   :defines company-box-icons-all-the-icons
+     ;;   :hook (company-mode . company-box-mode)
+     ;;   :init (setq company-box-enable-icon t
+     ;;               company-box-backends-colors nil
+     ;;               company-box-doc-enable nil)
+     ;;   :config
+     ;;   (with-no-warnings
+     ;;     ;; Prettify icons
+     ;;     (defun my-company-box-icons--elisp (candidate)
+     ;;       (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'lisp-mode))
+     ;;         (let ((sym (intern candidate)))
+     ;;           (cond ((fboundp sym) 'Function)
+     ;;                 ((featurep sym) 'Module)
+     ;;                 ((facep sym) 'Color)
+     ;;                 ((boundp sym) 'Variable)
+     ;;                 ((symbolp sym) 'Text)
+     ;;                 (t . nil)))))
+     ;;     (advice-add #'company-box-icons--elisp :override #'my-company-box-icons--elisp))
 
-;;   (when (icons-displayable-p)
-;;     (declare-function all-the-icons-faicon 'all-the-icons)
-;;     (declare-function all-the-icons-material 'all-the-icons)
-;;     (declare-function all-the-icons-octicon 'all-the-icons)
-;;     (setq company-box-icons-all-the-icons
-;;           `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.8 :v-adjust -0.15))
-;;             (Text . ,(all-the-icons-faicon "text-width" :height 0.8 :v-adjust -0.02))
-;;             (Method . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
-;;             (Function . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
-;;             (Constructor . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
-;;             (Field . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
-;;             (Variable . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
-;;             (Class . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
-;;             (Interface . ,(all-the-icons-material "share" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
-;;             (Module . ,(all-the-icons-material "view_module" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
-;;             (Property . ,(all-the-icons-faicon "wrench" :height 0.8 :v-adjust -0.02))
-;;             (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.8 :v-adjust -0.15))
-;;             (Value . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
-;;             (Enum . ,(all-the-icons-material "storage" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
-;;             (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.8 :v-adjust -0.15))
-;;             (Snippet . ,(all-the-icons-material "format_align_center" :height 0.8 :v-adjust -0.15))
-;;             (Color . ,(all-the-icons-material "palette" :height 0.8 :v-adjust -0.15))
-;;             (File . ,(all-the-icons-faicon "file-o" :height 0.8 :v-adjust -0.02))
-;;             (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.8 :v-adjust -0.15))
-;;             (Folder . ,(all-the-icons-faicon "folder-open" :height 0.8 :v-adjust -0.02))
-;;             (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15))
-;;             (Constant . ,(all-the-icons-faicon "square-o" :height 0.8 :v-adjust -0.1))
-;;             (Struct . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
-;;             (Event . ,(all-the-icons-octicon "zap" :height 0.8 :v-adjust 0 :face 'all-the-icons-orange))
-;;             (Operator . ,(all-the-icons-material "control_point" :height 0.8 :v-adjust -0.15))
-;;             (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.8 :v-adjust -0.02))
-;;             (Template . ,(all-the-icons-material "format_align_left" :height 0.8 :v-adjust -0.15)))
-;;           company-box-icons-alist 'company-box-icons-all-the-icons)))
-
-
+     ;;   (when (icons-displayable-p)
+     ;;     (declare-function all-the-icons-faicon 'all-the-icons)
+     ;;     (declare-function all-the-icons-material 'all-the-icons)
+     ;;     (declare-function all-the-icons-octicon 'all-the-icons)
+     ;;     (setq company-box-icons-all-the-icons
+     ;;           `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.8 :v-adjust -0.15))
+     ;;             (Text . ,(all-the-icons-faicon "text-width" :height 0.8 :v-adjust -0.02))
+     ;;             (Method . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
+     ;;             (Function . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
+     ;;             (Constructor . ,(all-the-icons-faicon "cube" :height 0.8 :v-adjust -0.02 :face 'all-the-icons-purple))
+     ;;             (Field . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
+     ;;             (Variable . ,(all-the-icons-octicon "tag" :height 0.85 :v-adjust 0 :face 'all-the-icons-lblue))
+     ;;             (Class . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
+     ;;             (Interface . ,(all-the-icons-material "share" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
+     ;;             (Module . ,(all-the-icons-material "view_module" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
+     ;;             (Property . ,(all-the-icons-faicon "wrench" :height 0.8 :v-adjust -0.02))
+     ;;             (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.8 :v-adjust -0.15))
+     ;;             (Value . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-lblue))
+     ;;             (Enum . ,(all-the-icons-material "storage" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
+     ;;             (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.8 :v-adjust -0.15))
+     ;;             (Snippet . ,(all-the-icons-material "format_align_center" :height 0.8 :v-adjust -0.15))
+     ;;             (Color . ,(all-the-icons-material "palette" :height 0.8 :v-adjust -0.15))
+     ;;             (File . ,(all-the-icons-faicon "file-o" :height 0.8 :v-adjust -0.02))
+     ;;             (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.8 :v-adjust -0.15))
+     ;;             (Folder . ,(all-the-icons-faicon "folder-open" :height 0.8 :v-adjust -0.02))
+     ;;             (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.8 :v-adjust -0.15))
+     ;;             (Constant . ,(all-the-icons-faicon "square-o" :height 0.8 :v-adjust -0.1))
+     ;;             (Struct . ,(all-the-icons-material "settings_input_component" :height 0.8 :v-adjust -0.15 :face 'all-the-icons-orange))
+     ;;             (Event . ,(all-the-icons-octicon "zap" :height 0.8 :v-adjust 0 :face 'all-the-icons-orange))
+     ;;             (Operator . ,(all-the-icons-material "control_point" :height 0.8 :v-adjust -0.15))
+     ;;             (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.8 :v-adjust -0.02))
+     ;;             (Template . ,(all-the-icons-material "format_align_left" :height 0.8 :v-adjust -0.15)))
+     ;;           company-box-icons-alist 'company-box-icons-all-the-icons)))
 
 
-;;Popup documentation for completion candidates
-;; (use-package company-quickhelp
-;;   :ensure t
-;;   :defines company-quickhelp-delay
-;;   :bind (:map company-active-map
-;;               ([remap company-show-doc-buffer] . company-quickhelp-manual-begin))
-;;   :hook (global-company-mode . company-quickhelp-mode)
-;;   :init (setq company-quickhelp-delay 0.5))
+
+
+     ;;Popup documentation for completion candidates
+     ;; (use-package company-quickhelp
+     ;;   
+     ;;   :defines company-quickhelp-delay
+     ;;   :bind (:map company-active-map
+     ;;               ([remap company-show-doc-buffer] . company-quickhelp-manual-begin))
+     ;;   :hook (global-company-mode . company-quickhelp-mode)
+     ;;   :init (setq company-quickhelp-delay 0.5))
 
    #+END_SRC
 
@@ -1131,7 +1366,7 @@ line instead."
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package helm-gtags
-       :ensure t
+       :after helm
        :init
        :config
        (setq
@@ -1174,8 +1409,8 @@ line instead."
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package elpy
-       :ensure t
-       :preface (use-package sphinx-doc :ensure t)
+       
+       :preface (use-package sphinx-doc )
        :custom
        (custom-set-variables
         '(elpy-rpc-python-command "python3")
@@ -1188,12 +1423,12 @@ line instead."
                                      (require 'sphinx-doc)
                                      (sphinx-doc-mode t)))
        (use-package sphinx-doc
-         :ensure t
+         
          :config
          (add-hook 'python-mode-hook (lambda ()
                                        (sphinx-doc-mode t)))))
 ;; (use-package pydoc-info
-;;   :ensure t
+;;   
 ;;   :config
 ;;   (info-lookup-add-help
 ;;    :mode 'python-mode
@@ -1201,11 +1436,11 @@ line instead."
 ;;    :doc-spec
 ;;    '(("(python)Index" pydoc-info-lookup-transform-entry)
 ;;      ("(TARGETNAME)Index" pydoc-info-lookup-transform-entry)))
-;;   ))
+;;   )
 
 
 (use-package ein
-  :ensure t)
+  )
    #+END_SRC
 
    #+RESULTS:
@@ -1214,7 +1449,7 @@ line instead."
 ** cpp
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package ivy
-       :ensure t
+       
        :preface (require 'cc-mode)
        :init
        (defun dynamic-xref-apropos ()
@@ -1261,16 +1496,17 @@ line instead."
 (setq llvm-root "/usr/lib/llvm-11")
 (setq my-clangd-executable (expand-file-name "bin/clangd" llvm-root))
 (setq my-clang-check-executable (expand-file-name "bin/clang-check" llvm-root))
+(setq my-clang-check-executable "clang-check")
 
 ;; Google style by default
 (use-package google-c-style
-  :ensure t
+  
   :hook ((c-mode-common . google-set-c-style)
        (c-mode-common . google-make-newline-indent)))
 
 
 (use-package flycheck-clangcheck
-  :ensure t
+  
   :init
   ;; Use clangcheck for flycheck in C++ mode
   (defun my-select-clangcheck-for-checker ()
@@ -1292,7 +1528,7 @@ line instead."
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
 (use-package modern-cpp-font-lock
-  :ensure t
+  
   :config
   (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 
@@ -1303,7 +1539,7 @@ line instead."
 (add-to-list 'auto-mode-alist '("\\.ipp\\'" . c++-mode))
 
 (use-package eglot
-  :ensure t
+  
   :config
   (add-to-list 'eglot-server-programs
                '((c++-mode c-mode) "clangd" "--query-driver=/usr/lib/llvm-11**" "-background-index" "--log=verbose" "--folding-ranges"))
@@ -1323,20 +1559,20 @@ line instead."
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package cmake-mode
-       :ensure t)
+       )
 
 
      (use-package clang-format
-       :ensure t)
+       )
    #+END_SRC
 
 ** haskell
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package haskell-mode
-       :ensure t)
+       )
 
 (use-package eglot
-  :ensure t
+  
   :config
   (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp"))))
    #+END_SRC
@@ -1346,27 +1582,27 @@ line instead."
 
 ** lisp
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package slime
-       :config
-       (load (expand-file-name "~/quicklisp/slime-helper.el"))
-       (setq inferior-lisp-program "/usr/bin/sbcl")
-       (setq slime-contribs '(slime-fancy slime-company))
-       (slime-setup '(slime-company slime-fancy))
-       )
+     ;; (use-package slime
+     ;;   :config
+     ;;   (load (expand-file-name "~/quicklisp/slime-helper.el"))
+     ;;   (setq inferior-lisp-program "/usr/bin/sbcl")
+     ;;   (setq slime-contribs '(slime-fancy slime-company))
+     ;;   (slime-setup '(slime-company slime-fancy))
+     ;;   )
 
-(use-package slime-company
-  :ensure t
-  :after (slime company)
-  :hook (slime-editing-mode-hook
-         . (lambda ()
-             (set (make-local-variable 'company-backends)
-                  '((company-slime company-dabbrev-code company-semantic)))))
-  :config
-  (setq slime-company-completion 'fuzzy
-        slime-company-after-completion 'slime-company-just-one-space))
+     ;; (use-package slime-company
 
-(use-package srefactor
-  :ensure t)
+     ;;   :after (slime company)
+     ;;   :hook (slime-editing-mode-hook
+     ;;          . (lambda ()
+     ;;              (set (make-local-variable 'company-backends)
+     ;;                   '((company-slime company-dabbrev-code company-semantic)))))
+     ;;   :config
+     ;;   (setq slime-company-completion 'fuzzy
+     ;;         slime-company-after-completion 'slime-company-just-one-space))
+
+     ;; (use-package srefactor
+     ;;   )
    #+END_SRC
 
    #+RESULTS:
@@ -1375,7 +1611,6 @@ line instead."
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package ess
-       :ensure t
        :config
        (setq inferior-julia-program-name "~/julia-1.3.1/bin/julia")
        )
@@ -1388,8 +1623,8 @@ line instead."
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package merlin
-       :preface (use-package tuareg :ensure t)
-       :ensure t
+       :preface (use-package tuareg )
+       
        :config
      (setq tuareg-indent-align-with-first-arg t)
        (setq tuareg-match-patterns-aligned t)
@@ -1407,10 +1642,10 @@ line instead."
        )
 
 (use-package proof-general
-  :ensure t
+  
   :config
   (use-package company-coq
-    :ensure t)
+    )
   (add-hook 'coq-mode-hook #'company-coq-mode)
   (custom-set-variables
    '(coq-prog-name (expand-file-name "~/.opam/4.08.1/bin/coqtop"))
@@ -1429,11 +1664,11 @@ line instead."
 ** shell
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package eglot
-       :ensure t
+
        :config
        (use-package project)
        (use-package flycheck
-         :ensure t)
+         )
        (add-to-list 'eglot-server-programs '(shell-script-mode . ("bash-language-server")))
        (defun sh-company-setup ()
          (add-to-list (make-local-variable 'company-backends)
@@ -1444,15 +1679,14 @@ line instead."
        (add-hook 'sh-mode-hook 'flycheck-mode)
        )
 
-     (use-package aweshell
-       :ensure nil
-       :load-path "~/.emacs.d/aweshell/aweshell.el")
+     ;; (use-package aweshell
+     ;;   :load-path "~/.emacs.d/aweshell/aweshell.el")
 
      (use-package vterm
-       :ensure t)
+       )
 
      (use-package shx
-       :ensure t)
+       )
    #+END_SRC
 
    #+RESULTS:
@@ -1461,21 +1695,21 @@ line instead."
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package docker
-       :ensure t)
+       )
      (use-package dockerfile-mode
-       :ensure t)
+       )
      (use-package docker-compose-mode
-       :ensure t)
+       )
    #+END_SRC
 
 ** misc
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package restclient
-       :ensure t)
+       )
 
 (use-package protobuf-mode
-  :ensure t)
+  )
    #+END_SRC
    
 ** Compilation and debugging
@@ -1499,27 +1733,28 @@ line instead."
 ** git
    #+BEGIN_SRC emacs-lisp :tangle yes
      
-;; git gutter
-(use-package git-gutter
-  :ensure t
-  :config
-  (global-git-gutter-mode t)
-  (custom-set-variables
-   '(git-gutter:update-interval 2)))
+     ;; git gutter
+     (use-package git-gutter
+       :config
+       (add-hook 'find-file-hook (lambda ()
+                                   (interactive)
+                                   (unless (file-remote-p default-directory)
+                                     (git-gutter-mode 1))))
+       (custom-set-variables
+        '(git-gutter:update-interval 2)))
 
 
 
-(use-package with-editor
-  :ensure t)
+     (use-package with-editor
+       )
 
 
-(use-package magit
-  :ensure t)
+     (use-package magit
+       )
 
 
 
-(use-package git-timemachine
-  :ensure t)
+     (use-package git-timemachine)
 
 
    #+END_SRC
@@ -1528,95 +1763,100 @@ line instead."
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package pdf-tools
-       :ensure t
+
        :config
        (pdf-tools-install))
 
 
      (use-package helm-bibtex
-       :ensure t
+       :after helm
        :config
        (autoload 'helm-bibtex "helm-bibtex" "" t))
 
      (use-package gscholar-bibtex
-       :ensure t)
+       )
 
      (use-package org-ref
-       :ensure t
+       :after org
        :config
        ;;see org-ref for use of these variables
        (setq org-ref-bibliography-notes "~/Bibliography/notes.org"
              org-ref-default-bibliography '("~/Bibliography/references.bib")
-             org-ref-pdf-directory "~/Bibliography/pdfs/"))
+             org-ref-pdf-directory "~/Bibliography/pdfs/")
+       (require 'org-ref-helm)
+       (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
+             org-ref-insert-cite-function 'org-ref-cite-insert-helm
+             org-ref-insert-label-function 'org-ref-insert-label-link
+             org-ref-insert-ref-function 'org-ref-insert-ref-link))
 
 
 
-     (use-package tex
-       :ensure auctex
-       :preface
-       (use-package company-auctex :ensure t)
-       (use-package company-math :ensure t)
-       (use-package company-bibtex :ensure t)
-       (use-package texfrag :ensure t)
+       (use-package tex
+         :straight auctex
+         :preface
+         (use-package company-auctex )
+         (use-package company-math )
+         (use-package company-bibtex )
+         (use-package texfrag )
 
-       :init
-       ;; local configuration for TeX modes
-       (defun my-latex-mode-setup ()
-         (setq-local company-backends
-                     (append '((company-math-symbols-latex
-                                company-auctex-labels
-                                company-auctex-bibs
-                                company-auctex-macros
-                                company-auctex-environments
-                                company-bibtex))
-                             company-backends)))
-       (defun my-latex-compile ()
-         (interactive)
-         (TeX-command "LaTeX" #'TeX-master-file))
-       :config
-       (setq org-latex-prefer-user-labels t)
-       (setq reftex-default-bibliography '("~/Bibliography/references.bib"))
-
-
-       ;; open pdf with system pdf viewer (works on mac)
-       (setq bibtex-completion-pdf-open-function
-             (lambda (fpath)
-               (start-process "open" "*open*" "open" fpath)))
-
-       (setq bibtex-completion-bibliography "~/Bibliography/references.bib"
-             bibtex-completion-library-path "~/Bibliography/pdfs/"
-             bibtex-completion-notes-path "~/Bibliography/helm-bibtex-notes")
+         :init
+         ;; local configuration for TeX modes
+         (defun my-latex-mode-setup ()
+           (setq-local company-backends
+                       (append '((company-math-symbols-latex
+                                  company-auctex-labels
+                                  company-auctex-bibs
+                                  company-auctex-macros
+                                  company-auctex-environments
+                                  company-bibtex))
+                               company-backends)))
+         (defun my-latex-compile ()
+           (interactive)
+           (TeX-command "LaTeX" #'TeX-master-file))
+         :config
+         (setq org-latex-prefer-user-labels t)
+         (setq reftex-default-bibliography '("~/Bibliography/references.bib"))
 
 
-       (setq bibtex-completion-format-citation-functions
-             '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
-               (latex-mode    . bibtex-completion-format-citation-cite)
-               (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
-               (default       . bibtex-completion-format-citation-default)))
+         ;; open pdf with system pdf viewer (works on mac)
+         (setq bibtex-completion-pdf-open-function
+               (lambda (fpath)
+                 (start-process "open" "*open*" "open" fpath)))
+
+         (setq bibtex-completion-bibliography "~/Bibliography/references.bib"
+               bibtex-completion-library-path "~/Bibliography/pdfs/"
+               bibtex-completion-notes-path "~/Bibliography/helm-bibtex-notes")
 
 
-       (add-to-list 'TeX-command-list `("Viewer"
-                                        ,(concat "emacsclient -s"
-                                                 (format " /tmp/emacs%d/server" (user-uid))
-                                                 " -e '(find-file-other-window (concat (file-name-directory (buffer-file-name (get-buffer \"%s.tex\"))) \"%s.pdf\"))'")
-                                        TeX-run-discard-or-function t t :help "View in buffer"))
+         (setq bibtex-completion-format-citation-functions
+               '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
+                 (latex-mode    . bibtex-completion-format-citation-cite)
+                 (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
+                 (default       . bibtex-completion-format-citation-default)))
 
-       (setq TeX-view-program-list '(("pdf-tools" "TeX-pdf-tools-sync-view")))
 
-       (setq TeX-view-program-selection '((output-pdf "pdf-tools"))
-             TeX-source-correlate-start-server t)
+         (add-to-list 'TeX-command-list `("Viewer"
+                                          ,(concat "emacsclient -s"
+                                                   (format " /tmp/emacs%d/server" (user-uid))
+                                                   " -e '(find-file-other-window (concat (file-name-directory (buffer-file-name (get-buffer \"%s.tex\"))) \"%s.pdf\"))'")
+                                          TeX-run-discard-or-function t t :help "View in buffer"))
 
-       (setq texfrag-global-mode 1)
-       (add-hook 'TeX-mode-hook 'my-latex-mode-setup)
+         (setq TeX-view-program-list '(("pdf-tools" "TeX-pdf-tools-sync-view")))
 
-       ;; Update PDF buffers after successful LaTeX runs
-       (add-hook 'TeX-after-compilation-finished-functions
-                 #'TeX-revert-document-buffer)
+         (setq TeX-view-program-selection '((output-pdf "pdf-tools"))
+               TeX-source-correlate-start-server t)
 
-       (setq tex-source-correlate-mode 1)
+         (setq texfrag-global-mode 1)
+         (add-hook 'TeX-mode-hook 'my-latex-mode-setup)
 
-       (define-key latex-mode-map (kbd "<f5>") 'my-latex-compile)
-       )
+         ;; Update PDF buffers after successful LaTeX runs
+         (add-hook 'TeX-after-compilation-finished-functions
+                   #'TeX-revert-document-buffer)
+
+         (setq tex-source-correlate-mode 1)
+
+         (define-key LaTeX-mode-map (kbd "<f5>") 'my-latex-compile)
+         )
    #+END_SRC
 
    #+RESULTS:
@@ -1629,7 +1869,7 @@ line instead."
 
      ;; Package: projejctile
      (use-package projectile
-       :ensure t
+       
        :init
        :config
        (projectile-mode)
@@ -1637,7 +1877,7 @@ line instead."
 
 
 (use-package helm-projectile
-  :ensure t
+  :after helm
   :init
   :config
   (require 'projectile)
@@ -1674,10 +1914,10 @@ line instead."
 
 
 ;; (use-package dap-mode
-;;   :ensure t)
+;;   )
 
 ;; (use-package lsp-ui
-;;   :ensure t
+;;   
 ;;   :hook (lsp-mode . lsp-ui-mode)
 ;;   :custom
 ;;   (lsp-ui-doc-enable t)
@@ -1692,7 +1932,7 @@ line instead."
 ;;   (lsp-ui-doc-delay 2))
 
 ;; (use-package helm-lsp
-;;   :ensure t
+;;   
 ;;   :config
 ;;   (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol))
 
@@ -1716,11 +1956,11 @@ line instead."
 
 ** formatting
    #+begin_src emacs-lisp :tangle yes
-     (use-package format-all :ensure t)
+     (use-package format-all )
    #+end_src
 ** docstring
    #+begin_src emacs-lisp :tangle yes
-     ;; (use-package docstr :ensure t) emacs 27
+     ;; (use-package docstr ) emacs 27
    #+end_src
    #+RESULTS:
 ** lean
@@ -1733,180 +1973,22 @@ line instead."
    #+end_src
 
    #+RESULTS:
-
-* Org
-** general
-   #+BEGIN_SRC emacs-lisp :tangle yes
-
-     (use-package org
-       :ensure t
-       :init
-       (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-       (setq org-directory (expand-file-name "~/org"))
-       (setq org-default-notes-file (expand-file-name "~/org/general.org"))
-       (global-set-key (kbd "C-c o")
-                       (lambda () (interactive) (find-file "~/org/general.org")))
-       (require 'org-protocol)
-       :config
-       (setq org-log-done t)
-       (setq org-fast-tag-selection-single-key t)
-       (setq org-use-fast-todo-selection t)
-       (setq org-startup-truncated nil)
-       (define-key global-map "\C-cl" 'org-store-link)
-       (define-key global-map "\C-ca" 'org-agenda)
-       (setq org-todo-keywords
-             '(
-               (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
-               (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-               ))
-       (setq org-todo-keyword-faces
-             '(("IDEA" . (:foreground "GoldenRod" :weight bold))
-               ("NEXT" . (:foreground "IndianRed1" :weight bold))
-               ("STARTED" . (:foreground "OrangeRed" :weight bold))
-               ("WAITING" . (:foreground "coral" :weight bold))
-               ("CANCELED" . (:foreground "LimeGreen" :weight bold))
-               ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
-               ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
-               ))
-       (setq org-hide-emphasis-markers t)
-       (setq org-todo-keywords
-             '(
-               (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
-               (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-               ))
-       (defun transform-square-brackets-to-round-ones(string-to-transform)
-         "Transforms [ into ( and ] into ), other chars left unchanged."
-         (concat
-          (mapcar #'(lambda (c) (if (equal c ?[) ?\( (if (equal c ?]) ?\) c))) string-to-transform))
-         )
-
-       (setq org-capture-templates `(
-                                     ("p" "Protocol" entry (file+headline ,(concat org-directory "/notes.org") "Inbox")
-                                      "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
-                                     ))
-       (use-package ob-ipython
-         :ensure t)
-       (org-babel-do-load-languages
-        'org-babel-load-languages
-        '((python . t)
-          (ipython . t)))
-
-       (use-package org-pdftools :ensure t :after org
-         :hook (org-mode . org-pdftools-setup-link)
-         :config
-         (add-to-list 'org-file-apps
-                      '("\\.pdf\\'" . (lambda (file link)
-                                        (org-pdftools-open link)))))
-       (use-package org-bullets
-         :ensure t
-         :config
-         (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-       (use-package org-ref :ensure t :after org)
-       (use-package org-noter :ensure t :after org
-         :init
-         (setq org-noter-notes-search-path (cons (expand-file-name "~/org") nil)))
-       (use-package org-noter-pdftools
-         :after org-noter
-         :config
-         ;; Add a function to ensure precise note is inserted
-         (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-           (interactive "P")
-           (org-noter--with-valid-session
-            (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-                                                          (not org-noter-insert-note-no-questions)
-                                                        org-noter-insert-note-no-questions))
-                  (org-pdftools-use-isearch-link t)
-                  (org-pdftools-use-freepointer-annot t))
-              (org-noter-insert-note (org-noter--get-precise-info)))))
-
-         ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
-         (defun org-noter-set-start-location (&optional arg)
-           "When opening a session with this document, go to the current location.
-          With a prefix ARG, remove start location."
-           (interactive "P")
-           (org-noter--with-valid-session
-            (let ((inhibit-read-only t)
-                  (ast (org-noter--parse-root))
-                  (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
-              (with-current-buffer (org-noter--session-notes-buffer session)
-                (org-with-wide-buffer
-                 (goto-char (org-element-property :begin ast))
-                 (if arg
-                     (org-entry-delete nil org-noter-property-note-location)
-                   (org-entry-put nil org-noter-property-note-location
-                                  (org-noter--pretty-print-location location))))))))
-         (with-eval-after-load 'pdf-annot
-           (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
-       (use-package org-mime :ensure t :after org)
-       (use-package org-download :ensure t :after org
-         :config
-         (add-hook 'dired-mode-hook 'org-download-enable))
-       (use-package ox-pandoc :ensure t :after org)
-       (use-package ox-reveal
-         :ensure t
-         :after org)
-       (require 'ox-reveal)
-       (setq org-reveal-root (expand-file-name "~/.npm-packages/lib/node_modules/reveal.js")))
-
-       ;;(use-package polymode :ensure t)
-       ;;(use-package poly-org :ensure t)
-#+end_src
-** recoll
-
-   #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package org-recoll
-       :ensure nil
-       :load-path "~/.emacs.d/modules/org-recoll.el"
-       :config
-       (use-package helm-recoll :after org-recoll :ensure t
-         :commands helm-recoll
-         :config (setq helm-recoll-directories
-                       '(("all" . "~/.recoll"))))
-       ;; custom stuff
-       (global-set-key (kbd "C-c g") 'org-recoll-search)
-       (global-set-key (kbd "C-c u") 'org-recoll-update-index))
-   #+END_SRC
-
-   #+RESULTS:
-   : t
-
-tools to handle text files, to test later.
-** deft
-#+begin_src emacs-lisp :tangle yes
-  (use-package deft :ensure t
-    :config
-    (setq deft-extensions '("txt" "org" "tex"))
-    (setq deft-directory "~/org")
-    (setq deft-recursive t))
-#+end_src
-
-#+RESULTS:
-: t
-
-** org-roam
-#+begin_src emacs-lisp :tangle yes
-(use-package org-roam
-:ensure t)
-#+end_src
-
-#+RESULTS:
-
 * Web
 ** markdown
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package markdown-mode
-       :ensure t
+       
        :commands (markdown-mode gfm-mode)
        :mode (("README\\.md\\'" . gfm-mode)
               ("\\.md\\'" . markdown-mode)
               ("\\.markdown\\'" . markdown-mode))
        :config
-       (use-package markdown-preview-mode :ensure t)
+       (use-package markdown-preview-mode )
        (setq markdown-command (concat "pandoc -s --mathjax -c "
                                       (expand-file-name "~/styles/gfm.css")
                                       " -t html5"))
        (setq markdown-preview-stylesheets
-             '((expand-file-name "~/styles/gfm.css")))
+             '("~/styles/"))
        ;; (add-hook 'markdown-mode-hook #'markdown-preview-mode)
        ;; (setq markdown-enable-math t)
        ;; (setq markdown-css-paths
@@ -1919,7 +2001,7 @@ tools to handle text files, to test later.
        )
 
 (use-package simple-httpd
-  :ensure t
+  
   :config
   (setq httpd-port 7070)
   (setq httpd-host (system-name))
@@ -1927,7 +2009,7 @@ tools to handle text files, to test later.
 
 
 (use-package impatient-mode
-  :ensure t
+  
   :commands impatient-mode)
    #+END_SRC
 
@@ -1936,25 +2018,34 @@ tools to handle text files, to test later.
 ** IRC
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package circe
-       :ensure t)
+       )
    #+END_SRC
 ** mail
 
    #+BEGIN_SRC emacs-lisp :tangle yes
+     (use-package mu4e
+       :straight (:host github
+                        :files ("build/mu4e/*.el")
+                        :branch "release/1.8"
+                        :repo "djcb/mu"
+                        :pre-build (("meson" "build")
+                                    ("ninja" "-C" "build")))
+       :custom (mu4e-mu-binary (expand-file-name "build/mu/mu" (straight--repos-dir "mu"))))
+
+     (use-package org-mime)
+
      (use-package mu4me
-       :ensure nil
-       :load-path "~/.emacs.d/modules/mu4me.el")
+       :straight
+       (:type nil :local-repo "/home/malaoui/.emacs.d/modules/mu4me"))
 
-
-(use-package smtpmail
-  :ensure t)
+     (use-package smtpmail)
    #+END_SRC
    
 ** elfeed
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package cl-lib :ensure t)
-(use-package eww :ensure t)
+     (use-package cl-lib )
+(use-package eww )
 
 (defvar arxiv-categories '("stat.ML"
                            "cs.CV"
@@ -2024,7 +2115,7 @@ tools to handle text files, to test later.
 
 
 (use-package elfeed
-  :ensure t
+  
   :config
   (global-set-key (kbd "C-x w") 'elfeed)
   (define-key elfeed-show-mode-map (kbd "C-c C-c") 'open-arxiv-pdf-link)
@@ -2049,9 +2140,9 @@ tools to handle text files, to test later.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package exwm
-       :ensure t
+
        :preface
-       (use-package exwm-edit :ensure t)
+       (use-package exwm-edit )
        (require 'exwm-randr)
        :init
        (defun exwm-config-default ()
@@ -2154,20 +2245,31 @@ tools to handle text files, to test later.
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package eaf
-       :load-path "~/.emacs.d/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
+       :straight (eaf
+                  :type git
+                  :host github
+                  :repo "emacs-eaf/emacs-application-framework"
+                  :files ("*.el" "*.py" "core" "app" "*.json")
+                  :includes (eaf-pdf-viewer eaf-browser)
+                  :pre-build (("python3" "install-eaf.py" "--install" "pdf-viewer" "browser" "--ignore-sys-deps"))
+                  )
        :init
-       (use-package epc :defer t :ensure t)
-       (use-package ctable :defer t :ensure t)
-       (use-package deferred :defer t :ensure t)
-       (use-package s :defer t :ensure t)
+       (use-package epc :defer t)
+       (use-package ctable :defer t)
+       (use-package deferred :defer t)
+       (use-package s :defer t))
+
+     (use-package eaf-browser
        :custom
        (eaf-browser-continue-where-left-off t)
-       :config
-       (eaf-setq eaf-browser-enable-adblocker "true")
-       (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-       (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-       (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+       (eaf-browser-enable-adblocker t)
        (eaf-bind-key nil "M-q" eaf-browser-keybinding))
+
+     (use-package eaf-pdf-viewer
+       :custom
+       (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+       (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding))
+
    #+END_SRC
 
 ** daemon
@@ -2177,3 +2279,4 @@ tools to handle text files, to test later.
      ;; (server-start)
    #+END_SRC
 
+   
