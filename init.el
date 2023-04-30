@@ -1,5 +1,3 @@
-
-
 (setq straight-use-package-by-default t)
 (setq straight-recipes-gnu-elpa-use-mirror t)
 
@@ -16,8 +14,11 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-
+;; we need to load the up to date org package to avoid conflicts
 (straight-use-package 'org)
+;; this needs to be setup before loading org
+;; (setq org-replace-disputed-keys t)
+
 (require 'org)
 (org-babel-load-file
  (expand-file-name "emacs.org"

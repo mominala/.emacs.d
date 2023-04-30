@@ -69,7 +69,7 @@ _SPC_ cancel
   ("q"  nil                                      "cancel" :color blue))
 
 (defhydra hydra-projectile (:color teal
-                            :hint nil)
+                                   :hint nil)
   "
      PROJECTILE: %(projectile-project-root)
 
@@ -78,13 +78,11 @@ _SPC_ cancel
 _s-f_: file            _a_: ag                _i_: Ibuffer           _c_: cache clear
  _ff_: file dwim       _g_: update gtags      _b_: switch to buffer  _x_: remove known project
  _fd_: file curr dir   _o_: multi-occur     _s-k_: Kill all buffers  _X_: cleanup non-existing
-  _r_: recent file    _ha_: helm-ag                              ^^^^_z_: cache current
-  _d_: dir            _hr_: helm-rg
+  _r_: recent file                                               ^^^^_z_: cache current
+  _d_: dir
 
 "
   ("a"   projectile-ag)
-  ("ha"  helm-projectile-ag)
-  ("hr"  helm-projectile-rg)
   ("b"   projectile-switch-to-buffer)
   ("c"   projectile-invalidate-cache)
   ("d"   projectile-find-dir)
@@ -295,72 +293,6 @@ T - tag prefix
   ("b" hydra-ibuffer-main/body "back" :color blue))
 
 (key-chord-define ibuffer-mode-map " h" 'hydra-ibuffer-main/body)
-
-
-
-
-;; ===================================== helm =======================================
-
-(defhydra hydra-helm-menu (:color pink
-                                  :hint nil)
-  "
-^Code^                ^Movement^           ^Search^               ^Misc
-^^^^^^^^---------------------------------------------------------------------------------
-_i_: Imenu-Semantic    _f_: Filesystem     _o_: Occurrences       _k_: Show Kill Ring
-_r_: Regexp            ^ ^                 _h_: Apropos           _SPC_: Show Mark Ring
-_le_: Lisp Eval        ^ ^                 _i_: Imenu-Semantic    _x_: helm-register
-_sws_: Swoop           ^ ^                 _m_: man woman pages   _cp_: Colour picker
-_swm_: Swoop multi     ^ ^                 _lf_: Locate Files     _ca_: Calculator
-_swa_: Swoop all       ^ ^                 _ss_: Ag search        ^ ^
-_swi_: Swoop from Is   ^ ^                 _sp_: Ag Project-root  ^ ^
-_pd_: Python Doc       ^ ^                 ^ ^                    ^ ^
-_j_: jedi:related-names
-
- "
-
-  ("j" helm-jedi-related-names :color blue)
-                                        ;----{Ocurrences}---;
-  ("o" helm-occur :color blue)
-                                        ;{semantic or imenu};
-  ("i" helm-semantic-or-imenu :color blue)
-                                        ;-----{Apropos}-----;
-  ("h" helm-apropos :color blue)
-                                        ;-{browse kill ring};
-  ("k" helm-show-kill-ring :color blue)
-                                        ;-{browse mark ring};
-  ("SPC" helm-mark-ring :color blue)
-                                        ;-----{Regexp }-----;
-  ("r" helm-regexp :color blue)
-                                        ;----{Registers}----;
-  ("x" helm-register :color blue)
-                                        ;---{Colour picker}--;
-  ("cp" helm-colors :color blue)
-                                        ;----{Calculator}---;
-  ("ca" helm-calcul-expression :color blue)
-                                        ;----{man-pages}----;
-  ("m" helm-man-woman :color blue)
-                                        ;----{Find files}---;
-  ("f" helm-find-files :color blue)
-                                        ;---{Locate Files}--;
-  ("lf" helm-locate :color blue)
-                                        ;----{Eval elisp}---;
-  ("le" helm-eval-expression-with-eldoc :color blue)
-                                        ;------{Swoop}------;
-  ("sws" helm-swoop :color blue)
-  ("swm" helm-multi-swoop :color blue)
-  ("swa" helm-multi-swoop-all :color blue)
-  ("swi" helm-swoop-from-isearch :color blue)
-                                        ;{Python documentation};
-  ("pd" helm-pydoc :color blue)
-                                        ;--{Search with Ag}-;
-  ("ss" helm-ag :color blue)
-                                        ;-{Ag project root}-;
-  ("sp" helm-ag-project-root :color blue)
-  ("c" nil "cancel")
-  ("q" quit-window "quit" :color blue))
-
-(key-chord-define global-map "lm" 'hydra-helm-menu/body)
-
 
 ;; ===================================== smerge =======================================
 
