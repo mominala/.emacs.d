@@ -527,7 +527,7 @@
      (use-package mydra
        :after projectile
        :straight
-       (:type nil :local-repo (expand-file-name "~/.emacs.d/modules/mydra")))
+       (:type nil :local-repo "~/.emacs.d/modules/mydra"))
    #+END_SRC
 
    #+RESULTS:
