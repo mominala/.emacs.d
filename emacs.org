@@ -30,7 +30,7 @@
      (add-to-list 'load-path "~/.emacs.d/modules")
      (add-to-list 'load-path "~/.emacs.d/aweshell")
      (add-to-list 'load-path "~/.emacs.d/emacs-application-framework")
-     (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+     ;; (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
      (add-to-list 'load-path "~/.emacs.d/emacs-reveal")
    #+END_SRC
 
@@ -1840,20 +1840,20 @@ tools to handle text files, to test later.
 ** mail
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package mu4e
-       :straight (:host github
-                        :files ("build/mu4e/*.el")
-                        :branch "release/1.8"
-                        :repo "djcb/mu"
-                        :pre-build (("meson" "build")
-                                    ("ninja" "-C" "build")))
-       :custom (mu4e-mu-binary (expand-file-name "build/mu/mu" (straight--repos-dir "mu"))))
+     ;; (use-package mu4e
+     ;;   :straight (:host github
+     ;;                    :files ("build/mu4e/*.el")
+     ;;                    :branch "release/1.8"
+     ;;                    :repo "djcb/mu"
+     ;;                    :pre-build (("meson" "build")
+     ;;                                ("ninja" "-C" "build")))
+     ;;   :custom (mu4e-mu-binary (expand-file-name "build/mu/mu" (straight--repos-dir "mu"))))
 
      (use-package org-mime)
 
-     (use-package mu4me
-       :straight
-       (:type nil :local-repo "/home/malaoui/.emacs.d/modules/mu4me"))
+     ;; (use-package mu4me
+     ;;   :straight
+     ;;   (:type nil :local-repo "/home/malaoui/.emacs.d/modules/mu4me"))
 
      (use-package smtpmail)
    #+END_SRC
@@ -2066,7 +2066,7 @@ tools to handle text files, to test later.
                   :type git
                   :host github
                   :repo "emacs-eaf/emacs-application-framework"
-                  :branch "6d1694a0d1b668bd08edf3ffa273b07a1142a9c8"
+                  ;; :branch "6d1694a0d1b668bd08edf3ffa273b07a1142a9c8"
                   :files ("*.el" "*.py" "core" "app" "*.json")
                   :includes (eaf-pdf-viewer eaf-browser)
                   :pre-build (("python3" "install-eaf.py" "--install" "pdf-viewer" "browser" "--ignore-sys-deps"))

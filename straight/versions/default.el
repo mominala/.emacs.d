@@ -45,7 +45,7 @@
  ("elfeed" . "162d7d545ed41c27967d108c04aa31f5a61c8e16")
  ("elpy" . "ae7919d94659eb26d4146d4c3422c5f4c3610837")
  ("emacs-aio" . "da93523e235529fa97d6f251319d9e1d6fc24a41")
- ("emacs-application-framework" . "6d1694a0d1b668bd08edf3ffa273b07a1142a9c8")
+ ("emacs-application-framework" . "856da622e86b858c033cd524349bfb3f40babdb9")
  ("emacs-async" . "328bca51db1afd6dffd553ff2cbdab2a16b8d7d0")
  ("emacs-ctable" . "48b73742757a3ae5736d825fe49e00034cc453b5")
  ("emacs-deferred" . "2239671d94b38d92e9b28d4e12fd79814cfb9c16")
