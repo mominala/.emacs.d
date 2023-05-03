@@ -1,5 +1,5 @@
 #+title: Emacs config
-* General 
+* General
 ** packages
    #+BEGIN_SRC emacs-lisp :tangle yes
      (straight-use-package 'use-package)
@@ -18,7 +18,7 @@
      (use-package exec-path-from-shell
   
        :config
-       (setq explicit-shell-file-name "/bin/zsh")
+       (setq explicit-shell-file-name "~/.nix-profile/bin/zsh")
        (setq shell-file-name "zsh")
        (exec-path-from-shell-initialize))
 
@@ -29,9 +29,7 @@
      ;; load path
      (add-to-list 'load-path "~/.emacs.d/modules")
      (add-to-list 'load-path "~/.emacs.d/aweshell")
-     (add-to-list 'load-path "~/.emacs.d/emacs-application-framework")
      ;; (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-     (add-to-list 'load-path "~/.emacs.d/emacs-reveal")
    #+END_SRC
 
 ** other params
@@ -529,7 +527,7 @@
      (use-package mydra
        :after projectile
        :straight
-       (:type nil :local-repo "/home/malaoui/.emacs.d/modules/mydra"))
+       (:type nil :local-repo (expand-file-name "~/.emacs.d/modules/mydra")))
    #+END_SRC
 
    #+RESULTS:
@@ -1052,7 +1050,7 @@ line instead."
           (plantuml . t)))
 
        (setq org-plantuml-jar-path
-             (expand-file-name "~/bin/plantuml.jar"))
+             (expand-file-name "~/.nix-profile/lib/plantuml.jar"))
 
        (use-package ob-async
          :config (require 'ob-async))
@@ -1130,9 +1128,9 @@ line instead."
          :after org
          :config
          (require 'ox-reveal)
-         (setq org-reveal-root (expand-file-name "~/work/reveal.js"))
+         (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@4.5.0")
          (setq org-reveal-external-plugins
-               '((RevealTocProgress . "%/plugin/toc-progress/toc-progress.js"))))
+               '((tableofcontents . "https://cdn.jsdelivr.net/npm/reveal.js-tableofcontents@1.0.1"))))
        )
 
      ;;(use-package polymode )
@@ -1362,9 +1360,7 @@ tools to handle text files, to test later.
                     '(company-capf company-files :separate company-yasnippet))
        )
 
-     (setq llvm-root "/usr/lib/llvm-11")
-     (setq my-clangd-executable (expand-file-name "bin/clangd" llvm-root))
-     (setq my-clang-check-executable (expand-file-name "bin/clang-check" llvm-root))
+     (setq my-clangd-executable "clangd")
      (setq my-clang-check-executable "clang-check")
 
      ;; Google style by default
@@ -1413,7 +1409,7 @@ tools to handle text files, to test later.
               ("M-*" . xref-pop-marker-stack)))
        :config
        (add-to-list 'eglot-server-programs
-                    '((c++-mode c-mode) "clangd" "--query-driver=/usr/lib/llvm-11**" "-background-index" "--log=verbose" "--folding-ranges"))
+                    '((c++-mode c-mode) "clangd" "--query-driver=~/.nix-profile/bin/clang**" "-background-index" "--log=verbose" "--folding-ranges"))
        (add-hook 'c-mode-hook 'eglot-ensure)
        (add-hook 'c++-mode-hook 'eglot-ensure))
    #+END_SRC
@@ -1467,7 +1463,7 @@ tools to handle text files, to test later.
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package ess
        :config
-       (setq inferior-julia-program-name "~/julia-1.3.1/bin/julia")
+       (setq inferior-julia-program-name "~/.nix-profile/bin/julia")
        )
    #+END_SRC
 
@@ -1857,7 +1853,7 @@ tools to handle text files, to test later.
 
      ;; (use-package mu4me
      ;;   :straight
-     ;;   (:type nil :local-repo "/home/malaoui/.emacs.d/modules/mu4me"))
+     ;;   (:type nil :local-repo "~/.emacs.d/modules/mu4me"))
 
      (use-package smtpmail)
    #+END_SRC
