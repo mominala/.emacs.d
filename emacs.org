@@ -1538,8 +1538,8 @@ tools to handle text files, to test later.
      ;;   :load-path "~/.emacs.d/aweshell/aweshell.el")
 
      (use-package vterm
-       :config
-       (setq vterm-always-compile-module t))
+       :straight (:post-build (setq vterm-always-compile-module t)
+                              (require 'vterm)))
 
      (use-package shx)
    #+END_SRC
