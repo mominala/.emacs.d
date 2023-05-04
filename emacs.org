@@ -1537,8 +1537,8 @@ tools to handle text files, to test later.
      ;; (use-package aweshell
      ;;   :load-path "~/.emacs.d/aweshell/aweshell.el")
 
-     (setq vterm-always-compile-module t)
-     (use-package vterm)
+     (use-package vterm
+       :straight (:pre-build ("nix-shell" "-p" "libvterm-neovim" "--run" "'" "mkdir" "-p" "build" "&&" "cd" "build"  "&&" "cmake" "-DUSE_SYSTEM_LIBVTERM=yes" ".." "&&" "make" "'" ")))
 
      (use-package shx)
    #+END_SRC
