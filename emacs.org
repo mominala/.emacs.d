@@ -16,13 +16,15 @@
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; load exec path from shell
      (use-package exec-path-from-shell
-  
        :config
-       (setq explicit-shell-file-name "~/.nix-profile/bin/zsh")
+       (setq explicit-shell-file-name (expand-file-name "~/.nix-profile/bin/zsh"))
        (setq shell-file-name "zsh")
        (exec-path-from-shell-initialize))
 
      #+END_SRC
+
+     #+RESULTS:
+     : t
 
 ** load path
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -989,6 +991,12 @@ line instead."
 * Org
 ** general
    #+BEGIN_SRC emacs-lisp :tangle yes
+     (use-package pdf-tools
+       :straight (pdf-tools :pre-build ("./server/autobuild")
+                            :files (:defaults "server/epdfinfo"))
+       :config
+       (pdf-tools-install))
+
      (use-package org
        :init
        (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
@@ -1103,7 +1111,7 @@ line instead."
          ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
          (defun org-noter-set-start-location (&optional arg)
            "When opening a session with this document, go to the current location.
-               With a prefix ARG, remove start location."
+                With a prefix ARG, remove start location."
            (interactive "P")
            (org-noter--with-valid-session
             (let ((inhibit-read-only t)
@@ -1132,8 +1140,8 @@ line instead."
                '((tableofcontents . "https://cdn.jsdelivr.net/npm/reveal.js-tableofcontents@1.0.1"))))
        )
 
-     ;;(use-package polymode )
-     ;;(use-package poly-org )
+      ;;(use-package polymode )
+      ;;(use-package poly-org )
 #+end_src
 ** recoll
 
@@ -1593,16 +1601,12 @@ tools to handle text files, to test later.
 
    #+END_SRC
 
+   #+RESULTS:
+
 ** Latex
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package gscholar-bibtex)
-
-     (use-package pdf-tools
-       :straight (pdf-tools :pre-build ("./server/autobuild")
-                            :files (:defaults "server/epdfinfo"))
-       :config
-       (pdf-tools-install))
 
      (use-package org-ref
        :after org
