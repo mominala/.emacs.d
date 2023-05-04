@@ -1538,7 +1538,7 @@ tools to handle text files, to test later.
      ;;   :load-path "~/.emacs.d/aweshell/aweshell.el")
 
      (use-package vterm
-       :straight (:pre-build ("nix-shell" "-p" "libvterm-neovim" "--run" "'" "mkdir" "-p" "build" "&&" "cd" "build"  "&&" "cmake" "-DUSE_SYSTEM_LIBVTERM=yes" ".." "&&" "make" "'" ")))
+       :straight (:pre-build ("mkdir" "-p" "build" "&&" "cd" "build" "&&" "cmake" "-DUSE_SYSTEM_LIBVTERM=yes" ".." "&&" "make")))
 
      (use-package shx)
    #+END_SRC
