@@ -992,7 +992,7 @@ line instead."
 ** general
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package pdf-tools
-       :straight (pdf-tools :pre-build ("./server/autobuild")
+       :straight (pdf-tools :pre-build ("nix-shell -p gcc gnumake automake autoconf pkgconfig libpng zlib poppler --run ./server/autobuild")
                             :files (:defaults "server/epdfinfo"))
        :config
        (pdf-tools-install))
