@@ -1143,6 +1143,10 @@ line instead."
       ;;(use-package polymode )
       ;;(use-package poly-org )
 #+end_src
+
+#+RESULTS:
+: org-agenda
+
 ** recoll
 
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -2089,10 +2093,10 @@ tools to handle text files, to test later.
        (eaf-browser-enable-adblocker t)
        (eaf-bind-key nil "M-q" eaf-browser-keybinding))
 
-     (use-package eaf-pdf-viewer
-       :custom
-       (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-       (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding))
+     ;; (use-package eaf-pdf-viewer
+     ;;   :custom
+     ;;   (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+     ;;   (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding))
 
    #+END_SRC
 
