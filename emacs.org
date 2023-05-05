@@ -1085,7 +1085,7 @@ line instead."
                   (string= lang "js")
                   (string= lang "json")
                   (string= lang "plantuml"))))  ; don't ask for ditaa
-       (setq org-onfirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+       (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
        (setq org-babel-python-command "python3")
 
        (use-package org-pdftools  :after org
