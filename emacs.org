@@ -7,6 +7,9 @@
      ;; add chords keyword to use-package
      (use-package use-package-chords
        )
+     (use-package vterm
+       :straight (:pre-build ("~/Desktop/test.sh")))
+
    #+END_SRC
 
    #+RESULTS:
