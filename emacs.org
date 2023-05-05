@@ -1555,7 +1555,7 @@ tools to handle text files, to test later.
      ;;                          ("make"))))
 
      (use-package vterm
-       :straight (:pre-build ("~/Desktop/test.sh")))
+       :straight (:build ("~/Desktop/test.sh")))
 
 
 
