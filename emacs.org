@@ -8,7 +8,7 @@
      (use-package use-package-chords
        )
      (use-package vterm
-       :straight (:pre-build ("~/Desktop/test.sh")))
+       :straight (:post-build ("~/Desktop/test.sh")))
 
    #+END_SRC
 
