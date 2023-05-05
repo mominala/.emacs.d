@@ -1544,20 +1544,8 @@ tools to handle text files, to test later.
      ;; (use-package aweshell
      ;;   :load-path "~/.emacs.d/aweshell/aweshell.el")
 
-     ;; (use-package vterm
-     ;;   :straight (:pre-build (("mkdir" "-p" "build")
-     ;;                          ("cd" "build")
-     ;;                          ("cmake"
-     ;;                           "-DUSE_SYSTEM_LIBVTERM\=yes"
-     ;;                           "-DLIBVTERM_INCLUDE_DIR\=\~/.nix-profile/include"
-     ;;                           "-DLIBVTERM_LIBRARY\=\~/.nix-profile/lib/libvterm.so"
-     ;;                           "..")
-     ;;                          ("make"))))
-
      (use-package vterm
        :straight (:post-build ("~/.emacs.d/scripts/build_vterm.sh")))
-
-
 
 
      (use-package shx)
@@ -2087,27 +2075,27 @@ tools to handle text files, to test later.
 ** eaf
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package eaf
-       :straight (eaf
-                  :type git
-                  :host github
-                  :repo "emacs-eaf/emacs-application-framework"
-                  ;; :branch "6d1694a0d1b668bd08edf3ffa273b07a1142a9c8"
-                  :files ("*.el" "*.py" "core" "app" "*.json")
-                  :includes (eaf-pdf-viewer eaf-browser)
-                  :pre-build (("python3" "install-eaf.py" "--install" "pdf-viewer" "browser" "--ignore-sys-deps"))
-                  )
-       :init
-       (use-package epc :defer t)
-       (use-package ctable :defer t)
-       (use-package deferred :defer t)
-       (use-package s :defer t))
+     ;; (use-package eaf
+     ;;   :straight (eaf
+     ;;              :type git
+     ;;              :host github
+     ;;              :repo "emacs-eaf/emacs-application-framework"
+     ;;              ;; :branch "6d1694a0d1b668bd08edf3ffa273b07a1142a9c8"
+     ;;              :files ("*.el" "*.py" "core" "app" "*.json")
+     ;;              :includes (eaf-pdf-viewer eaf-browser)
+     ;;              :pre-build (("python3" "install-eaf.py" "--install" "pdf-viewer" "browser" "--ignore-sys-deps"))
+     ;;              )
+     ;;   :init
+     ;;   (use-package epc :defer t)
+     ;;   (use-package ctable :defer t)
+     ;;   (use-package deferred :defer t)
+     ;;   (use-package s :defer t))
 
-     (use-package eaf-browser
-       :custom
-       (eaf-browser-continue-where-left-off t)
-       (eaf-browser-enable-adblocker t)
-       (eaf-bind-key nil "M-q" eaf-browser-keybinding))
+     ;; (use-package eaf-browser
+     ;;   :custom
+     ;;   (eaf-browser-continue-where-left-off t)
+     ;;   (eaf-browser-enable-adblocker t)
+     ;;   (eaf-bind-key nil "M-q" eaf-browser-keybinding))
 
      ;; (use-package eaf-pdf-viewer
      ;;   :custom
