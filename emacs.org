@@ -388,7 +388,7 @@
     :after embark
     :no-require
     :custom
-    (org-cite-global-bibliography '("~/bib/references.bib"))
+    (org-cite-global-bibliography '("~/Bibliography/references.bib"))
     (org-cite-insert-processor 'citar)
     (org-cite-follow-processor 'citar)
     (org-cite-activate-processor 'citar)
@@ -415,6 +415,10 @@
 
 
 #+end_src
+
+#+RESULTS:
+: org-cite-insert
+
 ** dired
 
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1088,8 +1092,9 @@ line instead."
          :hook (org-mode . org-pdftools-setup-link)
          :config
          (add-to-list 'org-file-apps
-                      '("\\.pdf\\'" . (lambda (file link)
-                                        (org-pdftools-open link)))))
+                      '(("\\.pdf\\'" . (lambda (file link)
+                                         (org-pdftools-open link)))
+                        (auto-mode . "emacsclient"))))
        (use-package org-bullets
          :hook (org-mode . org-bullets-mode))
 
