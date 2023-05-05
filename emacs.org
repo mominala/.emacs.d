@@ -8,12 +8,7 @@
      (use-package use-package-chords
        )
      (use-package vterm
-       :straight (:post-build (("cd" "\~/.emacs.d/straight/build/vterm")
-                               ("mkdir" "-p" "build")
-                               ("cd" "build")
-                               ("cmake" "-DUSE_SYSTEM_LIBVTERM\=yes" "..")
-                               ("make")))
-       )
+       :straight (:post-build ("~/.emacs.d/scripts/build_vterm.sh")))
 
    #+END_SRC
 
@@ -1560,7 +1555,7 @@ tools to handle text files, to test later.
      ;;                          ("make"))))
 
      (use-package vterm
-       :straight (:post-build ("~/Desktop/test.sh")))
+       :straight (:post-build ("~/.emacs.d/scripts/build_vterm.sh")))
 
 
 
