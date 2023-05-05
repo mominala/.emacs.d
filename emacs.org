@@ -1422,7 +1422,6 @@ tools to handle text files, to test later.
               ("M-." . xref-find-definitions)
               ("M-*" . xref-pop-marker-stack)))
        :config
-       (load "project")
        (add-to-list 'eglot-server-programs
                     '((c++-mode c-mode) "clangd" "--query-driver=~/.nix-profile/bin/clang**" "-background-index" "--log=verbose" "--folding-ranges"))
        (add-hook 'c-mode-hook 'eglot-ensure)
