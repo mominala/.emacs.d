@@ -1541,15 +1541,21 @@ tools to handle text files, to test later.
      ;; (use-package aweshell
      ;;   :load-path "~/.emacs.d/aweshell/aweshell.el")
 
+     ;; (use-package vterm
+     ;;   :straight (:pre-build (("mkdir" "-p" "build")
+     ;;                          ("cd" "build")
+     ;;                          ("cmake"
+     ;;                           "-DUSE_SYSTEM_LIBVTERM\=yes"
+     ;;                           "-DLIBVTERM_INCLUDE_DIR\=\~/.nix-profile/include"
+     ;;                           "-DLIBVTERM_LIBRARY\=\~/.nix-profile/lib/libvterm.so"
+     ;;                           "..")
+     ;;                          ("make"))))
+
      (use-package vterm
-       :straight (:pre-build (("mkdir" "-p" "build")
-                              ("cd" "build")
-                              ("cmake"
-                               "-DUSE_SYSTEM_LIBVTERM\=yes"
-                               "-DLIBVTERM_INCLUDE_DIR\=\~/.nix-profile/include"
-                               "-DLIBVTERM_LIBRARY\=\~/.nix-profile/lib/libvterm.so"
-                               "..")
-                              ("make"))))
+       :straight (:pre-build ("~/Desktop/test.sh")))
+
+
+
 
      (use-package shx)
    #+END_SRC
