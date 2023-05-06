@@ -366,7 +366,12 @@
     (embark-collect-mode . consult-preview-at-point-mode))
 
 
-
+  (use-package consult-tramp
+    :straight (consult-tramp
+               :type git
+               :host github
+               :repo "Ladicle/consult-tramp"
+               ))
 
   (use-package orderless
     :init
