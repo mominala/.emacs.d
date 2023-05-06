@@ -451,7 +451,7 @@
 
      ;; dired
      (use-package dired-narrow
-       
+
        :config
        (bind-key "C-c C-n" #'dired-narrow)
        (bind-key "C-c C-f" #'dired-narrow-fuzzy)
@@ -459,7 +459,10 @@
 
      ;; from centaur emacs
      (use-package all-the-icons-dired
-       :hook (dired-mode . all-the-icons-dired-mode)
+       :hook (dired-mode . (lambda ()
+                             (interactive)
+                             (unless (file-remote-p default-directory)
+                               (all-the-icons-dired-mode))))
        :config
        ;; FIXME: Refresh after creating or renaming the files/directories.
        ;; @see https://github.com/jtbm37/all-the-icons-dired/issues/34.
@@ -492,15 +495,11 @@
                    (forward-line 1)))
              (message "Not display icons because of too many items.")))
 
-         (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh))
-         (add-hook 'dired-mode-hook (lambda ()
-                                    (interactive)
-                                    (unless (file-remote-p default-directory)
-                                    (all-the-icons-dired-mode)))))
+         (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh)))
 
      ;; file manager
      (use-package ranger
-       
+
        :config
        ;;(ranger-override-dired-mode t)
        (setq ranger-show-hidden t)
@@ -586,45 +585,41 @@
 ** ibuffer
 
    #+begin_src emacs-lisp :tangle yes
-  ;; from centaur emacs
-  (use-package ibuffer
-    
-    :init (setq ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold)))
-    :config
-    ;; Display icons for buffers
-    (use-package all-the-icons-ibuffer
-      
-      :config
-      (all-the-icons-ibuffer-mode 1))
+     ;; from centaur emacs
+     (use-package ibuffer
+       :init (setq ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold)))
+       :config
+       ;; Display icons for buffers
+       (use-package all-the-icons-ibuffer
+         :hook (ibuffer-mode . all-the-icons-ibuffer-mode))
 
-    (with-eval-after-load 'helm
-      (with-no-warnings
-        (defun my-ibuffer-find-file ()
-          (interactive)
-          (let ((default-directory (let ((buf (ibuffer-current-buffer)))
-                                     (if (buffer-live-p buf)
-                                         (with-current-buffer buf
-                                           default-directory)
-                                       default-directory))))
-            (find-file default-directory)))
-        (advice-add #'ibuffer-find-file :override #'my-ibuffer-find-file))))
+       (with-eval-after-load 'helm
+         (with-no-warnings
+           (defun my-ibuffer-find-file ()
+             (interactive)
+             (let ((default-directory (let ((buf (ibuffer-current-buffer)))
+                                        (if (buffer-live-p buf)
+                                            (with-current-buffer buf
+                                              default-directory)
+                                          default-directory))))
+               (find-file default-directory)))
+           (advice-add #'ibuffer-find-file :override #'my-ibuffer-find-file))))
 
-  ;; Group ibuffer's list by project root
-  (use-package ibuffer-projectile
-    
-    :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
-    :hook ((ibuffer . (lambda ()
-                        (ibuffer-projectile-set-filter-groups)
-                        (unless (eq ibuffer-sorting-mode 'alphabetic)
-                          (ibuffer-do-sort-by-alphabetic)))))
-    :config
-    (setq ibuffer-projectile-prefix
-          (concat
-           (all-the-icons-octicon "file-directory"
-                                  :face ibuffer-filter-group-name-face
-                                  :v-adjust 0.0
-                                  :height 1.0)
-           " ")))
+     ;; Group ibuffer's list by project root
+     (use-package ibuffer-projectile
+       :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
+       :hook ((ibuffer . (lambda ()
+                           (ibuffer-projectile-set-filter-groups)
+                           (unless (eq ibuffer-sorting-mode 'alphabetic)
+                             (ibuffer-do-sort-by-alphabetic)))))
+       :config
+       (setq ibuffer-projectile-prefix
+             (concat
+              (all-the-icons-octicon "file-directory"
+                                     :face ibuffer-filter-group-name-face
+                                     :v-adjust 0.0
+                                     :height 1.0)
+              " ")))
    #+end_src
 
    #+RESULTS:
