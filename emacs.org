@@ -65,7 +65,9 @@
       delete-old-versions t
       kept-new-versions 6
       kept-old-versions 2
-      version-control t)       ; use versioned backups
+      version-control t
+      bookmark-file "~/emacs/bookmarks"
+      )       ; use versioned backups
    #+END_SRC
 
    #+RESULTS:
@@ -994,6 +996,10 @@ line instead."
      (use-package multiple-cursors)
 
      (use-package google-this)
+
+     (use-package wgrep
+       :config
+       (require 'wgrep))
    #+END_SRC
 * Org
 ** general
@@ -1018,6 +1024,7 @@ line instead."
        (setq org-fast-tag-selection-single-key t)
        (setq org-use-fast-todo-selection t)
        (setq org-startup-truncated nil)
+       (setq org-highlight-latex-and-related '(native))
        (setq org-todo-keywords
              '(
                (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
