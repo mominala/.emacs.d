@@ -540,7 +540,7 @@
 
 
      (use-package mydra
-       :after projectile
+       ;; :after projectile
        :straight
        (:type nil :local-repo "~/.emacs.d/modules/mydra"))
    #+END_SRC
@@ -613,26 +613,27 @@
            (advice-add #'ibuffer-find-file :override #'my-ibuffer-find-file))))
 
      ;; Group ibuffer's list by project root
-     (use-package ibuffer-projectile
+     (use-package ibuffer-project
        :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
        :hook ((ibuffer . (lambda ()
-                           (ibuffer-projectile-set-filter-groups)
-                           (unless (eq ibuffer-sorting-mode 'alphabetic)
-                             (ibuffer-do-sort-by-alphabetic)))))
+                           (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups))
+                           (unless (eq ibuffer-sorting-mode 'project-file-relative)
+                             (ibuffer-do-sort-by-project-file-relative)))))
        :config
-       (setq ibuffer-projectile-prefix
-             (concat
-              (all-the-icons-octicon "file-directory"
-                                     :face ibuffer-filter-group-name-face
-                                     :v-adjust 0.0
-                                     :height 1.0)
-              " ")))
+       (setq ibuffer-project-use-cache t)
+       ;; (setq ibuffer-projectile-prefix
+       ;;       (concat
+       ;;        (all-the-icons-octicon "file-directory"
+       ;;                               :face ibuffer-filter-group-name-face
+       ;;                               :v-adjust 0.0
+       ;;                               :height 1.0)
+       ;;        " "))
+       )
    #+end_src
 
    #+RESULTS:
-   | lambda | nil | (ibuffer-projectile-set-filter-groups) | (unless (eq ibuffer-sorting-mode (quote alphabetic)) (ibuffer-do-sort-by-alphabetic)) |
-   | lambda | nil | (ibuffer-projectile-set-filter-groups) | (if (eq ibuffer-sorting-mode (quote alphabetic)) nil (ibuffer-do-sort-by-alphabetic)) |
-   |        |     |                                        |                                                                                       |
+   | lambda | nil | (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups)) | (unless (eq ibuffer-sorting-mode 'project-file-relative) (ibuffer-do-sort-by-project-file-relative)) |
+   | lambda | nil | (ibuffer-projectile-set-filter-groups)                                | (if (eq ibuffer-sorting-mode 'alphabetic) nil (ibuffer-do-sort-by-alphabetic))                       |
 * Theme
 
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1718,13 +1719,13 @@ tools to handle text files, to test later.
      ;; projects
 
      ;; Package: projejctile
-     (use-package projectile
-       :bind-keymap
-       ("C-c p" . projectile-command-map)
-       :config
-       (projectile-mode)
-       (setq projectile-indexing-method 'alien)
-       (setq projectile-enable-caching t))
+     ;; (use-package projectile
+     ;;   :bind-keymap
+     ;;   ("C-c p" . projectile-command-map)
+     ;;   :config
+     ;;   (projectile-mode)
+     ;;   (setq projectile-indexing-method 'alien)
+     ;;   (setq projectile-enable-caching t))
 
    #+END_SRC
 
