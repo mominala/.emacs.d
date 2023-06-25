@@ -142,7 +142,7 @@
  ("smartparens" . "1d5cd5e8d46e182b935f8cd3cf29c8c4410aab0a")
  ("spacemacs-theme" . "1ec73d68b0f120f92538d9a329a3a46e32f74510")
  ("sphinx-doc.el" . "1eda612a44ef027e5229895daa77db99a21b8801")
- ("straight.el" . "3eca39dfc6797243ec7d1c6a7d45142407f73f88")
+ ("straight.el" . "039e5c9a9b5c00749602afb41341e9e77ba09429")
  ("string-inflection" . "50ad54970b3cc79b6b83979bde9889ad9a9e1a9c")
  ("styleguide" . "e065b55718436e83e36220381a2a8e80720c2ce3")
  ("tablist" . "faab7a035ef2258cc4ea2182f67e3aedab7e2af9")

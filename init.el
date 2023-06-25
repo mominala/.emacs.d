@@ -1,6 +1,6 @@
 (setq straight-use-package-by-default t)
 (setq straight-recipes-gnu-elpa-use-mirror t)
-(setq straight-repository-branch "develop")
+
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
