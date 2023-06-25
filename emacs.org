@@ -1186,7 +1186,7 @@ line instead."
 tools to handle text files, to test later.
 ** deft
 #+begin_src emacs-lisp :tangle yes
-  (use-package deft 
+  (use-package deft
     :config
     (setq deft-extensions '("txt" "org" "tex"))
     (setq deft-directory "~/org")
