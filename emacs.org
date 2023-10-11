@@ -1816,6 +1816,13 @@ tools to handle text files, to test later.
    #+end_src
 
    #+RESULTS:
+** misc
+#+begin_src emacs-lisp :tangle yes
+  (use-package just-mode)
+  (use-package sql-indent)
+  (use-package mermaid-mode)
+  (use-package plantuml-mode)
+#+end_src
 * Web
 ** markdown
    #+BEGIN_SRC emacs-lisp :tangle yes
