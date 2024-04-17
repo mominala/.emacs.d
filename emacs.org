@@ -1006,7 +1006,7 @@ line instead."
 ** general
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package pdf-tools
-       :straight (pdf-tools :pre-build ("nix-shell" "-p" "gcc" "gnumake" "automake" "autoconf" "pkgconfig" "libpng" "zlib" "poppler" "--run" "./server/autobuild")
+       :straight (pdf-tools :pre-build ("nix-shell" "-p" "gcc" "gnumake" "automake" "autoconf" "pkg-config" "libpng" "zlib" "poppler" "--run" "./server/autobuild")
                             :files (:defaults "server/epdfinfo"))
        :config
        (pdf-tools-install))
@@ -1697,6 +1697,7 @@ tools to handle text files, to test later.
              TeX-source-correlate-start-server t)
 
        (setq texfrag-global-mode 1)
+       (setq LaTeX-command "latex --synctex=1")
 
        (add-hook 'TeX-mode-hook 'my-latex-mode-setup)
 
