@@ -931,7 +931,7 @@
 
      ;; clipboard
      (setq select-enable-clipboard t)
-     (setq select-enable-primary t)
+     ;; (setq select-enable-primary t)
      (setq save-interprogram-paste-before-kill t)
      (setq interprogram-paste-function 'gui-selection-value)
 
