@@ -930,9 +930,10 @@
 
 
      ;; clipboard
-     (setq x-select-enable-clipboard t)
-     (setq interprogram-paste-function 'x-get-selection-value)
-
+     (setq select-enable-clipboard t)
+     (setq select-enable-primary t)
+     (setq save-interprogram-paste-before-kill t)
+     (setq interprogram-paste-function 'gui-selection-value)
 
      ;; show unncessary whitespace that can mess up your diff
      (add-hook 'prog-mode-hook
@@ -1069,7 +1070,8 @@ line instead."
           (shell . t)
           (restclient . t)
           (http . t)
-          (plantuml . t)))
+          (plantuml . t)
+          (mermaid . t)))
 
        (setq org-plantuml-jar-path
              (expand-file-name "~/.nix-profile/lib/plantuml.jar"))
@@ -1210,7 +1212,7 @@ tools to handle text files, to test later.
      (use-package company
 
        :preface
-       (use-package company-tabnine)
+       ;; (use-package company-tabnine)
        :config
        (global-company-mode 1)
        (setq company-show-numbers t)
@@ -1221,8 +1223,9 @@ tools to handle text files, to test later.
                                  company-dabbrev
                                  company-keywords
                                  company-yasnippet
-                                 :separate
-                                 company-tabnine)))
+                                 ;; :separate
+                                 ;; company-tabnine
+                                 )))
        (setq company-format-margin-function #'company-vscode-dark-icons-margin))
 
 
