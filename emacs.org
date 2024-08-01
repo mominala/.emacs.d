@@ -1060,7 +1060,7 @@ line instead."
        (use-package ob-ipython
          :after org)
        (use-package ob-mermaid
-         :after org)
+         :ensure t)
        (use-package ob-restclient
          :ensure t)
        (use-package ob-http
