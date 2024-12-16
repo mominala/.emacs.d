@@ -26,7 +26,8 @@
 
            (";x" . shell)
 
-           (";r" . recompile)))
+           (";r" . recompile)
+           ("lm" . copilot-complete)))
   (key-chord-define-global (car binding) (cdr binding)))
 
 ;; ================================== hideshow ============================================

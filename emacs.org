@@ -7,9 +7,6 @@
      ;; add chords keyword to use-package
      (use-package use-package-chords
        )
-     (use-package vterm
-       :straight (:post-build ("~/.emacs.d/scripts/build_vterm.sh")))
-
    #+END_SRC
 
    #+RESULTS:
@@ -375,6 +372,13 @@
                :repo "Ladicle/consult-tramp"
                ))
 
+  (use-package consult-dir
+    :ensure t
+    :bind (("C-x C-d" . consult-dir)
+           :map minibuffer-local-completion-map
+           ("C-x C-d" . consult-dir)
+           ("C-x C-j" . consult-dir-jump-file)))
+
   (use-package orderless
     :init
     ;; Configure a custom style dispatcher (see the Consult wiki)
@@ -721,7 +725,11 @@
       (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
       )
 
-
+    ;; (use-package indent-bars
+    ;;   :straight (indent-bars :type git :host github :repo "jdtsmith/indent-bars")
+    ;;   :custom
+    ;;   (indent-bars-no-descend-lists t) ; no extra bars in continued func arg lists
+    ;;   :hook ((prog-mode) . indent-bars-mode))
   #+END_SRC
 
 * Editing
@@ -763,10 +771,18 @@
      (use-package aggressive-indent
        :config
        (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode))
+
+     (use-package sudo-edit
+       :after embark
+       :bind
+       (:map embark-file-map
+             ("s" . sudo-edit-find-file))
+       (:map embark-become-file+buffer-map
+             ("s" . sudo-edit-find-file)))
    #+END_SRC
 
    #+RESULTS:
-   : t
+   : sudo-edit-find-file
 
 ** useful keybindings
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -900,15 +916,18 @@
 ** evil
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; evil mode, but emacs is the default
-     (use-package evil       
+     (use-package evil
        :config
        (setq evil-default-state 'emacs
              evil-disable-insert-state-bindings t
+             evil-undo-system 'undo-tree
              evil-toggle-key "C-M-v")
        (evil-mode))
 
      (use-package evil-tutor)
    #+END_SRC
+
+   #+RESULTS:
 
 ** movement and selection
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -983,6 +1002,15 @@ line instead."
 ** writing
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package darkroom)
+
+     (use-package olivetti
+       :ensure t
+       :commands (olivetti-mode)
+       :config
+       (setq olivetti-body-width 0.7)
+       (setq olivetti-minimum-body-width 80)
+       (setq olivetti-recall-visual-line-mode-entry-state t))
+
    #+END_SRC
 
    #+RESULTS:
@@ -1057,6 +1085,7 @@ line instead."
                                      ("p" "Protocol" entry (file+headline ,(concat org-directory "/notes.org") "Inbox")
                                       "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
                                      ))
+       (plist-put org-format-latex-options :scale 1.35)
        (use-package ob-ipython
          :after org)
        (use-package ob-restclient
@@ -1153,13 +1182,23 @@ line instead."
          :after org
          :config
          (require 'ox-reveal)
-         (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/")
+         (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@4.5.0")
+         (setq org-reveal-reveal-js-version 4)
          (setq org-reveal-external-plugins
-               '((tableofcontents . "https://cdn.jsdelivr.net/npm/reveal.js-tableofcontents@1.0.1/"))))
+               '((tableofcontents . "https://cdn.jsdelivr.net/npm/reveal.js-tableofcontents@1.0.1"))))
+       (use-package org-appear
+         :straight (org-appear :type git :host github :repo "awth13/org-appear")
+         :config
+         (setq org-appear-autolinks t)
+         (add-hook 'org-mode-hook 'org-appear-mode))
+
+       (use-package org-fragtog
+         :config
+         (add-hook 'org-mode-hook 'org-fragtog-mode))
        )
 
-      ;;(use-package polymode )
-      ;;(use-package poly-org )
+     ;;(use-package polymode )
+     ;;(use-package poly-org )
 #+end_src
 
 #+RESULTS:
@@ -1192,7 +1231,9 @@ tools to handle text files, to test later.
     :config
     (setq deft-extensions '("txt" "org" "tex"))
     (setq deft-directory "~/org")
-    (setq deft-recursive t))
+    (setq deft-recursive t)
+    (setq deft-file-limit 20)
+    )
 #+end_src
 
 #+RESULTS:
@@ -1438,18 +1479,30 @@ tools to handle text files, to test later.
               ("M-." . xref-find-definitions)
               ("M-*" . xref-pop-marker-stack)))
        :config
+       (setq eglot-ignored-server-capabilities '(:inlayHintProvider))
        (add-to-list 'eglot-server-programs
                     '((c++-mode c-mode) "clangd" "--query-driver=~/.nix-profile/bin/clang**" "-background-index" "--log=verbose" "--folding-ranges"))
        (add-hook 'c-mode-hook 'eglot-ensure)
        (add-hook 'c++-mode-hook 'eglot-ensure))
+
+
+     (use-package eglot-booster
+       :straight (eglot-booster :type git :host github :repo "jdtsmith/eglot-booster")
+       :after eglot
+       :config
+       (eglot-booster-mode))
+
    #+END_SRC
 
    #+RESULTS:
-   : t
+   : xref-pop-marker-stack
 
    #+BEGIN_SRC emacs-lisp :tangle yes
      (use-package cmake-mode)
-     (use-package clang-format)
+     (use-package clang-format
+       :config
+       (setq clang-format-executable (expand-file-name "~/.nix-profile/bin/clang-format"))
+       )
    #+END_SRC
 
 ** haskell
@@ -1563,6 +1616,17 @@ tools to handle text files, to test later.
      (use-package vterm
        :straight (:post-build ("~/.emacs.d/scripts/build_vterm.sh")))
 
+
+     (use-package eat
+       :straight
+       '(eat :type git
+             :host codeberg
+             :repo "akib/emacs-eat"
+             :files ("*.el" ("term" "term/*.el") "*.texi"
+                     "*.ti" ("terminfo/e" "terminfo/e/*")
+                     ("terminfo/65" "terminfo/65/*")
+                     ("integration" "integration/*")
+                     (:exclude ".dir-locals.el" "*-tests.el"))))
 
      (use-package shx)
    #+END_SRC
@@ -1823,6 +1887,10 @@ tools to handle text files, to test later.
        (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
        :hook
        (nix-mode . eglot-ensure))
+     (use-package direnv
+       :config
+       (direnv-mode)
+       )
    #+end_src
 
    #+RESULTS:
@@ -2141,4 +2209,57 @@ tools to handle text files, to test later.
      ;; (server-start)
    #+END_SRC
 
-   
+* AI
+
+# explore aider, elisa, elisyum, chatgpt shell
+#+begin_src emacs-lisp :tangle yes
+  (use-package gptel
+    :defer t
+    :config
+    ;; Github Models offers an OpenAI compatible API
+    ;; OPTIONAL configuration
+    (load (expand-file-name "~/work/.emacs.d/secrets.el.gpg"))
+    (setq gptel-model  'gpt-4o
+          gptel-backend
+          (gptel-make-openai "Github Models" ;Any name you want
+            :host "models.inference.ai.azure.com"
+            :endpoint "/chat/completions"
+            :stream t
+            :key github-key
+            :models '(Mistral-Nemo gpt-4o)))
+    (add-hook 'gptel-post-stream-hook 'gptel-auto-scroll)
+    (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
+    (setq gptel-default-mode 'org-mode)
+    )
+
+#+end_src
+
+#+RESULTS:
+: t
+
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package copilot
+    :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+    :ensure t
+    :bind
+    (:map copilot-completion-map :package copilot ("<tab>" . #'copilot-accept-completion))
+    )
+
+  ;; install shell-maker from github
+  (use-package shell-maker
+    :straight (:host github :repo "xenodium/shell-maker" :files ("*.el")))
+
+  (use-package copilot-chat
+    :straight (:host github :repo "chep/copilot-chat.el" :files ("*.el"))
+    :after (request shell-maker)
+    :custom
+    (copilot-chat-frontend 'org)
+    :config)
+
+#+end_src
+
+#+RESULTS:
+
+
+
