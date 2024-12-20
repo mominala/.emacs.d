@@ -386,6 +386,7 @@
     ;;       orderless-component-separator #'orderless-escapable-split-on-space)
     (setq completion-styles '(orderless basic)
           completion-category-defaults nil
+          orderless-component-separator "[ #]"
           completion-category-overrides '((file (styles partial-completion)))))
 
 
@@ -1099,7 +1100,8 @@ line instead."
           (shell . t)
           (restclient . t)
           (http . t)
-          (plantuml . t)))
+          (plantuml . t)
+          (jupyter . t)))
 
        (setq org-plantuml-jar-path
              (expand-file-name "~/.nix-profile/lib/plantuml.jar"))
@@ -1283,7 +1285,7 @@ tools to handle text files, to test later.
      ;;   :hook (company-mode . company-box-mode)
      ;;   :init (setq company-box-enable-icon t
      ;;               company-box-backends-colors nil
-     ;;               company-box-doc-enable nil)
+     ;;               company-box-doc-enable t)
      ;;   :config
      ;;   (with-no-warnings
      ;;     ;; Prettify icons
@@ -1343,10 +1345,11 @@ tools to handle text files, to test later.
      ;;   :hook (global-company-mode . company-quickhelp-mode)
      ;;   :init (setq company-quickhelp-delay 0.5))
 
+
    #+END_SRC
 
    #+RESULTS:
-   | company-box-mode | company-mode-set-explicitly |
+   : t
 ** semantic
    #+begin_src emacs-lisp :tangle yes
   (use-package emacs
@@ -1396,7 +1399,8 @@ tools to handle text files, to test later.
        :config
        (custom-set-variables
         '(elpy-rpc-python-command "python3")
-        '(python-shell-interpreter "python3")
+        '(python-shell-interpreter "ipython3")
+        '(pythoh-shell-interpreter-args "--simple-prompt --classic")
         '(python-shell-completion-native-enable nil))
        (elpy-enable)
        ;; sphinx doc
@@ -1419,10 +1423,27 @@ tools to handle text files, to test later.
 
 
      (use-package ein)
+
+     ;; (use-package eglot
+     ;;   :ensure t
+     ;;   :commands eglot
+     ;;   :config
+     ;;   (add-to-list 'eglot-server-programs
+     ;;                `(python-mode
+     ;;                  . ,(eglot-alternatives '("pylsp"
+     ;;                                           "jedi-language-server"
+     ;;                                           ("basedpyright-langserver" "--stdio")))))
+     ;;   (setq eglot-autoshutdown t))
+
+     ;; see how to automatically convert ipython notebook to org file back and forth
+     (use-package code-cells
+       :config
+       (add-hook 'python-mode-hook 'code-cells-mode-maybe))
+
+     (use-package jupyter)
    #+END_SRC
 
    #+RESULTS:
-   : t
 
 ** cpp
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1519,24 +1540,24 @@ tools to handle text files, to test later.
 
 ** lisp
    #+BEGIN_SRC emacs-lisp :tangle yes
-     ;; (use-package slime
-     ;;   :config
-     ;;   (load (expand-file-name "~/quicklisp/slime-helper.el"))
-     ;;   (setq inferior-lisp-program "/usr/bin/sbcl")
-     ;;   (setq slime-contribs '(slime-fancy slime-company))
-     ;;   (slime-setup '(slime-company slime-fancy)))
+     (use-package slime
+       :config
+       (load (expand-file-name "~/quicklisp/slime-helper.el"))
+       (setq inferior-lisp-program "sbcl")
+       (setq slime-contribs '(slime-fancy slime-company))
+       (slime-setup '(slime-company slime-fancy)))
 
-     ;; (use-package slime-company
-     ;;   :after (slime company)
-     ;;   :hook (slime-editing-mode-hook
-     ;;          . (lambda ()
-     ;;              (set (make-local-variable 'company-backends)
-     ;;                   '((company-slime company-dabbrev-code company-semantic)))))
-     ;;   :config
-     ;;   (setq slime-company-completion 'fuzzy
-     ;;         slime-company-after-completion 'slime-company-just-one-space))
+     (use-package slime-company
+       :after (slime company)
+       :hook (slime-editing-mode-hook
+              . (lambda ()
+                  (set (make-local-variable 'company-backends)
+                       '((company-slime company-dabbrev-code company-semantic)))))
+       :config
+       (setq slime-company-completion 'fuzzy
+             slime-company-after-completion 'slime-company-just-one-space))
 
-     ;; (use-package srefactor)
+     (use-package srefactor)
    #+END_SRC
 
    #+RESULTS:
@@ -1629,9 +1650,29 @@ tools to handle text files, to test later.
                      (:exclude ".dir-locals.el" "*-tests.el"))))
 
      (use-package shx)
+
+
+     (use-package mathjax
+       :straight
+       '(mathjax :type git
+                 :host github
+                 :repo "astoff/mathjax.el"
+                 :files ("*" (:exclude ".git"))))
+
+
+     (use-package comint-mime
+       :straight
+       '(comint-mime :type git
+                     :host github
+                     :repo "astoff/comint-mime"
+                     :files ("*" (:exclude ".git")))
+       :config
+       (add-hook 'shell-mode-hook 'comint-mime-setup)
+       (add-hook 'inferior-python-mode-hook 'comint-mime-setup))
    #+END_SRC
 
    #+RESULTS:
+   : t
 
 ** docker
 
@@ -2171,7 +2212,6 @@ tools to handle text files, to test later.
    : t
 
 ** eaf
-
    #+BEGIN_SRC emacs-lisp :tangle yes
      ;; (use-package eaf
      ;;   :straight (eaf
@@ -2208,6 +2248,31 @@ tools to handle text files, to test later.
      ;; (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
      ;; (server-start)
    #+END_SRC
+
+** xwidget
+#+begin_src emacs-lisp :tangle yes
+  (use-package xwwp
+    :straight
+    (xwwp :type git :host github :repo "kchanqvq/xwwp" :files ("*.el") )
+    :bind (:map xwidget-webkit-mode-map
+                ("v" . xwwp-follow-link)
+                ("f" . xwwp-ace-toggle)))
+
+
+
+  (use-package markdown-xwidget
+    :after markdown-mode
+    :straight (markdown-xwidget
+               :type git
+               :host github
+               :repo "cfclrk/markdown-xwidget"
+               :files (:defaults "resources"))
+    :bind (:map markdown-mode-command-map
+                ("x" . markdown-xwidget-preview-mode)))
+#+end_src
+
+#+RESULTS:
+: markdown-xwidget-preview-mode
 
 * AI
 
@@ -2261,5 +2326,4 @@ tools to handle text files, to test later.
 
 #+RESULTS:
 
-
-
+# tree sitter grammar using nix, ts docstr, television, tmux interaction
