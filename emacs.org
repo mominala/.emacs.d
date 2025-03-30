@@ -1037,171 +1037,176 @@ line instead."
 * Org
 ** general
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package pdf-tools
-       :straight (pdf-tools :pre-build ("nix-shell" "-p" "gcc" "gnumake" "automake" "autoconf" "pkg-config" "libpng" "zlib" "poppler" "--run" "./server/autobuild")
-                            :files (:defaults "server/epdfinfo"))
-       :config
-       (pdf-tools-install))
+       (use-package pdf-tools
+         :straight (pdf-tools :pre-build ("nix-shell" "-p" "gcc" "gnumake" "automake" "autoconf" "pkg-config" "libpng" "zlib" "poppler" "--run" "./server/autobuild")
+                              :files (:defaults "server/epdfinfo"))
+         :config
+         (pdf-tools-install))
 
-     (use-package org
-       :init
-       (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-       (setq org-directory (expand-file-name "~/org"))
-       (setq org-default-notes-file (expand-file-name "~/org/general.org"))
-       :bind (("C-c o" . (lambda () (interactive) (find-file "~/org/general.org")))
-              ("C-c l" . org-store-link)
-              ("C-c a" . org-agenda))
-       :config
-       (require 'org-protocol)
-       (setq org-log-done t)
-       (setq org-fast-tag-selection-single-key t)
-       (setq org-use-fast-todo-selection t)
-       (setq org-startup-truncated nil)
-       (setq org-highlight-latex-and-related '(native))
-       (setq org-todo-keywords
-             '(
-               (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
-               (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-               ))
-       (setq org-todo-keyword-faces
-             '(("IDEA" . (:foreground "GoldenRod" :weight bold))
-               ("NEXT" . (:foreground "IndianRed1" :weight bold))
-               ("STARTED" . (:foreground "OrangeRed" :weight bold))
-               ("WAITING" . (:foreground "coral" :weight bold))
-               ("CANCELED" . (:foreground "LimeGreen" :weight bold))
-               ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
-               ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
-               ))
-       (setq org-hide-emphasis-markers t)
-       (setq org-todo-keywords
-             '(
-               (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
-               (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-               ))
-       (defun transform-square-brackets-to-round-ones(string-to-transform)
-         "Transforms [ into ( and ] into ), other chars left unchanged."
-         (concat
-          (mapcar #'(lambda (c) (if (equal c ?[) ?\( (if (equal c ?]) ?\) c))) string-to-transform))
+       (use-package org
+         :init
+         (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+         (setq org-directory (expand-file-name "~/org"))
+         (setq org-default-notes-file (expand-file-name "~/org/general.org"))
+         :bind (("C-c o" . (lambda () (interactive) (find-file "~/org/general.org")))
+                ("C-c l" . org-store-link)
+                ("C-c a" . org-agenda))
+         :config
+         (require 'org-protocol)
+         (setq org-log-done t)
+         (setq org-fast-tag-selection-single-key t)
+         (setq org-use-fast-todo-selection t)
+         (setq org-startup-truncated nil)
+         (setq org-highlight-latex-and-related '(native))
+         (setq org-priority-highest ?A)   ;; Highest priority (default is A)
+         (setq org-priority-lowest ?E)    ;; Lowest priority (default is C)
+         (setq org-priority-default ?C)   ;; Default priority when none is set
+         (setq org-todo-keywords
+               '(
+                 (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
+                 (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+                 ))
+         (setq org-todo-keyword-faces
+               '(("IDEA" . (:foreground "GoldenRod" :weight bold))
+                 ("NEXT" . (:foreground "IndianRed1" :weight bold))
+                 ("STARTED" . (:foreground "OrangeRed" :weight bold))
+                 ("WAITING" . (:foreground "coral" :weight bold))
+                 ("CANCELED" . (:foreground "LimeGreen" :weight bold))
+                 ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
+                 ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
+                 ))
+         (setq org-hide-emphasis-markers t)
+         (setq org-todo-keywords
+               '(
+                 (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
+                 (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+                 ))
+         (defun transform-square-brackets-to-round-ones(string-to-transform)
+           "Transforms [ into ( and ] into ), other chars left unchanged."
+           (concat
+            (mapcar #'(lambda (c) (if (equal c ?[) ?\( (if (equal c ?]) ?\) c))) string-to-transform))
+           )
+
+         (setq org-capture-templates `(
+                                       ("p" "Protocol" entry (file+headline ,(concat org-directory "/notes.org") "Inbox")
+                                        "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+                                       ))
+         (plist-put org-format-latex-options :scale 1.35)
+         (use-package ob-ipython
+           :after org)
+         (use-package ob-restclient
+           :ensure t)
+         (use-package ob-http
+           :ensure t)
+         (org-babel-do-load-languages
+          'org-babel-load-languages
+          '((python . t)
+            (ipython . t)
+            (shell . t)
+            (restclient . t)
+            (http . t)
+            (plantuml . t)))
+
+         (setq org-plantuml-jar-path
+               (expand-file-name "~/.nix-profile/lib/plantuml.jar"))
+
+         (use-package ob-async
+           :config
+           (require 'ob-async)
+           (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia")))
+
+
+         (require 'ob)
+         (defun org-babel-execute:passthrough (body params)
+           body)
+                                               ; json output is json
+         (defalias 'org-babel-execute:json 'org-babel-execute:passthrough)
+         (defalias 'org-babel-execute:js 'org-babel-execute:passthrough)
+         (defun my-org-confirm-babel-evaluate (lang body)
+           (not (or (string= lang "python")
+                    (string= lang "bash")
+                    (string= lang "restclient")
+                    (string= lang "emacs-lisp")
+                    (string= lang "http")
+                    (string= lang "js")
+                    (string= lang "json")
+                    (string= lang "plantuml")
+                    (string= lang "mermaid"))))  ; don't ask for ditaa
+         (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+         (setq org-babel-python-command "python3")
+
+         (use-package org-pdftools  :after org
+           :hook (org-mode . org-pdftools-setup-link)
+           :config
+           (add-to-list 'org-file-apps
+                        '(("\\.pdf\\'" . (lambda (file link)
+                                           (org-pdftools-open link)))
+                          (auto-mode . "emacsclient"))))
+         (use-package org-bullets
+           :hook (org-mode . org-bullets-mode))
+
+         (use-package org-ref  :after org)
+         (use-package org-noter  :after org
+           :init
+           (setq org-noter-notes-search-path (cons (expand-file-name "~/org") nil)))
+         (use-package org-noter-pdftools
+           :after org-noter
+           :config
+           ;; Add a function to ensure precise note is inserted
+           (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+             (interactive "P")
+             (org-noter--with-valid-session
+              (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                            (not org-noter-insert-note-no-questions)
+                                                          org-noter-insert-note-no-questions))
+                    (org-pdftools-use-isearch-link t)
+                    (org-pdftools-use-freepointer-annot t))
+                (org-noter-insert-note (org-noter--get-precise-info)))))
+
+           ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+           (defun org-noter-set-start-location (&optional arg)
+             "When opening a session with this document, go to the current location.
+                  With a prefix ARG, remove start location."
+             (interactive "P")
+             (org-noter--with-valid-session
+              (let ((inhibit-read-only t)
+                    (ast (org-noter--parse-root))
+                    (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+                (with-current-buffer (org-noter--session-notes-buffer session)
+                  (org-with-wide-buffer
+                   (goto-char (org-element-property :begin ast))
+                   (if arg
+                       (org-entry-delete nil org-noter-property-note-location)
+                     (org-entry-put nil org-noter-property-note-location
+                                    (org-noter--pretty-print-location location))))))))
+           (with-eval-after-load 'pdf-annot
+             (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+         (use-package org-mime  :after org)
+         (use-package org-download  :after org
+           :config
+           (add-hook 'dired-mode-hook 'org-download-enable))
+         (use-package ox-pandoc  :after org)
+         (use-package ox-reveal
+           :after org
+           :config
+           (require 'ox-reveal)
+           (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@4.5.0")
+           (setq org-reveal-reveal-js-version 4)
+           (setq org-reveal-external-plugins
+                 '((tableofcontents . "https://cdn.jsdelivr.net/npm/reveal.js-tableofcontents@1.0.1"))))
+         (use-package org-appear
+           :straight (org-appear :type git :host github :repo "awth13/org-appear")
+           :config
+           (setq org-appear-autolinks t)
+           (add-hook 'org-mode-hook 'org-appear-mode))
+
+         (use-package org-fragtog
+           :config
+           (add-hook 'org-mode-hook 'org-fragtog-mode))
          )
 
-       (setq org-capture-templates `(
-                                     ("p" "Protocol" entry (file+headline ,(concat org-directory "/notes.org") "Inbox")
-                                      "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
-                                     ))
-       (plist-put org-format-latex-options :scale 1.35)
-       (use-package ob-ipython
-         :after org)
-       (use-package ob-restclient
-         :ensure t)
-       (use-package ob-http
-         :ensure t)
-       (org-babel-do-load-languages
-        'org-babel-load-languages
-        '((python . t)
-          (ipython . t)
-          (shell . t)
-          (restclient . t)
-          (http . t)
-          (plantuml . t)))
-
-       (setq org-plantuml-jar-path
-             (expand-file-name "~/.nix-profile/lib/plantuml.jar"))
-
-       (use-package ob-async
-         :config (require 'ob-async))
-
-
-       (require 'ob)
-       (defun org-babel-execute:passthrough (body params)
-         body)
-                                             ; json output is json
-       (defalias 'org-babel-execute:json 'org-babel-execute:passthrough)
-       (defalias 'org-babel-execute:js 'org-babel-execute:passthrough)
-       (defun my-org-confirm-babel-evaluate (lang body)
-         (not (or (string= lang "python")
-                  (string= lang "bash")
-                  (string= lang "restclient")
-                  (string= lang "emacs-lisp")
-                  (string= lang "http")
-                  (string= lang "js")
-                  (string= lang "json")
-                  (string= lang "plantuml")
-                  (string= lang "mermaid"))))  ; don't ask for ditaa
-       (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
-       (setq org-babel-python-command "python3")
-
-       (use-package org-pdftools  :after org
-         :hook (org-mode . org-pdftools-setup-link)
-         :config
-         (add-to-list 'org-file-apps
-                      '(("\\.pdf\\'" . (lambda (file link)
-                                         (org-pdftools-open link)))
-                        (auto-mode . "emacsclient"))))
-       (use-package org-bullets
-         :hook (org-mode . org-bullets-mode))
-
-       (use-package org-ref  :after org)
-       (use-package org-noter  :after org
-         :init
-         (setq org-noter-notes-search-path (cons (expand-file-name "~/org") nil)))
-       (use-package org-noter-pdftools
-         :after org-noter
-         :config
-         ;; Add a function to ensure precise note is inserted
-         (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-           (interactive "P")
-           (org-noter--with-valid-session
-            (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-                                                          (not org-noter-insert-note-no-questions)
-                                                        org-noter-insert-note-no-questions))
-                  (org-pdftools-use-isearch-link t)
-                  (org-pdftools-use-freepointer-annot t))
-              (org-noter-insert-note (org-noter--get-precise-info)))))
-
-         ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
-         (defun org-noter-set-start-location (&optional arg)
-           "When opening a session with this document, go to the current location.
-                With a prefix ARG, remove start location."
-           (interactive "P")
-           (org-noter--with-valid-session
-            (let ((inhibit-read-only t)
-                  (ast (org-noter--parse-root))
-                  (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
-              (with-current-buffer (org-noter--session-notes-buffer session)
-                (org-with-wide-buffer
-                 (goto-char (org-element-property :begin ast))
-                 (if arg
-                     (org-entry-delete nil org-noter-property-note-location)
-                   (org-entry-put nil org-noter-property-note-location
-                                  (org-noter--pretty-print-location location))))))))
-         (with-eval-after-load 'pdf-annot
-           (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
-       (use-package org-mime  :after org)
-       (use-package org-download  :after org
-         :config
-         (add-hook 'dired-mode-hook 'org-download-enable))
-       (use-package ox-pandoc  :after org)
-       (use-package ox-reveal
-         :after org
-         :config
-         (require 'ox-reveal)
-         (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@4.5.0")
-         (setq org-reveal-reveal-js-version 4)
-         (setq org-reveal-external-plugins
-               '((tableofcontents . "https://cdn.jsdelivr.net/npm/reveal.js-tableofcontents@1.0.1"))))
-       (use-package org-appear
-         :straight (org-appear :type git :host github :repo "awth13/org-appear")
-         :config
-         (setq org-appear-autolinks t)
-         (add-hook 'org-mode-hook 'org-appear-mode))
-
-       (use-package org-fragtog
-         :config
-         (add-hook 'org-mode-hook 'org-fragtog-mode))
-       )
-
-     ;;(use-package polymode )
-     ;;(use-package poly-org )
+       ;;(use-package polymode )
+       ;;(use-package poly-org )
 #+end_src
 
 #+RESULTS:
@@ -1401,7 +1406,7 @@ tools to handle text files, to test later.
        (custom-set-variables
         '(elpy-rpc-python-command "python3")
         '(python-shell-interpreter "ipython3")
-        '(pythoh-shell-interpreter-args "--simple-prompt --classic")
+        '(python-shell-interpreter-args "--simple-prompt --classic")
         '(python-shell-completion-native-enable nil))
        (elpy-enable)
        ;; sphinx doc
@@ -1509,7 +1514,7 @@ tools to handle text files, to test later.
        :config
        (setq eglot-ignored-server-capabilities '(:inlayHintProvider))
        (add-to-list 'eglot-server-programs
-                    '((c++-mode c-mode) "clangd" "--query-driver=~/.nix-profile/bin/clang**" "-background-index" "--log=verbose" "--folding-ranges"))
+                    '((c++-mode c-mode) "/usr/bin/clangd" "--query-driver=~/.nix-profile/bin/clang**" "-background-index" "--log=verbose" "--folding-ranges"))
        (add-hook 'c-mode-hook 'eglot-ensure)
        (add-hook 'c++-mode-hook 'eglot-ensure))
 
@@ -2339,3 +2344,107 @@ tools to handle text files, to test later.
 
 
 # tree sitter grammar using nix, ts docstr, television, tmux interaction
+
+* jira
+
+#+begin_src emacs-lisp :tangle yes
+
+  (use-package org-jira
+    :config
+    (load (expand-file-name "~/work/.emacs.d/secrets.el.gpg"))
+    (setq org-jira-jira-status-to-org-keyword-alist
+          '(("To do" . "TODO")
+            ("In  progress" . "PROGRESS")
+            ("DONE" . "DONE")
+            ("Review" . "REVIEW")
+            ("Rejected" . "REJECTED")))
+    (setq org-jira-priority-to-org-priority-alist '(list (cons "Highest" ?A)
+                                                         (cons "High" ?B)
+                                                         (cons "Medium" ?C)
+                                                         (cons "Low" ?D)
+                                                         (cons "Lowest" ?E)))
+    (setq jiralib-url my-jira-url)
+    (setq jiralib-user my-jira-user)
+    (setq jiralib-token (cons
+                         "Authorization"
+                         (concat "Basic " (base64-encode-string (concat my-jira-user ":" my-jira-token) 'no-line-break))))
+    )
+
+#+end_src
+
+#+RESULTS:
+: t
+
+
+# #+begin_src emacs-lisp :tangle yes
+#   (use-package jira
+#     :straight (:host github :repo "unmonoqueteclea/jira.el")
+#     :demand t
+#     :config
+#     (setq jira-base-url "") ;; Jira instance URL
+#     (setq jira-username "") ;; Jira username (usually, an email)
+#     ;; API token for Jira
+#     ;; See https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
+#     (setq jira-token "")
+#     (setq jira-token-is-personal-access-token nil)
+#     (setq jira-api-version 3) ;; Version 2 is also allowed
+#     ;; (Optional) API token for JIRA TEMPO plugin
+#     ;; See https://apidocs.tempo.io/)
+#     (setq jira-tempo-token "bv8ECagKPLIMm9khK8THguD55nTynf-us")
+# #+end_src
+
+# #+begin_src emacs-lisp :tangle yes
+#   (use-package ejira
+#     :straight (:host github :repo "nyyManni/ejira")
+#     :init
+#     (setq jiralib2-url              ""
+#           jiralib2-auth             'basic
+#           jiralib2-user-login-name  ""
+#           jiralib2-token            nil
+
+#           ;; NOTE, this directory needs to be in `org-agenda-files'`
+#           ejira-org-directory       "~/.jira"
+#           ejira-projects            '("VD")
+
+#           ejira-priorities-alist    '(("Highest" . ?A)
+#                                       ("High"    . ?B)
+#                                       ("Medium"  . ?C)
+#                                       ("Low"     . ?D)
+#                                       ("Lowest"  . ?E))
+#           ejira-todo-states-alist   '(("To do"       . 1)
+#                                       ("In  progress" . 2)
+#                                       ("DONE"        . 3)))
+#     :config
+#     ;; Tries to auto-set custom fields by looking into /editmeta
+#     ;; of an issue and an epic.
+#     (add-hook 'jiralib2-post-login-hook #'ejira-guess-epic-sprint-fields)
+
+#     ;; They can also be set manually if autoconfigure is not used.
+#     ;; (setq ejira-sprint-field       'customfield_10001
+#     ;;       ejira-epic-field         'customfield_10002
+#     ;;       ejira-epic-summary-field 'customfield_10004)
+
+#     (require 'ejira-agenda)
+
+#     ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
+#     ;; into your `org-agenda-files'.
+#     (add-to-list 'org-agenda-files ejira-org-directory)
+
+#     ;; Add an agenda view to browse the issues that
+#     (org-add-agenda-custom-command
+#      '("j" "My JIRA issues"
+#        ((ejira-jql "resolution = unresolved and assignee = currentUser()"
+#                    ((org-agenda-overriding-header "Assigned to me")))))))
+# #+end_src
+
+# #+RESULTS:
+# : t
+
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package org-ql
+    :straight (org-ql :host github :repo "alphapapa/org-ql"
+              :files (:defaults (:exclude "helm-org-ql.el"))))
+#+end_src
+
+#+RESULTS:
