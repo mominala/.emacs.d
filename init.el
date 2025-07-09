@@ -16,7 +16,7 @@
   (load bootstrap-file nil 'nomessage))
 
 ;; we need to load the up to date org package to avoid conflicts
-(straight-use-package 'org)
+;; (straight-use-package 'org)
 ;; this needs to be setup before loading org
 ;; (setq org-replace-disputed-keys t)
 

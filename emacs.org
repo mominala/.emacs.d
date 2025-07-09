@@ -3,6 +3,7 @@
 ** packages
    #+BEGIN_SRC emacs-lisp :tangle yes
      (straight-use-package 'use-package)
+     (setq straight-built-in-pseudo-packages '(emacs org pdf-tools notdeft xeft pdf-tools org-pdftools))
      (require 'use-package)
      ;; add chords keyword to use-package
      (use-package use-package-chords
@@ -680,7 +681,6 @@
       (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
       (add-hook 'comint-mode-hook (lambda () (display-line-numbers-mode -1)))
       (add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
-      (add-hook 'vterm-mode-hook (lambda () (display-line-numbers-mode -1)))
       (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode t)))
       (setq display-line-numbers "%4d \u2502 ")
       ;; highlight line conf
@@ -1037,13 +1037,20 @@ line instead."
 * Org
 ** general
    #+BEGIN_SRC emacs-lisp :tangle yes
+     ;; (use-package pdf-tools
+     ;;   :straight (pdf-tools :pre-build ("nix-shell" "-p" "gcc" "gnumake" "automake" "autoconf" "pkg-config" "libpng" "zlib" "poppler" "--run" "./server/autobuild")
+     ;;                        :files (:defaults "server/epdfinfo"))
+     ;;   :config
+     ;;   (pdf-tools-install))
+
+
      (use-package pdf-tools
-       :straight (pdf-tools :pre-build ("nix-shell" "-p" "gcc" "gnumake" "automake" "autoconf" "pkg-config" "libpng" "zlib" "poppler" "--run" "./server/autobuild")
-                            :files (:defaults "server/epdfinfo"))
+       :straight nil
        :config
        (pdf-tools-install))
 
      (use-package org
+       :straight nil
        :init
        (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
        (setq org-directory (expand-file-name "~/org"))
@@ -1106,7 +1113,6 @@ line instead."
           (restclient . t)
           (http . t)
           (plantuml . t)
-          (nushell . t)
           ))
 
        (setq org-plantuml-jar-path
@@ -1137,7 +1143,9 @@ line instead."
        (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
        (setq org-babel-python-command "python3")
 
-       (use-package org-pdftools  :after org
+       (use-package org-pdftools
+         :straight nil
+         :after org pdf-tools
          :hook (org-mode . org-pdftools-setup-link)
          :config
          (add-to-list 'org-file-apps
@@ -1152,7 +1160,7 @@ line instead."
          :init
          (setq org-noter-notes-search-path (cons (expand-file-name "~/org") nil)))
        (use-package org-noter-pdftools
-         :after org-noter
+         :after org-noter org-pdftools
          :config
          ;; Add a function to ensure precise note is inserted
          (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
@@ -1648,10 +1656,6 @@ tools to handle text files, to test later.
      ;; (use-package aweshell
      ;;   :load-path "~/.emacs.d/aweshell/aweshell.el")
 
-     (use-package vterm
-       :straight (:post-build ("~/.emacs.d/scripts/build_vterm.sh")))
-
-
      (use-package eat
        :straight
        '(eat :type git
@@ -1745,7 +1749,6 @@ tools to handle text files, to test later.
      (use-package magit)
 
      (use-package git-timemachine)
-
 
    #+END_SRC
 
