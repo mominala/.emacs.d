@@ -3,11 +3,10 @@
 ** packages
    #+BEGIN_SRC emacs-lisp :tangle yes
      (straight-use-package 'use-package)
-     (setq straight-built-in-pseudo-packages '(emacs org pdf-tools notdeft xeft pdf-tools org-pdftools))
+     (setq straight-built-in-pseudo-packages '(emacs org pdf-tools org-pdftools notdeft xeft))
      (require 'use-package)
      ;; add chords keyword to use-package
-     (use-package use-package-chords
-       )
+     (use-package use-package-chords)
    #+END_SRC
 
    #+RESULTS:
@@ -718,15 +717,15 @@
   #+BEGIN_SRC emacs-lisp :tangle yes
     ;; highlight indents and manually add it to python
     (use-package highlight-indent-guides
-
       :config
       (setq highlight-indent-guides-method 'character
             highlight-indent-guides-auto-odd-face-perc 15
             highlight-indent-guides-auto-even-face-perc 15
             highlight-indent-guides-auto-character-face-perc 10
             highlight-indent-guides-responsive 'top)
-      (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-      )
+      (add-hook 'prog-mode-hook #'highlight-indent-guides-mode))
+
+
 
     ;; (use-package indent-bars
     ;;   :straight (indent-bars :type git :host github :repo "jdtsmith/indent-bars")
@@ -734,6 +733,9 @@
     ;;   (indent-bars-no-descend-lists t) ; no extra bars in continued func arg lists
     ;;   :hook ((prog-mode) . indent-bars-mode))
   #+END_SRC
+
+  #+RESULTS:
+  : t
 
 * Editing
 ** general params
@@ -847,6 +849,7 @@
 
      ;; auto clean whitespaces
      (use-package ws-butler
+       :straight (:type git :host github :repo "lewang/ws-butler" :branch "master")
        :hook ((prog-mode . ws-butler-mode)
               (text-mode . ws-butler-mode)
               (fundamental-mode . ws-butler-mode)))
@@ -1733,22 +1736,22 @@ tools to handle text files, to test later.
 ** git
    #+BEGIN_SRC emacs-lisp :tangle yes
 
-     ;; git gutter
-     (use-package git-gutter
-       :config
-       (add-hook 'find-file-hook (lambda ()
-                                   (interactive)
-                                   (unless (file-remote-p default-directory)
-                                     (git-gutter-mode 1))))
-       (custom-set-variables
-        '(git-gutter:update-interval 2)))
+          ;; git gutter
+          (use-package git-gutter
+            :config
+            (add-hook 'find-file-hook (lambda ()
+                                        (interactive)
+                                        (unless (file-remote-p default-directory)
+                                          (git-gutter-mode 1))))
+            (custom-set-variables
+             '(git-gutter:update-interval 2)))
 
 
-     (use-package with-editor)
+          (use-package with-editor)
 
-     (use-package magit)
+          (use-package magit)
 
-     (use-package git-timemachine)
+          (use-package git-timemachine)
 
    #+END_SRC
 
