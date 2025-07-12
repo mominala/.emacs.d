@@ -1,4 +1,5 @@
 #+title: Emacs config
+
 * General
 ** packages
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1737,26 +1738,30 @@ tools to handle text files, to test later.
 ** git
    #+BEGIN_SRC emacs-lisp :tangle yes
 
-          ;; git gutter
-          (use-package git-gutter
-            :config
-            (add-hook 'find-file-hook (lambda ()
-                                        (interactive)
-                                        (unless (file-remote-p default-directory)
-                                          (git-gutter-mode 1))))
-            (custom-set-variables
-             '(git-gutter:update-interval 2)))
+     ;; git gutter
+     (use-package git-gutter
+       :config
+       (add-hook 'find-file-hook (lambda ()
+                                   (interactive)
+                                   (unless (file-remote-p default-directory)
+                                     (git-gutter-mode 1))))
+       (custom-set-variables
+        '(git-gutter:update-interval 2)))
 
 
-          (use-package with-editor)
+     (use-package with-editor)
 
-          (use-package magit)
+     (use-package magit)
 
-          (use-package git-timemachine)
+     (use-package git-timemachine
+       :config
+       (add-hook 'git-timemachine-mode-hook 'font-lock-mode)
+       )
 
    #+END_SRC
 
    #+RESULTS:
+   : t
 
 ** Latex
 
@@ -2235,7 +2240,8 @@ tools to handle text files, to test later.
          (menu-bar-mode -1)
          (tool-bar-mode -1)
          (scroll-bar-mode -1)
-         (fringe-mode -1))
+         ;; (fringe-mode -1) # causes fritcion with olivetti
+         )
        :config
        (exwm-config-default)
        )
