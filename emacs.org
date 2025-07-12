@@ -584,13 +584,14 @@
      ;; (add-hook 'prog-mode-hook 'hs-minor-mode)
 
      (use-package origami
+       :straight (origami :type git :host github :repo "elp-revive/origami.el" :local-repo "origami")
        :bind
        ("<f9>" . origami-toggle-node)
        :hook (prog-mode . origami-mode))
    #+END_SRC
 
    #+RESULTS:
-   | (lambda nil (interactive) (setq show-trailing-whitespace 1)) | clean-aindent-mode | highlight-indent-guides-mode | (lambda nil (display-line-numbers-mode t)) | display-line-numbers-mode | rainbow-delimiters-mode | origami-mode |
+   : origami-toggle-node
 
 
    
