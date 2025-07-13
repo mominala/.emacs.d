@@ -4,7 +4,7 @@
 ** packages
    #+BEGIN_SRC emacs-lisp :tangle yes
      (straight-use-package 'use-package)
-     (setq straight-built-in-pseudo-packages '(emacs org pdf-tools org-pdftools notdeft xeft))
+     (setq straight-built-in-pseudo-packages '(emacs org eglot pdf-tools org-pdftools notdeft xeft))
      (require 'use-package)
      ;; add chords keyword to use-package
      (use-package use-package-chords)
@@ -1519,6 +1519,7 @@ tools to handle text files, to test later.
      (add-to-list 'auto-mode-alist '("\\.ipp\\'" . c++-mode))
 
      (use-package eglot
+       :straight nil
        :init
        (require 'cc-mode)
        :bind
@@ -2198,7 +2199,7 @@ tools to handle text files, to test later.
 
          (setq exwm-workspace-show-all-buffers t)
          (setq exwm-layout-show-all-buffers t)
-         (exwm-randr-enable)
+         ;; (exwm-randr-enable)
          (exwm-enable)
          ;; Other configurations
          (exwm-config-misc))
