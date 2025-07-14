@@ -760,20 +760,20 @@
      (delete-selection-mode 1)
 
 
-     ;; show whitespace in diff-mode
-     (add-hook 'diff-mode-hook (lambda ()
-                                 (setq-local whitespace-style
-                                             '(face
-                                               tabs
-                                               tab-mark
-                                               spaces
-                                               space-mark
-                                               trailing
-                                               indentation::space
-                                               indentation::tab
-                                               newline
-                                               newline-mark))
-                                 (whitespace-mode 1)))
+     ;; ;; show whitespace in diff-mode
+     ;; (add-hook 'diff-mode-hook (lambda ()
+     ;;                             (setq-local whitespace-style
+     ;;                                         '(face
+     ;;                                           tabs
+     ;;                                           tab-mark
+     ;;                                           spaces
+     ;;                                           space-mark
+     ;;                                           trailing
+     ;;                                           indentation::space
+     ;;                                           indentation::tab
+     ;;                                           newline
+     ;;                                           newline-mark))
+     ;;                             (whitespace-mode 1)))
 
      (use-package aggressive-indent
        :config
@@ -786,6 +786,22 @@
              ("s" . sudo-edit-find-file))
        (:map embark-become-file+buffer-map
              ("s" . sudo-edit-find-file)))
+
+
+     (use-package diff-mode
+       :ensure nil ;; built-in
+       :hook ((diff-mode . my/diff-mode-use-magit-faces))
+       :config
+       (defun my/diff-mode-use-magit-faces ()
+         "Make diff-mode look like magit-diff."
+         (face-remap-add-relative 'diff-added     'magit-diff-added)
+         (face-remap-add-relative 'diff-removed   'magit-diff-removed)
+         (face-remap-add-relative 'diff-context   'magit-diff-context)
+         (face-remap-add-relative 'diff-file-header 'magit-diff-file-heading)
+         (face-remap-add-relative 'diff-header    'magit-diff-hunk-heading)
+         (face-remap-add-relative 'diff-refine-added   'magit-diff-added-highlight)
+         (face-remap-add-relative 'diff-refine-removed 'magit-diff-removed-highlight)))
+
    #+END_SRC
 
    #+RESULTS:
@@ -2372,7 +2388,32 @@ tools to handle text files, to test later.
 
 #+RESULTS:
 
+#+begin_src emacs-lisp :tangle yes
+  (use-package llm-tool-collection
+    :straight (:host github :repo "skissue/llm-tool-collection")
+    :ensure t
+    :config
+    ;; For gptel:
+    (mapcar (apply-partially #'apply #'gptel-make-tool)
+            (llm-tool-collection-get-all))
+    )
+#+end_src
+
 # tree sitter grammar using nix, ts docstr, television, tmux interaction
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package macher
+    :straight (:host github :repo "kmontag/macher")
+    :ensure t
+    :after gptel
+    :custom
+    ;; The org UI has structured navigation and nice content folding.
+    (macher-action-buffer-ui 'org)
+    :config
+    (macher-install))
+#+end_src
+
+#+RESULTS:
 
 * jira
 
