@@ -2339,7 +2339,8 @@ tools to handle text files, to test later.
     :config
     ;; Github Models offers an OpenAI compatible API
     ;; OPTIONAL configuration
-    (load (expand-file-name "~/work/.emacs.d/secrets.el.gpg"))
+    (load (expand-file-name "./secrets.el.gpg"))
+    (gptel-make-gh-copilot "Copilot")
     (setq gptel-model  'gpt-4o
           gptel-backend
           (gptel-make-openai "Github Models" ;Any name you want
@@ -2356,6 +2357,7 @@ tools to handle text files, to test later.
 #+end_src
 
 #+RESULTS:
+: t
 
 #+begin_src emacs-lisp :tangle yes
   (use-package copilot
@@ -2518,3 +2520,25 @@ tools to handle text files, to test later.
 #+end_src
 
 #+RESULTS:
+
+
+* misc
+
+
+#+begin_src emacs-lisp :tangle yes
+
+  ;; (use-package tinee
+  ;;     :straight (tinee :host codeberg :repo "tusharhero/tinee")
+  ;;     ;; default values, change them if you would like to.
+  ;;     :custom
+  ;;     ((tinee-send-text-function 'tinee-paste) ; or 'tinee-paste
+  ;;      (tinee-frame-name "tinee")))
+
+  ;; (setq notdeft-directories '("~/org"))
+  ;; (setq notdeft-xapian-max-results 20)
+  ;; (setq xeft-directory "~/org")
+
+#+end_src
+
+#+RESULTS:
+: ~/org
