@@ -2339,7 +2339,7 @@ tools to handle text files, to test later.
     :config
     ;; Github Models offers an OpenAI compatible API
     ;; OPTIONAL configuration
-    (load (expand-file-name "./secrets.el.gpg"))
+    (load (expand-file-name "~/.emacs.d/secrets.el.gpg"))
     (gptel-make-gh-copilot "Copilot")
     (setq gptel-model  'gpt-4o
           gptel-backend
@@ -2423,7 +2423,7 @@ tools to handle text files, to test later.
 
   (use-package org-jira
     :config
-    (load (expand-file-name "~/work/.emacs.d/secrets.el.gpg"))
+    (load (expand-file-name "~/.emacs.d/secrets.el.gpg"))
     (setq org-jira-jira-status-to-org-keyword-alist
           '(("To do" . "TODO")
             ("In  progress" . "PROGRESS")
