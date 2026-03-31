@@ -1,83 +1,5 @@
 #+title: Emacs config
 
-* General
-** packages
-   #+BEGIN_SRC emacs-lisp :tangle yes
-     (straight-use-package 'use-package)
-     (setq straight-built-in-pseudo-packages '(emacs org eglot pdf-tools org-pdftools notdeft xeft))
-     (require 'use-package)
-     ;; add chords keyword to use-package
-     (use-package use-package-chords)
-   #+END_SRC
-
-   #+RESULTS:
-   : t
-
-** exec path
-   #+BEGIN_SRC emacs-lisp :tangle yes
-     ;; load exec path from shell
-     (use-package exec-path-from-shell
-       :config
-       (setq explicit-shell-file-name (expand-file-name "~/.nix-profile/bin/zsh"))
-       (setq shell-file-name "zsh")
-       (exec-path-from-shell-initialize))
-
-     #+END_SRC
-
-     #+RESULTS:
-     : t
-
-** load path
-   #+BEGIN_SRC emacs-lisp :tangle yes
-     ;; load path
-     (add-to-list 'load-path "~/.emacs.d/modules")
-     (add-to-list 'load-path "~/.emacs.d/aweshell")
-     ;; (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-   #+END_SRC
-
-** other params
-   
-   #+BEGIN_SRC emacs-lisp :tangle yes
-     ;; garbage collection threshold
-     (setq gc-cons-threshold (* 50 1024 1024))
-
-     ;; useful for lsp-mode
-     (setq read-process-output-max (* 10 1024 1024))
-
-     ;; save desktop
-     (use-package desktop
-       :init
-       (desktop-save-mode 1))
-
-     ;; save customization elsewere
-     (setq custom-file "~/.emacs.d/custom.el")
-     (load custom-file t)
-
-     ;; backup settings
-
-
-     (setq
-      backup-by-copying t      ; don't clobber symlinks
-      backup-directory-alist
-      '(("." . "~/.saves/"))    ; don't litter my fs tree
-      delete-old-versions t
-      kept-new-versions 6
-      kept-old-versions 2
-      version-control t
-      bookmark-file "~/emacs/bookmarks"
-      )       ; use versioned backups
-   #+END_SRC
-
-   #+RESULTS:
-   : t
-
-** funcs
-   #+begin_src emacs-lisp :tangle yes
-  (defun icons-displayable-p ()
-    "Return non-nil if `all-the-icons' is displayable."
-    (and (display-graphic-p)
-         (require 'all-the-icons nil t)))
-   #+end_src   
 * User Interface
 
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -220,7 +142,7 @@
            ("M-g i" . consult-imenu)
            ("M-g I" . consult-imenu-multi)
            ;; M-s bindings (search-map)
-           ("M-s d" . consult-find)
+           ("M-s d" . consult-fd)
            ("M-s D" . consult-locate)
            ("M-s g" . consult-grep)
            ("M-s G" . consult-git-grep)
@@ -641,6 +563,100 @@
    #+RESULTS:
    | lambda | nil | (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups)) | (unless (eq ibuffer-sorting-mode 'project-file-relative) (ibuffer-do-sort-by-project-file-relative)) |
    | lambda | nil | (ibuffer-projectile-set-filter-groups)                                | (if (eq ibuffer-sorting-mode 'alphabetic) nil (ibuffer-do-sort-by-alphabetic))                       |
+* General
+** packages
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     (straight-use-package 'use-package)
+     (setq straight-built-in-pseudo-packages '(emacs org eglot pdf-tools org-pdftools notdeft xeft))
+     (require 'use-package)
+     ;; add chords keyword to use-package
+     (use-package use-package-chords)
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
+** exec path
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     ;; load exec path from shell
+     (use-package exec-path-from-shell
+       :config
+       (setq explicit-shell-file-name (expand-file-name "~/.nix-profile/bin/zsh"))
+       (setq shell-file-name "zsh")
+       (exec-path-from-shell-initialize))
+
+     #+END_SRC
+
+     #+RESULTS:
+     : t
+
+** load path
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     ;; load path
+     (add-to-list 'load-path "~/.emacs.d/modules")
+     (add-to-list 'load-path "~/.emacs.d/aweshell")
+     ;; (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+   #+END_SRC
+
+
+** other params
+
+   #+BEGIN_SRC emacs-lisp :tangle yes
+     ;; garbage collection threshold
+     (setq gc-cons-threshold (* 50 1024 1024))
+
+     ;; useful for lsp-mode
+     (setq read-process-output-max (* 10 1024 1024))
+
+     ;; save desktop
+     (use-package desktop
+       :init
+       (desktop-save-mode 1))
+
+     ;; save customization elsewere
+     (setq custom-file "~/.emacs.d/custom.el")
+     (load custom-file t)
+
+     ;; backup settings
+
+
+     (setq
+      backup-by-copying t      ; don't clobber symlinks
+      backup-directory-alist
+      '(("." . "~/.saves/"))    ; don't litter my fs tree
+      delete-old-versions t
+      kept-new-versions 6
+      kept-old-versions 2
+      version-control t
+      bookmark-file "~/emacs/bookmarks"
+      )       ; use versioned backups
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
+
+** misc
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package el-patch
+    :straight (
+               :host github
+               :repo "radian-software/el-patch"
+               :branch "main"))
+
+  (eval-when-compile
+    (require 'el-patch))
+#+end_src
+
+** funcs
+   #+begin_src emacs-lisp :tangle yes
+     (defun icons-displayable-p ()
+       "Return non-nil if `all-the-icons' is displayable."
+       (and (display-graphic-p)
+            (require 'all-the-icons nil t)))
+
+   #+end_src
 * Theme
 
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1071,12 +1087,12 @@ line instead."
        (pdf-tools-install))
 
      (use-package org
-       :straight nil
+       :straight  (:type built-in)
        :init
        (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
        (setq org-directory (expand-file-name "~/org"))
        (setq org-default-notes-file (expand-file-name "~/org/general.org"))
-       :bind (("C-c o" . (lambda () (interactive) (find-file "~/org/general.org")))
+       :bind (("C-c t" . (lambda () (interactive) (find-file "~/org/general.org")))
               ("C-c l" . org-store-link)
               ("C-c a" . org-agenda))
        :config
@@ -1126,6 +1142,13 @@ line instead."
          :ensure t)
        (use-package ob-http
          :ensure t)
+       (use-package jupyter
+       :defer t ;; conflit in emacs web server
+       :config
+       (add-to-list 'org-babel-load-languages '(jupyter . t))
+       (org-babel-do-load-languages
+        'org-babel-load-languages
+        org-babel-load-languages))
        (org-babel-do-load-languages
         'org-babel-load-languages
         '((python . t)
@@ -1134,6 +1157,7 @@ line instead."
           (restclient . t)
           (http . t)
           (plantuml . t)
+          (jupyter . t)
           ))
 
        (setq org-plantuml-jar-path
@@ -1160,6 +1184,7 @@ line instead."
                   (string= lang "js")
                   (string= lang "json")
                   (string= lang "plantuml")
+                  (string= lang "jupyter-python")
                   (string= lang "mermaid"))))  ; don't ask for ditaa
        (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
        (setq org-babel-python-command "python3")
@@ -1267,7 +1292,59 @@ tools to handle text files, to test later.
 ** deft
 #+begin_src emacs-lisp :tangle yes
   (use-package deft
+    :bind
+    ("C-c n d" . deft)
+    :config/el-patch
+    (defun deft-parse-summary (contents title)
+      "Parse the file CONTENTS, given the TITLE, and extract a summary.
+  The summary is a string extracted from the contents following the
+  title."
+      (let* ((summary (let ((case-fold-search nil))
+                        (replace-regexp-in-string deft-strip-summary-regexp " " contents)))
+             (summary-processed (deft-chomp
+                                 (if (and title
+                                          (not deft-use-filename-as-title)
+                                          (string-match (regexp-quote
+                                                         (if deft-org-mode-title-prefix
+                                                             (concat "^#+TITLE: " title)
+                                                           title))
+                                                        summary))
+                                     (substring summary (match-end 0) nil)
+                                   summary))))
+        (substring summary-processed 0 (min 256 (string-width summary-processed)))))
+    (defun deft-parse-title (file contents)
+  "Parse the given FILE and CONTENTS and determine the title.
+If `deft-use-filename-as-title' is nil, the title is taken to
+be the first non-empty line outside :PROPERTIES:...:END: drawers, else
+the base name of the FILE is used as title."
+  (if deft-use-filename-as-title
+      (deft-base-filename file)
+    (let* ((clean-contents (replace-regexp-in-string
+                            "^:PROPERTIES:[\r\n]+\\(.\\|\n\\)*?:END:[\r\n]+"
+                            ""
+                            contents))
+           (begin (string-match "^.+$" clean-contents)))
+      (if begin
+          (funcall deft-parse-title-function
+                   (substring clean-contents begin (match-end 0)))))))
+
     :config
+    (setq deft-strip-summary-regexp
+          (concat "\\("
+                  "[\n\t]" ;; blank
+                  "\\|^#\\+[[:upper:]_]+:.*$" ;; org-mode metadata
+                  "\\|^:.*:.*$"
+                  "\\)"))
+    (setq deft-strip-title-regexp
+          (concat "\\(?:"
+                  "^%+" ; line beg with %
+                  "\\|^#\\+TITLE: *" ; org-mode title
+                  "\\|^[#* ]+" ; line beg with #, * and/or space
+                  "\\|-\\*-[[:alpha:]]+-\\*-" ; -*- .. -*- lines
+                  "\\|^Title:[\t ]*" ; MultiMarkdown metadata
+                  "\\|^:.*:.*$" ; :property:
+                  "\\|#+" ; line with just # chars
+                  "$\\)"))
     (setq deft-extensions '("txt" "org" "tex"))
     (setq deft-directory "~/org")
     (setq deft-recursive t)
@@ -1276,14 +1353,31 @@ tools to handle text files, to test later.
 #+end_src
 
 #+RESULTS:
-: t
+: deft
 
 ** org-roam
 #+begin_src emacs-lisp :tangle yes
-(use-package org-roam)
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/org/roam"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today))
+    :config
+    ;; If you're using a vertical completion framework, you might want a more informative completion interface
+    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+    (org-roam-db-autosync-mode)
+    ;; If using org-roam-protocol
+    (require 'org-roam-protocol))
 #+end_src
 
 #+RESULTS:
+: org-roam-dailies-capture-today
 * Programming
 ** Completion
 
@@ -1295,6 +1389,7 @@ tools to handle text files, to test later.
        ;; (use-package company-tabnine)
        :config
        (global-company-mode 1)
+       (setq company-require-match nil)
        (setq company-show-numbers t)
        (setq company-idle-delay 0)
        (setq company-backends '((company-capf
@@ -1386,7 +1481,6 @@ tools to handle text files, to test later.
    #+END_SRC
 
    #+RESULTS:
-   : t
 ** semantic
    #+begin_src emacs-lisp :tangle yes
   (use-package emacs
@@ -1476,14 +1570,6 @@ tools to handle text files, to test later.
      (use-package code-cells
        :config
        (add-hook 'python-mode-hook 'code-cells-mode-maybe))
-
-     (use-package jupyter
-       :defer t ;; conflit in emacs web server
-       :config
-       (add-to-list 'org-babel-load-languages '(jupyter . t))
-       (org-babel-do-load-languages
-        'org-babel-load-languages
-        org-babel-load-languages))
    #+END_SRC
 
    #+RESULTS:
@@ -1995,7 +2081,11 @@ tools to handle text files, to test later.
   (use-package sql-indent)
   (use-package mermaid-mode)
   (use-package plantuml-mode)
+  (use-package terraform-mode)
 #+end_src
+
+#+RESULTS:
+
 * Web
 ** markdown
    #+BEGIN_SRC emacs-lisp :tangle yes
@@ -2334,30 +2424,125 @@ tools to handle text files, to test later.
 
 # explore aider, elisa, elisyum, chatgpt shell
 #+begin_src emacs-lisp :tangle yes
+  (use-package mcp
+    :ensure t
+    :after gptel
+    :custom
+    (mcp-hub-servers
+     `(("mcp-atlassian" . (
+                           :command "uvx"
+                           :args ("mcp-atlassian")
+                           :env (
+                                 :JIRA_URL ,my-jira-url
+                                 :JIRA_USERNAME ,my-jira-user
+                                 :JIRA_API_TOKEN ,my-jira-token
+                                 :CONFLUENCE_URL ,(concat my-jira-url "/wiki")
+                                 :CONFLUENCE_USERNAME ,my-jira-user
+                                 :CONFLUENCE_API_TOKEN ,my-jira-token
+                                 )
+                           ))
+       ))
+    :config
+    (require 'mcp-hub)
+    (load (expand-file-name "~/.emacs.d/secrets.el.gpg"))
+    :hook (after-init . mcp-hub-start-all-server))
+
+  (use-package gptel-agent
+    :after gptel
+    :ensure t)
+
   (use-package gptel
     :defer t
+    :bind (("C-c C-<return>" . gptel-menu)
+           ("C-c <return>" . gptel-send)
+           ("C-c j" . gptel-menu)
+           ("C-c M-j" . gptel)
+           ("C-c C-g" . gptel-abort)
+           :map gptel-mode-map
+           ("C-c C-x t" . gptel-set-topic)
+           :map embark-region-map
+           ("+" . gptel-add))
     :config
     ;; Github Models offers an OpenAI compatible API
     ;; OPTIONAL configuration
+    (require 'gptel-integrations)
     (load (expand-file-name "~/.emacs.d/secrets.el.gpg"))
-    (gptel-make-gh-copilot "Copilot")
-    (setq gptel-model  'gpt-4o
+    (setq gptel-model  'gpt-4.1
           gptel-backend
-          (gptel-make-openai "Github Models" ;Any name you want
-            :host "models.inference.ai.azure.com"
-            :endpoint "/chat/completions"
-            :stream t
-            :key github-key
-            :models '(Mistral-Nemo gpt-4o)))
+          (gptel-make-gh-copilot "Copilot"))
+    (gptel-make-openai "Github Models" ;Any name you want
+      :host "models.inference.ai.azure.com"
+      :endpoint "/chat/completions"
+      :stream t
+      :key github-key
+      :models '(Mistral-Nemo gpt-4o))
+
     (add-hook 'gptel-post-stream-hook 'gptel-auto-scroll)
     (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
     (setcdr (assoc 'org-mode gptel-prompt-prefix-alist) "** ")
     (setq gptel-default-mode 'org-mode)
+
+
+    (gptel-make-preset 'web
+      :description " TOOLS: Add basic web search tools"
+      :pre (lambda () (require 'gptel-agent-tools))
+      :tools '(:append ("WebSearch" "WebFetch" "YouTube"))
+      :system '(:append "\n\nUse the provided tools to search the web for up-to-date information."))
+    (defun my/gptel-windows-on-frame ()
+      "Return all windows on frame that aren't gptel chat buffers."
+      (delq (and-let* ((current-buf (window-buffer (selected-window)))
+                       ((buffer-local-value 'gptel-mode current-buf)))
+              (selected-window))
+            (window-list)))
+
+    (gptel-make-preset 'visible-buffers
+      :description " CONTEXT: Include the full text of all buffers visible in the frame."
+      :context
+      '(:eval (mapcar #'window-buffer (my/gptel-windows-on-frame))))
+
+    (gptel-make-preset 'files
+      :pre (lambda () (require 'gptel-agent-tools))
+      :description " TOOLS: Add file read/write"
+      :tools '(:append ("Read" "Glob" "Write" "Edit" "Insert")))
+
+    (gptel-make-preset 'files-ro
+      :pre (lambda () (require 'gptel-agent-tools))
+      :description " TOOLS: Add file read-only"
+      :tools '(:append ("Read" "Glob")))
+
+    (gptel-make-preset 'shell
+      :pre (lambda () (require 'gptel-agent-tools))
+      :description " TOOLS: Add Bash eval"
+      :tools  '(:append ("Bash"))
+      :system '(:append "Use the Bash tool to introspect and change the state of the system."))
+
+    (gptel-make-preset 'include
+      :description " CONTEXT: Include the filename following @include"
+      :context
+      '(:function
+        (lambda (context)
+          (and-let* ((filename (progn (skip-syntax-forward " ")
+                                      (thing-at-point 'filename))))
+            (if (file-readable-p filename) (push filename context)
+              (message "Ignoring @include %s, file not readable" filename)))
+          context)))
+
+
+    (gptel-make-preset 'visible-text
+      :description " CONTEXT: Include visible text from all windows in the frame."
+      :context
+      '(:eval (mapcar (lambda (win) ;; Create (<buffer> :bounds ((start . end)))
+                        `(,(window-buffer win)
+                          :bounds ((,(window-start win) . ,(window-end win)))))
+                      (my/gptel-windows-on-frame))))
     )
+
+
+
 #+end_src
 
 #+RESULTS:
-: t
+: gptel-add
 
 #+begin_src emacs-lisp :tangle yes
   (use-package copilot
@@ -2384,6 +2569,7 @@ tools to handle text files, to test later.
 
 #+begin_src emacs-lisp :tangle yes
   (use-package gptel-aibo
+    :after gptel
     :straight (:host github :repo "dolmens/gptel-aibo")
     :ensure t)
 #+end_src
@@ -2392,6 +2578,7 @@ tools to handle text files, to test later.
 
 #+begin_src emacs-lisp :tangle yes
   (use-package llm-tool-collection
+    :after gptel
     :straight (:host github :repo "skissue/llm-tool-collection")
     :ensure t
     :config
@@ -2400,6 +2587,9 @@ tools to handle text files, to test later.
             (llm-tool-collection-get-all))
     )
 #+end_src
+
+#+RESULTS:
+: t
 
 # tree sitter grammar using nix, ts docstr, television, tmux interaction
 
@@ -2423,6 +2613,7 @@ tools to handle text files, to test later.
 
   (use-package org-jira
     :config
+    (make-directory "~/.org-jira" t)
     (load (expand-file-name "~/.emacs.d/secrets.el.gpg"))
     (setq org-jira-jira-status-to-org-keyword-alist
           '(("To do" . "TODO")
@@ -2524,7 +2715,6 @@ tools to handle text files, to test later.
 
 * misc
 
-
 #+begin_src emacs-lisp :tangle yes
 
   ;; (use-package tinee
@@ -2533,12 +2723,32 @@ tools to handle text files, to test later.
   ;;     :custom
   ;;     ((tinee-send-text-function 'tinee-paste) ; or 'tinee-paste
   ;;      (tinee-frame-name "tinee")))
-
-  ;; (setq notdeft-directories '("~/org"))
-  ;; (setq notdeft-xapian-max-results 20)
-  ;; (setq xeft-directory "~/org")
-
 #+end_src
 
+#+begin_src emacs-lisp :tangle yes
+  (setq notdeft-directories '("~/org"))
+  (setq notdeft-xapian-max-results 20)
+  (setq xeft-directory "~/org")
+  (setq xeft-recursive 1)
+#+end_src
+
+* treesitter
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package treesit-fold)
+  (use-package treesit-auto
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode))
+  (use-package combobulate
+    :custom
+    ;; You can customize Combobulate's key prefix here.
+    ;; Note that you may have to restart Emacs for this to take effect!
+    (combobulate-key-prefix "C-c o")
+    :hook ((prog-mode . combobulate-mode))
+    )
+#+end_src
 #+RESULTS:
-: ~/org
+| combobulate-mode | #[nil ((setq show-trailing-whitespace 1)) nil nil nil nil] | ws-butler-mode | clean-aindent-mode | highlight-indent-guides-mode | #[nil ((display-line-numbers-mode t)) nil] | display-line-numbers-mode | rainbow-delimiters-mode | origami-mode |

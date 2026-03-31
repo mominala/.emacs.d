@@ -15,9 +15,9 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; we need to load the up to date org package to avoid conflicts
+;; ;; we need to load the up to date org package to avoid conflicts
 ;; (straight-use-package 'org)
-;; this needs to be setup before loading org
+;; ;; this needs to be setup before loading org
 ;; (setq org-replace-disputed-keys t)
 
 (require 'org)
