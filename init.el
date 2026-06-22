@@ -1,5 +1,6 @@
 (setq straight-use-package-by-default t)
 (setq straight-recipes-gnu-elpa-use-mirror t)
+(setq straight-built-in-pseudo-packages '(emacs org eglot pdf-tools org-pdftools notdeft xeft))
 
 
 (defvar bootstrap-version)
