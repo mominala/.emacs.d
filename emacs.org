@@ -1500,24 +1500,24 @@ the base name of the FILE is used as title."
 ** tags
 
    #+BEGIN_SRC emacs-lisp :tangle yes
-     (use-package helm-gtags
-       :after helm
-       :hook
-       ((dired-mode . helm-gtags-mode)
-        (eshell-mode-hook . helm-gtags-mode)
-        (c-mode . helm-gtags-mode)
-        (c++-mode . helm-gtags-mode)
-        (java-mode . helm-gtags-mode)
-        (asm-mode . helm-gtags-mode))
-       :config
-       (setq
-        helm-gtags-ignore-case t
-        helm-gtags-auto-update t
-        helm-gtags-use-input-at-cursor t
-        helm-gtags-pulse-at-cursor t
-        helm-gtags-prefix-key (kbd "C-x g")
-        helm-gtags-suggested-key-mapping t
-        ))
+     ;; (use-package helm-gtags
+     ;;   :after helm
+     ;;   :hook
+     ;;   ((dired-mode . helm-gtags-mode)
+     ;;    (eshell-mode-hook . helm-gtags-mode)
+     ;;    (c-mode . helm-gtags-mode)
+     ;;    (c++-mode . helm-gtags-mode)
+     ;;    (java-mode . helm-gtags-mode)
+     ;;    (asm-mode . helm-gtags-mode))
+     ;;   :config
+     ;;   (setq
+     ;;    helm-gtags-ignore-case t
+     ;;    helm-gtags-auto-update t
+     ;;    helm-gtags-use-input-at-cursor t
+     ;;    helm-gtags-pulse-at-cursor t
+     ;;    helm-gtags-prefix-key (kbd "C-x g")
+     ;;    helm-gtags-suggested-key-mapping t
+     ;;    ))
    #+END_SRC
 
    #+RESULTS:
@@ -1608,6 +1608,8 @@ the base name of the FILE is used as title."
 
      (add-hook 'c-mode-hook 'c-c++-company-setup)
      (add-hook 'c++-mode-hook 'c-c++-company-setup)
+     (add-hook 'c-ts-mode-hook 'c-c++-company-setup)
+     (add-hook 'c++-ts-mode-hook 'c-c++-company-setup)
      (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
      (use-package modern-cpp-font-lock
@@ -1632,9 +1634,12 @@ the base name of the FILE is used as title."
        :config
        (setq eglot-ignored-server-capabilities '(:inlayHintProvider))
        (add-to-list 'eglot-server-programs
-                    '((c++-mode c-mode) "/usr/bin/clangd" "--query-driver=~/.nix-profile/bin/clang**" "-background-index" "--log=verbose" "--folding-ranges"))
+                    '((c++-mode c-mode c++-ts-mode c-ts-mode) "/usr/bin/clangd" "--query-driver=~/.nix-profile/bin/clang**" "-background-index" "--log=verbose" "--folding-ranges"))
        (add-hook 'c-mode-hook 'eglot-ensure)
-       (add-hook 'c++-mode-hook 'eglot-ensure))
+       (add-hook 'c++-mode-hook 'eglot-ensure)
+       (add-hook 'c-ts-mode-hook 'eglot-ensure)
+       (add-hook 'c++-ts-mode-hook 'eglot-ensure)
+       )
 
 
      (use-package eglot-booster
@@ -2741,8 +2746,13 @@ the base name of the FILE is used as title."
     :custom
     (treesit-auto-install 'prompt)
     :config
-    (treesit-auto-add-to-auto-mode-alist 'all)
-    (global-treesit-auto-mode))
+    (setq treesit-auto-langs '(c++ c just nix terraform))
+    ;; (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode)
+    (add-hook
+     'c++-ts-mode-hook
+     (lambda () (setq-local indent-line-function #'c-indent-line)))
+    )
   (use-package combobulate
     :custom
     ;; You can customize Combobulate's key prefix here.
